@@ -128,6 +128,9 @@ class BaseRunnable(BaseLogger, Runnable[Input, Output]):
         )
         kwargs['model_kwargs'] = model_kwargs
 
+        # Set custom OpenAI base URL if not already specified
+        if 'base_url' not in kwargs and 'openai' in mn.lower():
+            kwargs['base_url'] = os.environ.get('OPENAI_API_BASE', 'https://api.openai-hub.com/v1')
 
         if 'o1' in mn or 'o3' in mn or 'o4' in mn:
             # temp not supported on o series models

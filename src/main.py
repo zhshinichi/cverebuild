@@ -533,9 +533,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--json",
         type=str,
-        required=True,
-        help="Path to the cve json file",
-        default='dummy_data/data.json'
+        required=False,
+        default=None,
+        help="Path to the cve json file (optional, will use cvelist if not provided)"
     )
     parser.add_argument(
         "--run-type",

@@ -80,7 +80,7 @@ class LLMApiRateLimitError(Exception):
 SECRET = os.environ.get("LITELLM_KEY", "")
 
 # API_ENDPOINT = 'http://beatty.unfiltered.seclab.cs.ucsb.edu:4269/completions'
-API_ENDPOINT = os.environ.get("AIXCC_LITELLM_HOSTNAME", "")
+API_ENDPOINT = os.environ.get("AIXCC_LITELLM_HOSTNAME", "https://api.openai-hub.com/v1")
 
 LLM_API_CLIENT = (
     openai.OpenAI(api_key=SECRET, base_url=API_ENDPOINT)

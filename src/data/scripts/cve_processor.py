@@ -11,11 +11,23 @@ CVE_DIR = os.path.join(os.path.dirname(__file__), '..', 'cvelist')
 def fetch_patch_commit_url(cve: dict) -> tuple[list, list]:
     """
     Fetches the patch commit URLs from the list of URLs.
+    Supports both CVE 4.0 and CVE 5.0 formats.
     """
-    if 'references' not in cve:
+    # CVE 5.0 format
+    if 'containers' in cve:
+        urls = []
+        if 'cna' in cve['containers'] and 'references' in cve['containers']['cna']:
+            urls = [{'url': ref['url']} for ref in cve['containers']['cna']['references']]
+        elif 'adp' in cve['containers']:
+            for adp in cve['containers']['adp']:
+                if 'references' in adp:
+                    urls.extend([{'url': ref['url']} for ref in adp['references']])
+    # CVE 4.0 format
+    elif 'references' in cve:
+        urls = cve['references']['reference_data']
+    else:
         return [], []
     
-    urls = cve['references']['reference_data']
     git_re = r'(((?P<repo>(https|http):\/\/(bitbucket|github|gitlab)\.(org|com)\/(?P<owner>[^\/]+)\/(?P<project>[^\/]*))\/(commit|commits)\/(?P<hash>\w+)#?)+)' # Used this regex from CVEfixes (https://github.com/secureIT-project/CVEfixes)
     patch_commit_data = []
     other_urls = []
@@ -36,9 +48,31 @@ def fetch_patch_commit_url(cve: dict) -> tuple[list, list]:
     return patch_commit_data, other_urls
 
 def get_cwe_id(cve: dict) -> list[str]:
-    # [{'id': cwe['cweId'], 'value': cwe['value']} if 'cweId' in cwe else {'id': 'n/a', 'value': cwe['value']} for cwe in cve['problemtype']['problemtype_data'][0]['description']] if 'problemtype' in cve else []
+    """
+    Extracts CWE IDs from CVE data.
+    Supports both CVE 4.0 and CVE 5.0 formats.
+    """
     cwes = []
-    if 'problemtype' in cve:
+    
+    # CVE 5.0 format
+    if 'containers' in cve:
+        if 'cna' in cve['containers'] and 'problemTypes' in cve['containers']['cna']:
+            for problem in cve['containers']['cna']['problemTypes']:
+                if 'descriptions' in problem:
+                    for desc in problem['descriptions']:
+                        cwe_info = {'id': 'n/a', 'value': 'n/a'}
+                        if 'cweId' in desc:
+                            cwe_info['id'] = desc['cweId']
+                        if 'description' in desc:
+                            cwe_info['value'] = desc['description']
+                            # Try to extract CWE ID from description if not present
+                            if cwe_info['id'] == 'n/a':
+                                cwe_re = re.search(r'CWE-(\d+)', desc['description'])
+                                if cwe_re:
+                                    cwe_info['id'] = f"CWE-{cwe_re.group(1)}"
+                        cwes.append(cwe_info)
+    # CVE 4.0 format
+    elif 'problemtype' in cve:
         if 'problemtype_data' in cve['problemtype']:
             for cwe in cve['problemtype']['problemtype_data']:
                 cwe = cwe['description'][0]
@@ -51,23 +85,68 @@ def get_cwe_id(cve: dict) -> list[str]:
                         cwe_info['id'] = cwe_re.group(1)
                 cwe_info['value'] = cwe['value']
                 cwes.append(cwe_info)
+    
     return cwes
 
 def process_cve_data(cve: dict) -> dict:
     """
     Processes the CVE data and returns a dictionary.
+    Supports both CVE 4.0 and CVE 5.0 formats.
     """
     patch_urls, other_urls = fetch_patch_commit_url(cve)
     cwe_id = get_cwe_id(cve)
-    cve_data = {
-        'id': cve['CVE_data_meta']['ID'],
-        'description': cve['description']['description_data'][0]['value'],
-        'cwe': cwe_id,
-        'patch_urls': patch_urls,
-        'other_urls': other_urls,
-        'vendor_data': cve['affects']['vendor']['vendor_data'] if 'affects' in cve else [],
-        'version_data': cve['affects']['vendor']['vendor_data'][0]['product']['product_data'][0]['version']['version_data'] if 'affects' in cve else []
-    }
+    
+    # CVE 5.0 format
+    if 'cveMetadata' in cve:
+        cve_id = cve['cveMetadata']['cveId']
+        description = 'n/a'
+        if 'containers' in cve and 'cna' in cve['containers']:
+            if 'descriptions' in cve['containers']['cna']:
+                for desc in cve['containers']['cna']['descriptions']:
+                    if desc.get('lang') == 'en':
+                        description = desc.get('value', 'n/a')
+                        break
+            
+            # Extract affected vendor/product data
+            vendor_data = []
+            version_data = []
+            if 'affected' in cve['containers']['cna']:
+                for affected in cve['containers']['cna']['affected']:
+                    vendor_info = {
+                        'vendor_name': affected.get('vendor', 'n/a'),
+                        'product': {
+                            'product_data': [{
+                                'product_name': affected.get('product', 'n/a'),
+                                'version': {
+                                    'version_data': affected.get('versions', [])
+                                }
+                            }]
+                        }
+                    }
+                    vendor_data.append(vendor_info)
+                    if 'versions' in affected:
+                        version_data.extend(affected['versions'])
+        
+        cve_data = {
+            'id': cve_id,
+            'description': description,
+            'cwe': cwe_id,
+            'patch_urls': patch_urls,
+            'other_urls': other_urls,
+            'vendor_data': vendor_data,
+            'version_data': version_data
+        }
+    # CVE 4.0 format
+    else:
+        cve_data = {
+            'id': cve['CVE_data_meta']['ID'],
+            'description': cve['description']['description_data'][0]['value'],
+            'cwe': cwe_id,
+            'patch_urls': patch_urls,
+            'other_urls': other_urls,
+            'vendor_data': cve['affects']['vendor']['vendor_data'] if 'affects' in cve else [],
+            'version_data': cve['affects']['vendor']['vendor_data'][0]['product']['product_data'][0]['version']['version_data'] if 'affects' in cve else []
+        }
 
     return cve_data
 

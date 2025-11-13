@@ -25,7 +25,10 @@ def ask_structured_llm(sys: str = None, examples: list[str, str] = None, prompt:
         raise ValueError("🤡 Response model is required in BaseModel format!!")
     
     # Create the request
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"),
+        base_url="https://api.openai-hub.com/v1",
+    )
     completion = client.beta.chat.completions.parse(
         model=model,
         messages=msgs,
