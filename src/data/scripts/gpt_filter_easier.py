@@ -53,7 +53,7 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 # Initialize LangChain's OpenAI client
-llm = ChatOpenAI(model="gpt-4o-mini")
+llm = ChatOpenAI(model="gpt-4o-mini", base_url="https://api.openai-hub.com/v1")
 agent = create_tool_calling_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 

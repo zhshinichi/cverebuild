@@ -11,6 +11,8 @@ INSTRUCTIONS TO FOLLOW:
 6. Go through directories and relevant files in the project and build up knowledge about the project.
 7. See if there are any services that are required to setup the project, and analyse them to output which of them will be necessary for reproducing the given CVE. This is to make sure the next agent will not spin up irrelevant services.
 8. If the cve is for a library and includes a vulnerable version that can be fetched directly via a package manager such as pip or npm by specifying the version, then DO NOT BUILD from source unless necessary. Use the files just as a reference in that case.
+9. BE CONCISE: In all your analysis and reporting, you must be concise. Report only the most critical information directly relevant to reproducing the CVE. Avoid detailed descriptions of project features not related to the vulnerability.
+10. LIMIT INTERMEDIATE ANALYSIS: When analyzing the output of a tool (like 'ls' or 'cat'), your analysis must be a brief summary of key findings (use bullet points), not a full narrative paragraph. Keep detailed reasoning internal and only output the minimum information needed for the next step.
 
 THE FINAL REPORT SHOULD INCLUDE:
 1. A detailed overview of the project, especially of the parts that are relevant to the CVE.

@@ -1,0 +1,316 @@
+{
+  "top_20": [
+    {
+      "cve_id": "CVE-2024-45601",
+      "score": 130,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "安全CWE: CWE-20",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Mesop is a Python-based UI framework designed for rapid web apps development. A vulnerability has be...",
+      "cwe": [
+        "CWE-22",
+        "CWE-20"
+      ],
+      "sw_version": "v0.9.0"
+    },
+    {
+      "cve_id": "CVE-2024-50343",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-20",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "symfony/validator is a module for the Symphony PHP framework which provides tools to validate values...",
+      "cwe": [
+        "CWE-20"
+      ],
+      "sw_version": "v5.4.42"
+    },
+    {
+      "cve_id": "CVE-2024-50341",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-287",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "symfony/security-bundle is a module for the Symphony PHP framework which provides a tight integratio...",
+      "cwe": [
+        "CWE-287"
+      ],
+      "sw_version": "v6.2.0"
+    },
+    {
+      "cve_id": "CVE-2024-55657",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "SiYuan is a personal knowledge management system. Prior to version 3.1.16, an arbitrary file read vu...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v3.1.16-dev2"
+    },
+    {
+      "cve_id": "CVE-2024-52600",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有3个patch"
+      ],
+      "warnings": [],
+      "description": "Statmatic is a Laravel and Git powered content management system (CMS). Prior to version 5.17.0, ass...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v5.16.0"
+    },
+    {
+      "cve_id": "CVE-2024-52516",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-269",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Nextcloud Server is a self hosted personal cloud system. When a server is configured to only allow s...",
+      "cwe": [
+        "CWE-269"
+      ],
+      "sw_version": "v28.0.0"
+    },
+    {
+      "cve_id": "CVE-2024-52511",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-639",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Nextcloud Tables allows users to to create tables with individual columns. By directly specifying th...",
+      "cwe": [
+        "CWE-639"
+      ],
+      "sw_version": "v0.6.0"
+    },
+    {
+      "cve_id": "CVE-2024-52507",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-639",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Nextcloud Tables allows users to to create tables with individual columns. The information which Tab...",
+      "cwe": [
+        "CWE-639"
+      ],
+      "sw_version": "v0.3.0"
+    },
+    {
+      "cve_id": "CVE-2024-37889",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-639",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "MyFinances is a web application for managing finances. MyFinances has a way to access other customer...",
+      "cwe": [
+        "CWE-639"
+      ],
+      "sw_version": "v0.4.5"
+    },
+    {
+      "cve_id": "CVE-2024-37169",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "@jmondi/url-to-png is a self-hosted URL to PNG utility. Versions prior to 2.0.3 are vulnerable to ar...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v2.0.2"
+    },
+    {
+      "cve_id": "CVE-2024-36399",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-639",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Kanboard is project management software that focuses on the Kanban methodology. The vuln is in app/C...",
+      "cwe": [
+        "CWE-284",
+        "CWE-285",
+        "CWE-639"
+      ],
+      "sw_version": "v1.2.37"
+    },
+    {
+      "cve_id": "CVE-2024-43395",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "CraftOS-PC 2 is a rewrite of the desktop port of CraftOS from the popular Minecraft mod ComputerCraf...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v2.8.3-luajit"
+    },
+    {
+      "cve_id": "CVE-2024-43415",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-89",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "An improper neutralization of special elements used in an SQL command in the papertrail/version- mod...",
+      "cwe": [
+        "CWE-89"
+      ],
+      "sw_version": "v0.9.1"
+    },
+    {
+      "cve_id": "CVE-2024-47877",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Extract is aA Go library to extract archives in zip, tar.gz or tar.bz2 formats. A maliciously crafte...",
+      "cwe": [
+        "CWE-22",
+        "CWE-61"
+      ],
+      "sw_version": "v3.1.1"
+    },
+    {
+      "cve_id": "CVE-2024-39903",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Solara is a pure Python, React-style framework for scaling Jupyter and web apps. A Local File Inclus...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v1.35.0"
+    },
+    {
+      "cve_id": "CVE-2024-49770",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "`oak` is a middleware framework for Deno's native HTTP server, Deno Deploy, Node.js 16.5 and later, ...",
+      "cwe": [
+        "CWE-35",
+        "CWE-22"
+      ],
+      "sw_version": "v17.1.2"
+    },
+    {
+      "cve_id": "CVE-2024-49376",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-287",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Autolab, a course management service that enables auto-graded programming assignments, has misconfig...",
+      "cwe": [
+        "CWE-287"
+      ],
+      "sw_version": "v3.0.0"
+    },
+    {
+      "cve_id": "CVE-2024-38358",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Wasmer is a web assembly (wasm) Runtime supporting WASIX, WASI and Emscripten. If the preopened dire...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v4.3.1"
+    },
+    {
+      "cve_id": "CVE-2025-31131",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-22",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "YesWiki is a wiki system written in PHP. The squelette parameter is vulnerable to path traversal att...",
+      "cwe": [
+        "CWE-22"
+      ],
+      "sw_version": "v4.5.1"
+    },
+    {
+      "cve_id": "CVE-2025-31135",
+      "score": 120,
+      "reasons": [
+        "安全CWE: CWE-20",
+        "sec_adv简洁",
+        "有1个patch"
+      ],
+      "warnings": [],
+      "description": "Go-Guerrilla SMTP Daemon is a lightweight SMTP server written in Go. Prior to 1.6.7, when ProxyOn is...",
+      "cwe": [
+        "CWE-20"
+      ],
+      "sw_version": "v1.6.6"
+    }
+  ],
+  "statistics": {
+    "total": 841,
+    "safe": 500,
+    "medium": 233,
+    "dangerous": 108
+  }
+}
