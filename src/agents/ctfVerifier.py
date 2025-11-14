@@ -73,7 +73,7 @@ class CTFVerifier(AgentWithHistory[dict, str]):
     __SYSTEM_PROMPT_TEMPLATE__ = 'ctfVerifier/verifier.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'ctfVerifier/verifier.user.j2'
     __OUTPUT_PARSER__ = MyParser
-    __MAX_TOOL_ITERATIONS__ = 60
+    __MAX_TOOL_ITERATIONS__ = 30
 
     # general
     PROJECT_DIR_TREE: Optional[str]

@@ -2,7 +2,26 @@ import argparse
 from dotenv import load_dotenv
 import signal
 import os
+import sys
 import time
+from datetime import datetime
+
+class TeeLogger:
+    """将输出同时写入终端和文件"""
+    def __init__(self, log_file_path):
+        self.terminal = sys.stdout
+        self.log_file = open(log_file_path, 'w', encoding='utf-8', buffering=1)
+    
+    def write(self, message):
+        self.terminal.write(message)
+        self.log_file.write(message)
+    
+    def flush(self):
+        self.terminal.flush()
+        self.log_file.flush()
+    
+    def close(self):
+        self.log_file.close()
 
 class TimeoutExpired(Exception):
     def __init__(self, phase: str = None, message: str = "Timeout expired"):
@@ -563,17 +582,52 @@ if __name__ == "__main__":
 
     reproducer = CVEReproducer(args.cve, args.json)
     
+    # 设置日志文件
+    log_dir = os.path.join('/shared', args.cve)
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, f'{args.cve}_log.txt')
+    
+    # 创建 TeeLogger 实例，同时输出到终端和文件
+    tee_logger = TeeLogger(log_file)
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+    sys.stdout = tee_logger
+    sys.stderr = tee_logger
+    
+    # 记录开始时间
+    print(f"{'='*60}")
+    print(f"CVE Reproduction Log")
+    print(f"CVE ID: {args.cve}")
+    print(f"Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Model: {os.environ['MODEL']}")
+    print(f"{'='*60}\n")
+    
     signal.signal(signal.SIGALRM, alarm_handler)
     signal.alarm(TIMEOUT)
     
     try:
         reproducer.run()
-    except:
+    except Exception as e:
         signal.alarm(0)
+        print(f"\n{'='*60}")
+        print(f"ERROR: {str(e)}")
+        print(f"{'='*60}")
     
+    # 记录结束信息
+    print(f"\n{'='*60}")
     print("Cost:", reproducer.total_cost)
     reproducer.results['cost'] = reproducer.total_cost
     reproducer.results['time'] = TIMEOUT - signal.alarm(0)
     reproducer.results['model'] = os.environ['MODEL']
     print("Results:", reproducer.results)
+    print(f"End Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"{'='*60}")
+    
+    # 恢复原始输出并关闭日志文件
+    sys.stdout = original_stdout
+    sys.stderr = original_stderr
+    tee_logger.close()
+    
+    print(f"✅ Log saved to: {log_file}")
+    
     helper.save_result(args.cve, reproducer.results)
