@@ -19,3 +19,6 @@ CVE-2024-2288,False,"Error code: 400 - {'error': {'message': ""This model's maxi
 CVE-2024-2288,False,"Error code: 400 - {'error': {'message': ""This model's maximum context length is 200000 tokens. However, your messages resulted in 229439 tokens (228917 in the messages, 522 in the functions). Please reduce the length of the messages or functions."", 'type': 'rix_api_error', 'param': 'messages', 'code': 'context_length_exceeded'}}",2.6730660000000004,1785,example_run
 CVE-2024-7009,False,Cost exceeds maximum limit,5.474663700000001,2700,example_run
 CVE-2024-2928,False,"Error code: 403 - {'error': {'message': '预扣费额度失败, 用户剩余额度: ＄0.130524, 需要预扣费额度: ＄0.600000 (request id: 20251112162142599359065Z7tO6RyJ)', 'type': 'rix_api_error', 'param': '', 'code': 'insufficient_user_quota'}}",1.9301984,1853,example_run
+CVE-2024-45601,False,"Error code: 403 - {'error': {'message': '用户额度不足, 剩余额度: ＄-0.000824 (request id: 20251113154913411029896SvtQJM90)', 'type': 'rix_api_error', 'param': '', 'code': 'insufficient_user_quota'}}",0.011589600000000002,119,example_run
+CVE-2024-45601,False,"Error code: 403 - {'error': {'message': '用户额度不足, 剩余额度: ＄-0.003384 (request id: 20251114144926437584034iN2yLm6)', 'type': 'rix_api_error', 'param': '', 'code': 'insufficient_user_quota'}}",0,36,example_run
+CVE-2024-45601,False,Cost exceeds maximum limit,6.108838,2365,example_run

@@ -1,0 +1,14 @@
+============================================================
+Test Log Feature
+Time: 2025-11-13 19:43:37
+============================================================
+
+This is a test message.
+This message should appear in both terminal and log file.
+
+Simulating error output:
+ERROR: This is a test error
+
+============================================================
+Test completed!
+============================================================
