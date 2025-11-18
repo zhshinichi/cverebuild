@@ -44,8 +44,9 @@ if not os.environ.get('MODEL'):
 MODEL = os.environ['MODEL']
 
 from toolbox import helper, CVEDataProcessor, Validator
-from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy
+from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator
 
+CVE_INFO_GEN = False
 KB = False
 PRE_REQ = False
 REPO = False
@@ -79,6 +80,53 @@ class CVEReproducer:
 
     def run(self):
         try:
+            if CVE_INFO_GEN:
+                print(f"\n📄 Generating CVE Information for {self.cve_id} ...")
+                print("🤖 Model: ", MODEL)
+                
+                # 先处理 CVE 数据
+                processor = CVEDataProcessor(self.cve_id, self.cve_json)
+                self.cve_info = processor.run()
+                
+                # 准备数据
+                cwe = '\n'.join([f"* {c['id']} - {c['value']}" for c in self.cve_info["cwe"]])
+                project_name = self.cve_info["sw_version_wget"].split("//")[1].split("/")[2]
+                patches = '\n\n'.join([f"Commit Hash: {p['url'].split('/')[-1]}\n\"\"\"\n{p['content']}\n\"\"\"" for p in self.cve_info["patch_commits"]])
+                sec_adv = '\n\n'.join([f"Advisory: {a['url']}\n\"\"\"\n{a['content']}\n\"\"\"" for ix, a in enumerate(self.cve_info["sec_adv"])])
+                
+                # 调用 CVE 信息生成 agent
+                cve_info_generator = CVEInfoGenerator(
+                    cve_id = self.cve_id,
+                    description = self.cve_info["description"],
+                    cwe = cwe,
+                    project_name = project_name,
+                    affected_version = self.cve_info["sw_version"],
+                    security_advisory = sec_adv,
+                    patch = patches
+                )
+                
+                info_summary = cve_info_generator.invoke().value
+                print(f"\n📋 CVE Information Summary:\n{info_summary}\n")
+                
+                # 保存到 shared 文件夹
+                info_dir = os.path.join('/shared', self.cve_id)
+                os.makedirs(info_dir, exist_ok=True)
+                info_file = os.path.join(info_dir, f'{self.cve_id}_info.txt')
+                
+                with open(info_file, 'w', encoding='utf-8') as f:
+                    f.write(f"CVE Information Summary\n")
+                    f.write(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"{'='*60}\n\n")
+                    f.write(info_summary)
+                
+                print(f"✅ CVE Information saved to: {info_file}")
+                
+                cost = cve_info_generator.get_cost()
+                print(f"💰 Cost: ${cost:.4f}")
+                
+                self.results = {"success": "True", "info_file": info_file, "cost": cost}
+                return
+            
             if KB:
                 print(f"\n🛠️ Reproducing {self.cve_id} ...")
 
@@ -560,14 +608,16 @@ if __name__ == "__main__":
         "--run-type",
         type=str,
         required=True,
-        choices=['build', 'exploit', 'verify', 'build,exploit', 'exploit,verify', 'build,exploit,verify'],
-        help="Type of run: build, exploit, verify",
+        choices=['info', 'build', 'exploit', 'verify', 'build,exploit', 'exploit,verify', 'build,exploit,verify'],
+        help="Type of run: info (generate CVE info only), build, exploit, verify",
         default='build,exploit,verify'
     )
     args = parser.parse_args()
 
     run_types = args.run_type.split(',')
 
+    if 'info' in run_types:
+        CVE_INFO_GEN = True
     if 'build' in run_types:
         KB = True
         PRE_REQ = True

@@ -6,3 +6,4 @@ from .exploiter import Exploiter
 from .exploitCritic import ExploitCritic
 from .ctfVerifier import CTFVerifier
 from .sanityGuy import SanityGuy
+from .cveInfoGenerator import CVEInfoGenerator
