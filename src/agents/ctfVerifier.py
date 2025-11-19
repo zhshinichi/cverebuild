@@ -53,10 +53,14 @@ class MyParser(BaseParser):
                 m = re.search(r'<verifier>(.*?)</verifier>', text, re.DOTALL)
                 verifier = m.group(1) if m else self.raise_format_error()
 
+                # 移除 markdown 代码块标记
+                verifier = verifier.strip()
                 if verifier.startswith('```'):
-                    verifier = verifier.strip()
+                    # 移除开头的 ```python 或 ```
                     verifier = verifier[verifier.index('\n')+1:]
-                    verifier = verifier[:verifier.rindex('\n')]
+                if verifier.endswith('```'):
+                    # 移除结尾的 ```
+                    verifier = verifier[:verifier.rindex('```')].strip()
 
                 print(f'✅ Successfully parsed the output!')
                 return dict(

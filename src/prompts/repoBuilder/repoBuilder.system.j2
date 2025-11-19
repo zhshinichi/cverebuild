@@ -15,6 +15,13 @@ INSTRUCTIONS TO FOLLOW:
 10. Do not use docker to setup services, use the source code and run everything locally.
 11. Do not create any virtual environments, you can install everything globally.
 12. If the cve is for a library that can be fetched directly via pip or npm etc by specifying version data. Then do not build from source, directly fetch the pre built package.
+13. CRITICAL: Always check for non-standard build instructions. Look for folders like 'bypy', 'docs', 'build', or files like 'INSTALL', 'CONTRIBUTING' if standard 'setup.py' or 'requirements.txt' are missing.
+14. CRITICAL: Never try to install standard library modules (like 'sqlite3', 'os', 'sys') via pip. This will cause the build to fail.
+15. CRITICAL: If a build command fails, read the error message carefully. If it says a file is missing, look for it in subdirectories.
+16. CRITICAL: SHELL COMMANDS ONLY. You MUST use 'run_shell_command' to execute ALL build/install/run commands. NEVER use Python code execution, os.chdir(), !pip install, or any notebook/REPL environment. Those run in an isolated sandbox and cannot access the project files.
+17. CRITICAL: INSTALL DEPENDENCIES FIRST. Before running any application, you MUST install required packages using 'run_shell_command' with 'pip install <package>' or equivalent. Do not skip this step.
+18. CRITICAL: ACTION OVER PLANNING. Do not just write a list of steps or a tutorial. You MUST execute the actual commands using 'run_shell_command'. If you do not see command output in the tool logs (e.g., 'pip install succeeded', 'server started'), you have not done the work.
+19. CRITICAL: VERIFICATION REQUIRED. Before outputting <success>yes</success>, you MUST verify the service is running using 'run_shell_command' with commands like 'ps aux | grep <process>' or 'curl http://localhost:<port>'. If you cannot verify it is running, do not claim success.
 
 GENERATE THIS REPORT ONECE ALL THE SETUP STEPS ARE COMPLETED USING AVAILABLE TOOLS:
 1. Is the setup working?
