@@ -10,7 +10,7 @@ class CVEInfoGenerator(Agent[dict, str]):
     3. Vulnerability mechanism
     4. Trigger conditions
     """
-    __LLM_MODEL__ = 'gpt-4o'
+    __LLM_MODEL__ = 'gpt-5'
     __SYSTEM_PROMPT_TEMPLATE__ = 'cveInfoGenerator/cveInfoGenerator.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'cveInfoGenerator/cveInfoGenerator.user.j2'
 

@@ -44,7 +44,23 @@ if not os.environ.get('MODEL'):
 MODEL = os.environ['MODEL']
 
 from toolbox import helper, CVEDataProcessor, Validator
-from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator
+from toolbox.web_detector import requires_web_driver, get_attack_type
+from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic
+
+# -------------------------------------------------------------------------
+# 🔧 动态配置所有 Agent 以提升复现率和解决 Token 问题
+# -------------------------------------------------------------------------
+AGENTS = [KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic]
+for agent_cls in AGENTS:
+    # 配置 Token 超限策略 (解决 Context Window Exceeded 问题)
+    # 当上下文超限时，自动移除最旧的 2 轮对话并重试，而不是直接失败
+    agent_cls.__CONTEXT_WINDOW_EXCEEDED_STRATEGY__ = dict(
+        name="remove_turns",
+        number_to_remove=2,
+    )
+
+print(f"🔧 Configured all agents with auto-pruning strategy for token limits.")
+# -------------------------------------------------------------------------
 
 CVE_INFO_GEN = False
 KB = False
@@ -60,6 +76,9 @@ SANITY_CHECK = False
 
 TIMEOUT = 2700
 MAX_COST = 5.00
+
+# Web Driver 配置
+WEB_DRIVER_TARGET_URL = os.environ.get('WEB_DRIVER_TARGET_URL', 'http://localhost:9600')
 
 class CVEReproducer:
     def __init__(self, cve_id: str, cve_json: str):
@@ -335,6 +354,9 @@ class CVEReproducer:
                     self.results = {"success": "False", "reason": "Repo Builder response not found"}
                     return
                 self.repo_build = res
+                # 如果跳过了 processor 阶段,初始化 start_time
+                if self.start_time is None:
+                    self.start_time = time.time()
 
             print(f"\n💰 Cost till Repo Builder = {self.total_cost}\n")
 
@@ -346,6 +368,13 @@ class CVEReproducer:
                 os.environ['REPO_PATH'] = self.cve_info['repo_path']
                 
                 print("Time left: ", self.repo_build['time_left'])
+                
+                # 🌐 检测是否需要 WebDriver
+                use_web_driver = requires_web_driver(self.cve_info)
+                if use_web_driver:
+                    attack_type = get_attack_type(self.cve_info)
+                    print(f"\n🌐 Detected web-based vulnerability (Type: {attack_type})")
+                    print("   Using WebDriver for browser automation...\n")
                 
                 print("\n########################################\n" \
                     "# 6) 🚀 Running Exploiter ...\n" \
@@ -362,14 +391,24 @@ class CVEReproducer:
                         print("\n----------------------------------------\n" \
                             "- a) 🧨 Feedback-Based Exploiter \n" \
                             "-------------------------------------------\n")
-                    exploiter = Exploiter(
-                        cve_knowledge = self.cve_knowledge,
-                        project_overview = self.pre_reqs['overview'],
-                        project_dir_tree = self.cve_info['dir_tree'],
-                        repo_build = self.repo_build,
-                        feedback = exploit_feedback,
-                        critic_feedback = exploit_critic_feedback
-                    )
+                    
+                    # 根据漏洞类型选择不同的 Exploiter
+                    if use_web_driver:
+                        print("\n🌐 Using WebDriverAgent for browser-based exploitation...\n")
+                        exploiter = WebDriverAgent(
+                            cve_knowledge = self.cve_knowledge,
+                            target_url = WEB_DRIVER_TARGET_URL,
+                            attack_type = attack_type
+                        )
+                    else:
+                        exploiter = Exploiter(
+                            cve_knowledge = self.cve_knowledge,
+                            project_overview = self.pre_reqs['overview'],
+                            project_dir_tree = self.cve_info['dir_tree'],
+                            repo_build = self.repo_build,
+                            feedback = exploit_feedback,
+                            critic_feedback = exploit_critic_feedback
+                        )
                     res = exploiter.invoke().value
 
                     # Check if the agent stopped due to max iterations
@@ -400,9 +439,19 @@ class CVEReproducer:
                                 print("\n----------------------------------------\n" \
                                         "👀 Running Critic on Exploiter ...\n" \
                                         "-------------------------------------------\n")
-                                critic = ExploitCritic(
-                                    exploit_logs = exploit_logs
-                                )
+                                
+                                # 根据是否使用 WebDriver 选择不同的 Critic
+                                if use_web_driver:
+                                    print("🌐 Using WebExploitCritic for browser-based validation...\n")
+                                    critic = WebExploitCritic(
+                                        exploit_logs = exploit_logs,
+                                        cve_knowledge = self.cve_knowledge
+                                    )
+                                else:
+                                    critic = ExploitCritic(
+                                        exploit_logs = exploit_logs
+                                    )
+                                
                                 res = critic.invoke().value
                                 helper.save_response(self.cve_id, res, "exploit_critic", struct=True)
                                 exploit_critic_try += 1
