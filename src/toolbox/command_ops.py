@@ -79,14 +79,28 @@ def set_environment_variable(key: str, value: str, clear: bool) -> str:
 @tools.tool
 def execute_linux_command(command: str, background: bool) -> str:
     """
-    This tool runs a command (in the root directory of the target repository) in the shell.
-    export commands will not work independently.
-    Make sure not run commands that will ask for user input as they will hang indefinitely.
-    sudo commands will work.
+    Executes a shell command in the root directory of the target repository.
+    
+    USAGE GUIDELINES:
+    - Use background=False for: installations, builds, one-time commands
+    - Use background=True for: servers, daemons, long-running processes
+    
+    IMPORTANT NOTES:
+    - Export commands won't persist across calls (use set_environment_variable instead)
+    - Avoid commands requiring user input (they will hang)
+    - sudo commands are supported
+    - Exit code 0 = success, non-zero = error
+    - Empty/null output does NOT mean failure - check exit code!
+    
+    EXAMPLES:
+    - execute_linux_command('pip install mlflow==2.11.2', background=False)
+    - execute_linux_command('mlflow ui --host 0.0.0.0 --port 5000', background=True)
+    - execute_linux_command('ps aux | grep mlflow', background=False)
+    - execute_linux_command('curl http://localhost:5000', background=False)
 
-    :param command: The command to run.
-    :param background: If the command should be run in background.
-    :return: The output of the command.
+    :param command: The shell command to execute
+    :param background: True for long-running processes (servers), False for normal commands
+    :return: Command output with exit code and logs
     """
     print("Trying to execute: ", command)
     if background:
@@ -110,9 +124,10 @@ def execute_command_foreground(command: str) -> str:
     
     stdout_log = create_unique_logfile("stdout")
     stderr_log = create_unique_logfile("stderr")
+    exit_code = 0
     try:
         with open(stdout_log, "w") as stdout, open(stderr_log, "w") as stderr:
-            subprocess.run(
+            result = subprocess.run(
                 command,
                 shell=True,
                 executable="/bin/bash",
@@ -124,11 +139,21 @@ def execute_command_foreground(command: str) -> str:
                 errors="ignore",
                 env=os.environ.copy() | env
             )
+            exit_code = result.returncode
     except subprocess.TimeoutExpired:
-        return "Timed out! If this command starts a server/anything that expects input, try using execute_command_background"
+        return "❌ Timed out! If this command starts a server/anything that expects input, try using execute_command_background"
 
     # Get the last 100 lines of both log files
-    return get_tail_log(stdout_log, stderr_log)
+    tail_output = get_tail_log(stdout_log, stderr_log)
+    
+    # Add exit code and status indicator
+    status_icon = "✅" if exit_code == 0 else "⚠️"
+    return (
+        f"{status_icon} Command completed with exit code: {exit_code}\n"
+        f"Command: {command}\n\n"
+        f"{tail_output}\n"
+        f"{'Note: Exit code 0 = success, non-zero = error' if exit_code != 0 else ''}"
+    )
 
 background_process_list={}
 
@@ -168,8 +193,19 @@ def execute_command_background(command: str) -> str:
 
     time.sleep(5)
 
-    # Get the last 100 lines of both log files
-    return get_tail_log(stdout_log, stderr_log)
+    # Get the last 100 lines of both log files and add process info
+    tail_output = get_tail_log(stdout_log, stderr_log)
+    return (
+        f"✅ Background process started successfully!\n"
+        f"PID: {process.pid}\n"
+        f"Command: {command}\n\n"
+        f"{tail_output}\n"
+        f"⚠️ Note: Background processes may show minimal initial output.\n"
+        f"Verify service is running with:\n"
+        f"  - ps aux | grep <process_name>\n"
+        f"  - ss -ltnp | grep :<port>\n"
+        f"  - curl http://localhost:<port>\n"
+    )
 
 def cleanup_background_processes():
     global background_process_list

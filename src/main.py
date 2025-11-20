@@ -4,6 +4,7 @@ import signal
 import os
 import sys
 import time
+import subprocess
 from datetime import datetime
 
 class TeeLogger:
@@ -28,6 +29,87 @@ class TimeoutExpired(Exception):
         self.phase = phase
         self.message = f"{message} during phase: {phase}" if phase else message
         super().__init__(self.message)
+
+def copy_container_files_to_local():
+    """自动从 Docker 容器复制 /shared 目录到本地"""
+    try:
+        # 获取容器 ID 或名称
+        result = subprocess.run(
+            ['docker', 'ps', '--format', '{{.Names}}'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        containers = result.stdout.strip().split('\n')
+        
+        # 查找第一个运行的容器（通常是我们的工作容器）
+        if not containers or not containers[0]:
+            print("⚠️  No running containers found, skipping file copy.")
+            return False
+        
+        container_name = containers[0]
+        
+        # 确定目标路径
+        local_shared_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src', 'shared')
+        os.makedirs(local_shared_path, exist_ok=True)
+        
+        # 执行复制命令
+        print(f"\n{'='*60}")
+        print(f"📦 Copying files from container '{container_name}'...")
+        print(f"   Source: {container_name}:/shared/")
+        print(f"   Target: {local_shared_path}")
+        
+        copy_result = subprocess.run(
+            ['docker', 'cp', f'{container_name}:/shared/.', local_shared_path],
+            capture_output=True,
+            text=True
+        )
+        
+        if copy_result.returncode == 0:
+            print(f"✅ Successfully copied files to {local_shared_path}")
+            # 显示复制的内容
+            if copy_result.stdout:
+                print(copy_result.stdout)
+            return True
+        else:
+            print(f"⚠️  Failed to copy files: {copy_result.stderr}")
+            return False
+            
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  Error executing docker command: {e}")
+        return False
+    except Exception as e:
+        print(f"⚠️  Unexpected error during file copy: {e}")
+        return False
+    finally:
+        print(f"{'='*60}\n")
+
+def sanitize_cve_knowledge_for_builder(cve_knowledge: str) -> str:
+    """
+    移除 CVE 知识中可能触发安全对齐的 exploit payload 细节
+    保留技术分析和修复建议，但删除具体的攻击代码
+    """
+    import re
+    
+    # 标记要移除的危险部分
+    patterns_to_remove = [
+        # 移除包含 ATTACH 的 SQL injection payload
+        (r'(?:Example Exploit Request|Exploit Outline|Line-by-line breakdown).*?(?=\n\n[A-Z#]|\Z)', re.DOTALL),
+        # 移除包含具体攻击步骤的代码块
+        (r'```(?:sql|bash|shell)\n.*?ATTACH.*?```', re.DOTALL | re.IGNORECASE),
+        # 移除 URL 编码的 payload
+        (r'GET /fts/snippets/.*?highlight_end=.*?(?=\n\n|\Z)', re.DOTALL),
+    ]
+    
+    sanitized = cve_knowledge
+    for pattern, flags in patterns_to_remove:
+        sanitized = re.sub(pattern, '[EXPLOIT DETAILS REDACTED FOR SAFE BUILD]', sanitized, flags=flags)
+    
+    # 添加安全说明
+    safe_note = "\n\n⚠️ NOTE: Exploit payload details have been redacted from this knowledge base to prevent security policy violations during build. The builder's task is only to set up the vulnerable environment, not to execute exploits.\n"
+    sanitized = safe_note + sanitized
+    
+    return sanitized
 
 def alarm_handler(signum, frame):
     raise TimeoutExpired
@@ -249,7 +331,7 @@ class CVEReproducer:
                     
                     repo_builder = RepoBuilder(
                         project_dir_tree = self.cve_info['dir_tree'],
-                        cve_knowledge = self.cve_knowledge,
+                        cve_knowledge = sanitize_cve_knowledge_for_builder(self.cve_knowledge),
                         build_pre_reqs = self.pre_reqs,
                         feedback = repo_feedback,
                         critic_feedback = critic_feedback
@@ -728,5 +810,8 @@ if __name__ == "__main__":
     tee_logger.close()
     
     print(f"✅ Log saved to: {log_file}")
+    
+    # 自动复制容器文件到本地
+    copy_container_files_to_local()
     
     helper.save_result(args.cve, reproducer.results)

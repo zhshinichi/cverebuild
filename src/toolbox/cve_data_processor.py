@@ -123,6 +123,17 @@ class CVEDataProcessor:
         os.chdir(dir_name)
         os.environ['REPO_PATH'] = f"{dir_name}/"
 
+        # Fix syntax error in Calibre 7.15.0 fts.py (missing comma)
+        fts_file = "src/calibre/srv/fts.py"
+        if os.path.exists(fts_file):
+            with open(fts_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            # Fix: query = rd.query.get('query' '') -> query = rd.query.get('query', '')
+            content = content.replace("rd.query.get('query' '')", "rd.query.get('query', '')")
+            with open(fts_file, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"✅ Applied syntax fix to {fts_file}")
+
         # 4) get the directory tree of the repo
         cve['dir_tree'] = subprocess.run("tree -d", shell=True, capture_output=True).stdout.decode("utf-8")
         cve['repo_path'] = f"{dir_name}/"
