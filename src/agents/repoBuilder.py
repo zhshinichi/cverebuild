@@ -121,7 +121,16 @@ class RepoBuilder(AgentWithHistory[dict, str]):
         return vars
 
     def get_available_tools(self):
-        return TOOLS.values()
+        # Only return shell-based tools, NO Python code interpreter
+        # This prevents environment isolation issues
+        allowed_tools = [
+            'get_file',
+            'write_to_file', 
+            'execute_ls_command',
+            'execute_linux_command',
+            'set_environment_variable'
+        ]
+        return [TOOLS[name] for name in allowed_tools if name in TOOLS]
     
     def get_cost(self, *args, **kw) -> float:
         total_cost = 0
