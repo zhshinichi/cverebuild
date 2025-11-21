@@ -185,25 +185,44 @@ class CVEReproducer:
                 print(f"\n📄 Generating CVE Information for {self.cve_id} ...")
                 print("🤖 Model: ", MODEL)
                 
-                # 先处理 CVE 数据
-                processor = CVEDataProcessor(self.cve_id, self.cve_json)
-                self.cve_info = processor.run()
+                # 直接从 data.json 加载数据，不运行耗时的 CVEDataProcessor
+                import json
+                if not os.path.exists(self.cve_json):
+                    raise FileNotFoundError(f"❌ Data file not found: {self.cve_json}")
+                
+                print(f"📖 Loading CVE data from: {self.cve_json}")
+                with open(self.cve_json, 'r', encoding='utf-8') as f:
+                    all_cve_data = json.load(f)
+                
+                if self.cve_id not in all_cve_data:
+                    raise ValueError(f"❌ {self.cve_id} not found in {self.cve_json}")
+                
+                self.cve_info = all_cve_data[self.cve_id]
+                print(f"✅ CVE data loaded successfully!")
                 
                 # 准备数据
-                cwe = '\n'.join([f"* {c['id']} - {c['value']}" for c in self.cve_info["cwe"]])
-                project_name = self.cve_info["sw_version_wget"].split("//")[1].split("/")[2]
-                patches = '\n\n'.join([f"Commit Hash: {p['url'].split('/')[-1]}\n\"\"\"\n{p['content']}\n\"\"\"" for p in self.cve_info["patch_commits"]])
-                sec_adv = '\n\n'.join([f"Advisory: {a['url']}\n\"\"\"\n{a['content']}\n\"\"\"" for ix, a in enumerate(self.cve_info["sec_adv"])])
+                cwe = '\n'.join([f"* {c['id']} - {c['value']}" for c in self.cve_info.get("cwe", [])])
+                
+                # 从 sw_version_wget 提取项目名，如果不存在则使用空字符串
+                sw_wget = self.cve_info.get("sw_version_wget", "")
+                if sw_wget and "//" in sw_wget:
+                    parts = sw_wget.split("//")[1].split("/")
+                    project_name = parts[2] if len(parts) > 2 else "Unknown"
+                else:
+                    project_name = "Unknown"
+                
+                patches = '\n\n'.join([f"Commit Hash: {p['url'].split('/')[-1]}\n\"\"\"\n{p['content']}\n\"\"\"" for p in self.cve_info.get("patch_commits", [])])
+                sec_adv = '\n\n'.join([f"Advisory: {a['url']}\n\"\"\"\n{a['content']}\n\"\"\"" for ix, a in enumerate(self.cve_info.get("sec_adv", []))])
                 
                 # 调用 CVE 信息生成 agent
                 cve_info_generator = CVEInfoGenerator(
                     cve_id = self.cve_id,
-                    description = self.cve_info["description"],
-                    cwe = cwe,
+                    description = self.cve_info.get("description", "No description available"),
+                    cwe = cwe if cwe else "No CWE information available",
                     project_name = project_name,
-                    affected_version = self.cve_info["sw_version"],
-                    security_advisory = sec_adv,
-                    patch = patches
+                    affected_version = self.cve_info.get("sw_version", "Unknown"),
+                    security_advisory = sec_adv if sec_adv else "No security advisory available",
+                    patch = patches if patches else "No patch information available"
                 )
                 
                 info_summary = cve_info_generator.invoke().value

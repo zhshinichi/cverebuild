@@ -262,6 +262,16 @@ class ModelRegistry(object):
             'o4-mini': 'openai/o4-mini',
             'gpt-o4-mini': 'openai/o4-mini',
 
+            # gpt-5
+            'openai/gpt-5': (
+                f'{pfx}gpt-5'
+                    if cls.__USING_LLM_API__ else
+                'gpt-5',
+                mcls
+            ),
+            'gpt-5': 'openai/gpt-5',
+            'gpt5': 'openai/gpt-5',
+
             # gpt-o3
             'openai/o3': (
                 f'{pfx}gpt-o3'
