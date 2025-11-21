@@ -57,3 +57,5 @@ CVE-2024-7009,False,Repo could not be built,0.20862340000000001,855,example_run
 CVE-2024-2928,False,Repo could not be built,0.3012955,896,example_run
 CVE-2024-2928,False,Repo could not be built,0.40941149999999993,867,example_run
 CVE-2024-2928,True,CTF Verifier done! CVE reproduced!,0.48237450000000004,1111,example_run
+CVE-2024-2928,False,"No model found with name: gpt-5, see https://github.com/shellphish-support-syndicate/artiphishell/blob/main/libs/agentlib/agentlib/lib/common/available_llms.py#L117 for all available models",0,196,example_run
+CVE-2024-2928,False,"No model found with name: gpt-5, see https://github.com/shellphish-support-syndicate/artiphishell/blob/main/libs/agentlib/agentlib/lib/common/available_llms.py#L117 for all available models",0,1,example_run
