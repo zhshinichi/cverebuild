@@ -811,7 +811,8 @@ if __name__ == "__main__":
     
     print(f"✅ Log saved to: {log_file}")
     
-    # 自动复制容器文件到本地
-    copy_container_files_to_local()
-    
+    # 先保存结果到容器内的 CSV
     helper.save_result(args.cve, reproducer.results)
+    
+    # 然后复制容器文件到本地（包括更新后的 results.csv）
+    copy_container_files_to_local()
