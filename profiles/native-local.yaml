@@ -1,0 +1,78 @@
+# Native Local Profile
+# 适用于本地可编译的原生代码漏洞（C/C++/Python等）
+
+profile: native-local
+description: "Local native code vulnerabilities requiring compilation and environment setup"
+
+# 需要收集的产物
+artifacts:
+  - cve_knowledge
+  - prerequisites
+  - source_code
+  - build_artifacts
+  - exploit_poc
+  - verification_flag
+
+# 执行步骤定义
+steps:
+  - step_id: collect-info
+    capability: collect-cve-info
+    description: "Collect CVE metadata and vulnerability knowledge"
+    dependencies: []
+    config:
+      use_nvd: true
+      use_github: true
+    outputs:
+      - cve_knowledge
+  
+  - step_id: analyze-prereq
+    capability: analyze-prerequisites
+    description: "Analyze build dependencies and system requirements"
+    dependencies:
+      - collect-info
+    config:
+      sanitize_exploits: true
+    outputs:
+      - prerequisites
+  
+  - step_id: build-env
+    capability: build-environment
+    description: "Clone source code and compile vulnerable version"
+    dependencies:
+      - analyze-prereq
+    config:
+      critic_enabled: true
+      max_retries: 3
+    outputs:
+      - source_code
+      - build_artifacts
+  
+  - step_id: generate-exploit
+    capability: generate-exploit
+    description: "Generate exploit PoC targeting the vulnerability"
+    dependencies:
+      - build-env
+    config:
+      critic_enabled: true
+      max_retries: 3
+    outputs:
+      - exploit_poc
+  
+  - step_id: verify-exploit
+    capability: verify-exploit
+    description: "Execute exploit and verify flag capture"
+    dependencies:
+      - generate-exploit
+    config:
+      sanity_check: true
+      max_retries: 3
+    outputs:
+      - verification_flag
+
+# 环境配置
+environment:
+  type: docker
+  base_image: ubuntu:22.04
+  network_mode: bridge
+  shared_volumes:
+    - "/shared:/shared"

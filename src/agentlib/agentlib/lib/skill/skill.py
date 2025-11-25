@@ -23,7 +23,7 @@ class Skill(NamedFileObject):
         # TODO separate func
         proto, src = self.source_ptr.split('://', 1)
         if proto == 'file':
-            return open(src, 'r').read()
+            return open(src, 'r', encoding='utf-8').read()
         raise ValueError(f'Unknown source protocol: {proto}')
 
 class SkillRepository(ObjectRepository):

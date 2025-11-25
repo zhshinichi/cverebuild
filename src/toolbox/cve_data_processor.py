@@ -12,7 +12,7 @@ class CVEDataProcessor:
         """
         if not os.path.exists(cve_path):
             raise FileNotFoundError(f"❌ File not found at {cve_path}")
-        return json.loads(open(cve_path, "r").read())
+        return json.loads(open(cve_path, "r", encoding='utf-8').read())
 
     def pre_reqs_builder_setup(cve_info: dict) -> str:
         """
@@ -38,7 +38,7 @@ class CVEDataProcessor:
         # 1) If cache exists, load cve from cache
         if self.cve_json:
             if os.path.exists(self.cve_json):
-                cve = json.loads(open(self.cve_json, "r").read()).get(self.cve_id)
+                cve = json.loads(open(self.cve_json, "r", encoding='utf-8').read()).get(self.cve_id)
                 if not cve:
                     raise ValueError(f"❌ {self.cve_id} not found in cache file")
             else:

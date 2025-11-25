@@ -10,7 +10,7 @@ class Validator:
         os.chdir("simulation_environments/" + os.environ['REPO_PATH'])
 
         # create verifier.py
-        with open("verifier.py", "w") as f:
+        with open("verifier.py", "w", encoding='utf-8') as f:
             f.write(self.verifier)
 
         # run verifier.py

@@ -1,0 +1,90 @@
+# Web Basic Profile
+# 适用于需要浏览器驱动的 Web 应用漏洞（XSS/CSRF/SQLi/SSRF等）
+
+profile: web-basic
+description: "Web application vulnerabilities requiring browser automation"
+
+# 需要收集的产物
+artifacts:
+  - cve_knowledge
+  - target_url
+  - browser_session
+  - exploit_script
+  - verification_evidence
+
+# 执行步骤定义
+steps:
+  - step_id: collect-info
+    capability: collect-cve-info
+    description: "Collect CVE metadata and attack vector details"
+    dependencies: []
+    config:
+      use_nvd: true
+      use_github: true
+      extract_urls: true
+    outputs:
+      - cve_knowledge
+      - target_url
+  
+  - step_id: browser-provision
+    capability: provision-browser
+    description: "Launch browser environment with required capabilities"
+    dependencies:
+      - collect-info
+    config:
+      engine: selenium  # 可覆盖为 playwright
+      headless: false
+      timeout: 30
+    outputs:
+      - browser_session
+  
+  - step_id: exploit-web
+    capability: exploit-web-vuln
+    description: "Execute web exploit via browser automation"
+    dependencies:
+      - browser-provision
+    config:
+      critic_enabled: true
+      max_retries: 3
+      capture_network: false
+    outputs:
+      - exploit_script
+  
+  - step_id: verify-web
+    capability: verify-web-exploit
+    description: "Verify exploitation success via HTTP/Cookie/DOM checks"
+    dependencies:
+      - exploit-web
+    config:
+      strategies:
+        - http-response
+        - cookie-check
+        - dom-verification
+      mode: any  # any 或 all
+    outputs:
+      - verification_evidence
+
+# 环境配置
+environment:
+  type: browser
+  engine: selenium  # 默认引擎，可通过 CLI 参数覆盖
+  browser: chrome
+  driver_options:
+    - "--no-sandbox"
+    - "--disable-dev-shm-usage"
+    - "--disable-blink-features=AutomationControlled"
+  network_capture: false
+
+# Web 漏洞特有配置
+web_specific:
+  # 目标应用部署方式
+  target_deployment: manual  # manual 或 auto（未来支持）
+  
+  # 是否需要登录
+  requires_auth: false
+  
+  # 攻击类型提示（帮助选择验证策略）
+  attack_hints:
+    - check_cookies_for_session_hijacking
+    - check_http_status_for_sqli
+    - check_dom_for_xss

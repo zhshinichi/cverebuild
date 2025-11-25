@@ -21,7 +21,7 @@ def write_to_file(content: str, filename: str):
 
     try:
         os.makedirs('./'+os.path.dirname(filename), exist_ok=True)
-        outfile = open(filename, "w")
+        outfile = open(filename, "w", encoding='utf-8')
         for line in content.split("\n"):
             outfile.write(line + "\n")
         outfile.close()
@@ -67,7 +67,7 @@ def get_file(file_path: str, offset: int, num_lines:int) -> str:
 
         file_view = ""
 
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             log_context = file.read()
         
         # Grab the total number of lines in the file

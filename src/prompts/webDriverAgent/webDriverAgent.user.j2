@@ -1,19 +1,76 @@
-# CVE 漏洞信息
+# CVE Vulnerability Information
 
 {{ CVE_KNOWLEDGE }}
 
-# 目标信息
+# Target Information
 
-- **目标 URL**: {{ TARGET_URL }}
-- **攻击类型**: {{ ATTACK_TYPE }}
+- **Target URL**: {{ TARGET_URL }}
+- **Attack Type**: {{ ATTACK_TYPE }}
 
-# 任务
+# Task
 
-请使用浏览器自动化工具复现上述漏洞。
+Reproduce the above vulnerability using browser automation tools.
 
-1. 仔细分析 CVE 漏洞细节和 PoC
-2. 使用提供的工具构造攻击场景
-3. 验证漏洞是否可以成功触发
-4. 提供详细的复现步骤和证据
+## CRITICAL INSTRUCTIONS:
 
-开始执行复现任务。
+1. **YOU MUST ACTUALLY CALL THE TOOLS** - Do NOT just describe steps, execute them!
+2. **Analyze the CVE details first** - understand the vulnerability type and attack vector
+3. **Start immediately** - Call `navigate_to_url("{{ TARGET_URL }}")` as your first action
+
+## General Attack Workflow:
+
+### Step 1: Reconnaissance
+- Call `navigate_to_url("{{ TARGET_URL }}")` to access the target
+- Call `get_page_source()` to analyze page structure
+- Identify vulnerable endpoints, forms, and input fields
+
+### Step 2: Prepare Attack (based on vulnerability type)
+
+**For CSRF vulnerabilities:**
+- Identify the vulnerable endpoint (e.g., profile update, settings change)
+- Create attack HTML using `create_csrf_page(html_content, filename)`
+- The HTML should auto-submit a form or send fetch request to the vulnerable endpoint
+
+**For XSS vulnerabilities:**
+- Identify input fields that reflect user input
+- Use `input_text(selector, payload)` to inject XSS payloads
+- Common payloads: `<script>alert('XSS')</script>`, `<img src=x onerror=alert(1)>`
+
+**For Authentication bypass:**
+- Try default credentials or SQL injection in login forms
+- Use `input_text()` and `click_element()` to interact with forms
+
+### Step 3: Execute Attack
+- Trigger the vulnerability (submit form, navigate to crafted page, etc.)
+- Call `take_screenshot(filename)` to capture evidence
+
+### Step 4: Verify Success
+- For XSS: Call `check_alert()` to detect JavaScript alerts
+- For CSRF: Check if the action was performed (profile changed, etc.)
+- Call `get_page_source()` to verify DOM changes
+
+## Output Format (MANDATORY):
+
+After completing the attack, output your report in this EXACT format:
+
+```
+<report>
+<success>yes/no</success>
+<steps>
+1. [What you did first]
+2. [What you did next]
+...
+</steps>
+<evidence>
+- [Screenshot paths]
+- [Alert text if XSS]
+- [Response messages]
+- [Any other proof of exploitation]
+</evidence>
+<poc>
+[Complete exploit code or steps that can reproduce this]
+</poc>
+</report>
+```
+
+**START NOW - Call navigate_to_url("{{ TARGET_URL }}") immediately!**

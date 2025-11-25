@@ -39,7 +39,7 @@ class JsonIndexStore(BaseLogger, LocalFileStore):
 
     def get_blob(self, name) -> Optional[Dict[str, Any]]:
         data_path = self.resolve_index_to_path(name)
-        with open(data_path, 'r') as f:
+        with open(data_path, 'r', encoding='utf-8') as f:
             return json.load(f)
 
     def dump_object_to_json(self, obj) -> str:
@@ -69,7 +69,7 @@ class JsonIndexStore(BaseLogger, LocalFileStore):
         tmp_file_path = file_path + '.tmp'
 
         data = self.dump_object_to_json(data)
-        with open(tmp_file_path, 'w') as f:
+        with open(tmp_file_path, 'w', encoding='utf-8') as f:
             f.write(data)
         os.rename(tmp_file_path, file_path)
 
