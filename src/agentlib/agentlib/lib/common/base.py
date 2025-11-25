@@ -293,9 +293,10 @@ def load_prompt_template_from_file(
     if fpath.suffix in ['.j2','.jinja2', '.py'] or True:
         return PromptTemplate.from_file(
             template_file=fpath,
-            template_format='jinja2'
+            template_format='jinja2',
+            encoding='utf-8'
         )
-    return PromptTemplate.from_file(fpath, **kwargs)
+    return PromptTemplate.from_file(fpath, encoding='utf-8', **kwargs)
 
 from langchain_core.messages import BaseMessage, AIMessage,AIMessageChunk
 

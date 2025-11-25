@@ -1,0 +1,37 @@
+## Target Application Information
+
+**Software Version**: {{ sw_version }}
+**Download URL**: {{ sw_version_wget }}
+
+## CVE Knowledge
+{{ cve_knowledge }}
+
+{% if prerequisites %}
+## Prerequisites Analysis
+{{ prerequisites | tojson(indent=2) }}
+{% endif %}
+
+{% if feedback %}
+## Previous Attempt Feedback
+{{ feedback }}
+
+Please fix the issues mentioned above and try again.
+{% endif %}
+
+## Your Task
+
+Deploy the vulnerable web application following these steps:
+
+1. **Download** the source code from the provided URL (if available)
+2. **Extract** and analyze the repository structure
+3. **Deploy** using the most appropriate method (docker-compose > Dockerfile > pip > npm)
+4. **Verify** the service is accessible
+5. **Return** the deployment result as JSON
+
+**IMPORTANT**: 
+- The service MUST be accessible via HTTP for the exploit agent to work
+- Use port 9600 if possible
+- Run services in background mode
+- Verify with curl before returning success
+
+Begin deployment now.

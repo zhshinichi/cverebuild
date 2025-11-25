@@ -9,7 +9,7 @@ def add_skill_from_python_file(fpath: str, repo: SkillRepository):
     name = os.path.basename(fpath).rsplit('.', 1)[0]
     existing = repo.get_by_name(name)
 
-    with open(fpath, 'r') as f:
+    with open(fpath, 'r', encoding='utf-8') as f:
         source = f.read()
 
     is_changed = False

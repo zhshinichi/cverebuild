@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE-Genie - 漏洞自动复现平台</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-color: #0071e3;
+            --accent-hover: #0077ed;
+            --danger-color: #ff3b30;
+            --success-color: #34c759;
+            --warning-color: #ff9f0a;
+            --border-radius: 12px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #1d1d1f 0%, #424245 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        .form-control, input[type="text"], select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #d2d2d7;
+            border-radius: var(--border-radius);
+            background-color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .form-control:focus, input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 980px; /* Pill shape */
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .task-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .task-item {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 0; /* Override old style */
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: white;
+        }
+
+        .task-info h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .task-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending { background: #f2f2f7; color: #86868b; }
+        .status-running { background: #e3f2fd; color: #0071e3; animation: none; }
+        .status-completed { background: #e8f5e9; color: #34c759; }
+        .status-failed { background: #ffebee; color: #ff3b30; }
+
+        /* Modal - macOS Terminal Style */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 5% auto;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            border: 1px solid #333;
+        }
+
+        .terminal-header {
+            background: #2d2d2d;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            margin-right: 16px;
+        }
+
+        .control-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .terminal-title {
+            color: #999;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            flex-grow: 1;
+            text-align: center;
+            margin-right: 50px; /* Balance the dots */
+        }
+
+        .log-output {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .log-line { margin-bottom: 4px; word-wrap: break-word; }
+        .log-info { color: #a8c7fa; }
+        .log-command { color: #ffd54f; font-weight: bold; }
+        .log-error { color: #ff8a80; }
+        .log-success { color: #81c784; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: #1e1e1e; /* Terminal background color */
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 999;
+            border: 1px solid #333;
+        }
+        
+        .fab:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: #2d2d2d;
+        }
+
+        .fab-icon {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ CVE-Genie</h1>
+            <p>LLM驱动的漏洞自动复现平台 - DAG架构</p>
+        </div>
+        
+        <!-- 提交表单 -->
+        <div class="card">
+            <h2>🚀 提交复现任务</h2>
+            <form id="submitForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="cveId">CVE ID *</label>
+                        <input type="text" id="cveId" placeholder="CVE-2024-2288" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mode">执行模式</label>
+                        <select id="mode">
+                            <option value="dag" selected>DAG 模式 (推荐)</option>
+                                                    <option value="legacy">Legacy 完整模式</option>
+                        <option value="info-only">ℹ️ 仅生成信息 (Info Only)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="browserEngineGroup">
+                        <label for="browserEngine">浏览器引擎</label>
+                        <select id="browserEngine">
+                            <option value="selenium" selected>Selenium</option>
+                            <option value="playwright">Playwright</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="profileGroup">
+                        <label for="profile">Profile</label>
+                        <select id="profile">
+                            <option value="auto" selected>自动识别</option>
+                            <option value="web-basic">Web 漏洞</option>
+                            <option value="native-local">Native 漏洞</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">▶️ 开始复现</button>
+            </form>
+        </div>
+        
+        <!-- 任务列表 -->
+        <div class="card">
+            <h2>📋 任务列表</h2>
+            <div id="tasksList" class="tasks-list">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 模态框 -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="terminal-header">
+                <div class="window-controls">
+                    <div class="control-dot dot-red" onclick="closeModal()"></div>
+                    <div class="control-dot dot-yellow"></div>
+                    <div class="control-dot dot-green"></div>
+                </div>
+                <div class="terminal-title" id="modalTitle">Terminal - CVE-Genie</div>
+            </div>
+            <div id="taskDetails" style="display:none;"></div>
+            <div id="logOutput" class="log-output">
+                <div class="log-line log-info">Waiting for logs...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Terminal Button -->
+    <div id="terminalFab" class="fab" onclick="openLatestTerminal()" title="打开终端">
+        <div class="fab-icon">💻</div>
+    </div>
+    
+    <script>
+        let currentTaskId = null;
+        let eventSource = null;
+        
+        // 提交表单
+        document.getElementById('submitForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const cveId = document.getElementById('cveId').value.trim();
+            const mode = document.getElementById('mode').value;
+            const browserEngine = document.getElementById('browserEngine').value;
+            const profile = document.getElementById('profile').value;
+            
+            if (!cveId) {
+                alert('请输入 CVE ID');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cve_id: cveId,
+                        mode: mode,
+                        browser_engine: browserEngine,
+                        profile: profile
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`任务已创建！Task ID: ${data.task_id}`);
+                    document.getElementById('cveId').value = '';
+                    loadTasks();
+                    // 自动打开任务详情
+                    setTimeout(() => showTaskDetails(data.task_id), 500);
+                } else {
+                    alert('错误: ' + data.error);
+                }
+            } catch (error) {
+                alert('提交失败: ' + error.message);
+            }
+        });
+        
+        // 模式切换时控制字段显示
+        document.getElementById('mode').addEventListener('change', (e) => {
+            const isDag = e.target.value === 'dag';
+            document.getElementById('browserEngineGroup').style.display = isDag ? 'block' : 'none';
+            document.getElementById('profileGroup').style.display = isDag ? 'block' : 'none';
+        });
+        
+        // 加载任务列表
+        async function loadTasks() {
+            try {
+                const response = await fetch('/api/tasks');
+                const data = await response.json();
+                
+                const tasksList = document.getElementById('tasksList');
+                
+                if (data.tasks.length === 0) {
+                    tasksList.innerHTML = '<div class="loading"><p>暂无任务</p></div>';
+                    return;
+                }
+                
+                tasksList.innerHTML = data.tasks
+                    .sort((a, b) => b.task_id - a.task_id)
+                    .map(task => `
+                        <div class="task-item" onclick="showTaskDetails(${task.task_id})">
+                            <div class="task-info">
+                                <div class="task-id">#${task.task_id}</div>
+                                <div class="task-cve">${task.cve_id}</div>
+                                <div class="task-meta">
+                                    ${task.mode === 'dag' ? 'DAG' : 'Legacy'} | 
+                                    ${task.browser_engine || 'N/A'} | 
+                                    ${task.start_time ? new Date(task.start_time).toLocaleString('zh-CN') : '未开始'}
+                                    ${task.duration ? ` | ${task.duration.toFixed(1)}s` : ''}
+                                </div>
+                            </div>
+                            <div class="status-badge status-${task.status}">
+                                ${getStatusText(task.status)}
+                            </div>
+                        </div>
+                    `).join('');
+            } catch (error) {
+                console.error('加载任务失败:', error);
+            }
+        }
+        
+        // 显示任务详情
+        async function showTaskDetails(taskId) {
+            currentTaskId = taskId;
+            document.getElementById('taskModal').style.display = 'block';
+            document.getElementById('modalTitle').textContent = `任务 #${taskId} 详情`;
+            
+            try {
+                const response = await fetch(`/api/task/${taskId}`);
+                const data = await response.json();
+                
+                const task = data.task;
+                document.getElementById('taskDetails').innerHTML = `
+                    <div class="grid">
+                        <div><strong>CVE ID:</strong> ${task.cve_id}</div>
+                        <div><strong>状态:</strong> <span class="status-badge status-${task.status}">${getStatusText(task.status)}</span></div>
+                        <div><strong>模式:</strong> ${task.mode}</div>
+                        <div><strong>引擎:</strong> ${task.browser_engine || 'N/A'}</div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div><strong>开始时间:</strong> ${task.start_time ? new Date(task.start_time).toLocaleString('zh-CN') : '未开始'}</div>
+                        <div><strong>结束时间:</strong> ${task.end_time ? new Date(task.end_time).toLocaleString('zh-CN') : '运行中'}</div>
+                        <div><strong>耗时:</strong> ${task.duration ? task.duration.toFixed(1) + 's' : 'N/A'}</div>
+                    </div>
+                `;
+                
+                // 使用 SSE 流式显示日志
+                if (task.status === 'running') {
+                    streamTaskLog(taskId);
+                } else {
+                    displayTaskOutput(data.output);
+                }
+            } catch (error) {
+                console.error('加载任务详情失败:', error);
+            }
+        }
+        
+        // 流式显示日志
+        function streamTaskLog(taskId) {
+            const logOutput = document.getElementById('logOutput');
+            logOutput.innerHTML = '';
+            
+            if (eventSource) {
+                eventSource.close();
+            }
+            
+            eventSource = new EventSource(`/api/stream/${taskId}`);
+            
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'end') {
+                    eventSource.close();
+                    loadTasks();
+                    return;
+                }
+                
+                if (data.error) {
+                    logOutput.innerHTML += `<div class="log-line log-error">${data.error}</div>`;
+                    return;
+                }
+                
+                const lineClass = `log-${data.type}`;
+                const timestamp = new Date(data.timestamp).toLocaleTimeString('zh-CN');
+                logOutput.innerHTML += `<div class="log-line ${lineClass}">[${timestamp}] ${escapeHtml(data.message)}</div>`;
+                logOutput.scrollTop = logOutput.scrollHeight;
+            };
+            
+            eventSource.onerror = () => {
+                eventSource.close();
+                logOutput.innerHTML += '<div class="log-line log-error">连接断开</div>';
+                loadTasks();
+            };
+        }
+        
+        // 显示完整输出
+        function displayTaskOutput(output) {
+            const logOutput = document.getElementById('logOutput');
+            logOutput.innerHTML = output.map(line => {
+                const lineClass = `log-${line.type}`;
+                const timestamp = new Date(line.timestamp).toLocaleTimeString('zh-CN');
+                return `<div class="log-line ${lineClass}">[${timestamp}] ${escapeHtml(line.message)}</div>`;
+            }).join('');
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+        }
+        
+        // 工具函数
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': '等待中',
+                'running': '运行中',
+                'completed': '已完成',
+                'failed': '失败',
+                'error': '错误',
+                'stopped': '已停止'
+            };
+            return statusMap[status] || status;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 初始加载
+        loadTasks();
+        
+        // 定期刷新任务列表
+        setInterval(loadTasks, 5000);
+
+        // 打开最近的任务终端
+        function openLatestTerminal() {
+            const tasksList = document.getElementById('tasksList');
+            // 查找第一个任务项（假设是最新的，因为我们按 task_id 倒序排列）
+            const firstTask = tasksList.querySelector('.task-item');
+            
+            if (firstTask) {
+                // 模拟点击
+                firstTask.click();
+            } else {
+                // 如果没有任务，显示提示
+                alert('暂无任务可显示终端');
+            }
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = (event) => {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>

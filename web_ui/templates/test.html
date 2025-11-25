@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>Flask Test Page</h1>
+    <p>If you see this, Flask is working!</p>
+    <div id="status">Loading...</div>
+    
+    <script>
+        console.log('JavaScript is running');
+        
+        // Test API call
+        fetch('/api/tasks')
+            .then(response => {
+                console.log('Response:', response);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data:', data);
+                document.getElementById('status').textContent = 'API working! Tasks: ' + data.tasks.length;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('status').textContent = 'Error: ' + error.message;
+            });
+    </script>
+</body>
+</html>

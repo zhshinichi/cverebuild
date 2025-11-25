@@ -373,7 +373,7 @@ class FileBackedObject(PersistentObject):
             raise ValueError('No path provided')
 
         tpath = path + '.tmp'
-        with open(tpath, 'w') as f:
+        with open(tpath, 'w', encoding='utf-8') as f:
             f.write(self.dump_to_json(
                 force_json=force_json,
                 pretty=pretty,
@@ -404,7 +404,7 @@ class FileBackedObject(PersistentObject):
 
     @classmethod
     def from_file(cls, filename):
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             return cls.from_json(f.read())
 
     @classmethod

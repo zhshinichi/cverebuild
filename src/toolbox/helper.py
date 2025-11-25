@@ -3,7 +3,11 @@ import subprocess
 import json
 import csv
 
-LOGS_DIR="/shared"
+# 使用挂载目录，确保日志自动同步到本地
+# 如果在容器内且有挂载目录，使用挂载路径；否则使用 /shared
+LOGS_DIR = os.environ.get('SHARED_DIR', '/workspaces/submission/src/shared')
+if not os.path.exists(LOGS_DIR):
+    LOGS_DIR = "/shared"  # 回退到原来的路径
 
 def remove_tree_from_setup_logs(logs: str) -> str:
     lines = logs.splitlines()
@@ -42,7 +46,9 @@ def save_result(cve: str, result: dict):
 
     with open(f"{LOGS_DIR}/results.csv", mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
-        writer.writerow([cve, result['success'], result['reason'], result['cost'], result['time'], result['model']])
+        # info 命令可能没有 reason 字段,使用 get 方法提供默认值
+        reason = result.get('reason', result.get('info_file', 'N/A'))
+        writer.writerow([cve, result['success'], reason, result['cost'], result['time'], result['model']])
 
 def save_log(cve: str, name: str, log: str):
     os.makedirs(os.path.dirname(f"{LOGS_DIR}/{cve}/logs/"), exist_ok=True)

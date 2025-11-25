@@ -19,3 +19,33 @@ See end-to-end reproduction logs and outputs of CVE-2024-4340 [here](src/results
 
 ## b) In a Virtual Machine
 Read the [VM Library Documentation](vm_library/README.md) on how to run it in a VM.
+
+## 🩹 Generate Fix Recommendations
+Run the FixAdvisor workflow to obtain patch guidance without executing the full reproduction pipeline:
+
+```
+ENV_PATH=.env MODEL=example_run python3 src/main.py \
+  --cve CVE-2024-4340 \
+  --json src/data/example/data.json \
+  --run-type fix
+```
+
+The agent will summarize existing CWEs, known patches, and prior reproduction status to produce actionable remediation steps under `shared/<CVE>/`.
+
+## 🌐 Web Vulnerability Support
+
+For browser-based vulnerabilities (CSRF, XSS, etc.), install browser automation tools:
+
+**Option 1: Selenium (Default)**
+```bash
+pip install selenium
+apt-get install -y chromium-chromedriver
+```
+
+**Option 2: Playwright (Recommended for advanced scenarios)**
+```bash
+pip install playwright
+playwright install chromium
+```
+
+See `docs/planner/usage_guide.md` for architecture details and `examples/playwright_web_exploit.py` for usage examples.

@@ -72,7 +72,7 @@ class PythonCodeExecutionEnvironment(CodeExecutionEnvironment):
         # Remove existing file
         if os.path.exists(source_fp):
             os.remove(source_fp)
-        with open(source_fp, 'w') as f:
+        with open(source_fp, 'w', encoding='utf-8') as f:
             f.write(source_code)
 
         mod_name = os.path.splitext(os.path.basename(source_fp))[0]

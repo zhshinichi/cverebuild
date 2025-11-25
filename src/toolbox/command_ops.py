@@ -108,6 +108,26 @@ def execute_linux_command(command: str, background: bool) -> str:
     else:
         return execute_command_foreground(command)
 
+def get_working_directory() -> str:
+    """获取命令执行的工作目录"""
+    # 优先使用 REPO_PATH（传统模式）
+    if os.environ.get("REPO_PATH"):
+        repo_dir = "simulation_environments/" + os.environ["REPO_PATH"]
+        if os.path.exists(repo_dir):
+            return repo_dir
+    
+    # 其次检查 WORK_DIR 环境变量
+    if os.environ.get("WORK_DIR"):
+        return os.environ["WORK_DIR"]
+    
+    # 检查挂载目录
+    if os.path.exists("/workspaces/submission/src"):
+        return "/workspaces/submission/src"
+    
+    # 最后回退到当前目录
+    return os.getcwd()
+
+
 def execute_command_foreground(command: str) -> str:
     """
     This tool runs a command (in the root directory of the target repository) in the shell, waits for termination and returns the output.
@@ -125,13 +145,14 @@ def execute_command_foreground(command: str) -> str:
     stdout_log = create_unique_logfile("stdout")
     stderr_log = create_unique_logfile("stderr")
     exit_code = 0
+    work_dir = get_working_directory()
     try:
-        with open(stdout_log, "w") as stdout, open(stderr_log, "w") as stderr:
+        with open(stdout_log, "w", encoding='utf-8') as stdout, open(stderr_log, "w", encoding='utf-8') as stderr:
             result = subprocess.run(
                 command,
                 shell=True,
                 executable="/bin/bash",
-                cwd="simulation_environments/" + os.environ["REPO_PATH"],
+                cwd=work_dir,
                 stdout=stdout,
                 stderr=stderr,
                 text=True,
@@ -177,14 +198,15 @@ def execute_command_background(command: str) -> str:
     
     stdout_log = create_unique_logfile("stdout")
     stderr_log = create_unique_logfile("stderr")
+    work_dir = get_working_directory()
 
     process = subprocess.Popen(
         command,
         shell=True,
         executable="/bin/bash",
-        cwd="simulation_environments/" + os.environ["REPO_PATH"],
-        stdout=open(stdout_log, "w"),
-        stderr=open(stderr_log, "w"),
+        cwd=work_dir,
+        stdout=open(stdout_log, "w", encoding='utf-8'),
+        stderr=open(stderr_log, "w", encoding='utf-8'),
         preexec_fn=os.setsid,
         env=os.environ.copy() | env
     )
@@ -233,7 +255,7 @@ def create_unique_logfile(suffix: str) -> str:
 def get_last_lines(file_path: str, line_count: int = 100):
     """Retrieve the last `line_count` lines from a file."""
     try:
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding='utf-8') as file:
             r=file.readlines()
             return "".join(r[-line_count:]), len(r)
     except Exception as e:
