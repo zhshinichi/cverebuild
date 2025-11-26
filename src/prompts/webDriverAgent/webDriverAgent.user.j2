@@ -11,64 +11,126 @@
 
 Reproduce the above vulnerability using browser automation tools.
 
-## CRITICAL INSTRUCTIONS:
+## CRITICAL: Self-Reflection & Retry Strategy
 
-1. **YOU MUST ACTUALLY CALL THE TOOLS** - Do NOT just describe steps, execute them!
-2. **Analyze the CVE details first** - understand the vulnerability type and attack vector
-3. **Start immediately** - Call `navigate_to_url("{{ TARGET_URL }}")` as your first action
+**You are an intelligent agent. When something fails, analyze WHY and try a DIFFERENT approach.**
 
-## General Attack Workflow:
+If an attack doesn't work:
+1. **Analyze the failure** - What went wrong? Why didn't it work?
+2. **Consider alternatives** - Is there another way to achieve the same goal?
+3. **Try a different method** - Don't repeat the same failed approach!
 
-### Step 1: Reconnaissance
-- Call `navigate_to_url("{{ TARGET_URL }}")` to access the target
-- Call `get_page_source()` to analyze page structure
-- Identify vulnerable endpoints, forms, and input fields
+Examples:
+- If file:// protocol doesn't work for CSRF → Use execute_javascript() to submit form directly
+- If XSS payload is filtered → Try different encoding or different payload
+- If element not found → Try different selector or wait for page load
+- If login fails → Use the `login` tool which has multiple fallback strategies
 
-### Step 2: Prepare Attack (based on vulnerability type)
+## IMPORTANT: Tool Usage Rules
 
-**For CSRF vulnerabilities:**
-- Identify the vulnerable endpoint (e.g., profile update, settings change)
-- Create attack HTML using `create_csrf_page(html_content, filename)`
-- The HTML should auto-submit a form or send fetch request to the vulnerable endpoint
+1. **KEEP CALLING TOOLS** - Continue using tool calls until success or exhausted all options
+2. **DO NOT output Python code** - Use the function calling interface only
+3. **Analyze CVE details first** - Understand the vulnerability type and vector
+4. **Start immediately** - Call navigate_to_url with {{ TARGET_URL }}
 
-**For XSS vulnerabilities:**
-- Identify input fields that reflect user input
-- Use `input_text(selector, payload)` to inject XSS payloads
-- Common payloads: `<script>alert('XSS')</script>`, `<img src=x onerror=alert(1)>`
+## Attack Workflow
 
-**For Authentication bypass:**
-- Try default credentials or SQL injection in login forms
-- Use `input_text()` and `click_element()` to interact with forms
+### Phase 1: Reconnaissance
+1. navigate_to_url("{{ TARGET_URL }}")
+2. get_page_source() - Analyze page structure
+3. Identify: login pages, forms, vulnerable endpoints
 
-### Step 3: Execute Attack
-- Trigger the vulnerability (submit form, navigate to crafted page, etc.)
-- Call `take_screenshot(filename)` to capture evidence
+### Phase 2: Establish Session (CRITICAL - Use the login tool!)
+**IMPORTANT: Use the `login` tool for authentication. It's more reliable than manual input.**
 
-### Step 4: Verify Success
-- For XSS: Call `check_alert()` to detect JavaScript alerts
-- For CSRF: Check if the action was performed (profile changed, etc.)
-- Call `get_page_source()` to verify DOM changes
+Example:
+```
+login(
+    login_url="{{ TARGET_URL }}/login",
+    username="admin",
+    password="admin123"
+)
+```
 
-## Output Format (MANDATORY):
+The login tool:
+- Automatically waits for page load
+- Tries multiple click strategies (direct click, JavaScript click, form submit, Enter key)
+- Verifies login success by checking URL change
+- Returns clear success/failure status
 
-After completing the attack, output your report in this EXACT format:
+### Phase 3: Identify Vulnerability
+For CSRF:
+- Find forms that modify data (POST/PUT)
+- Check for missing CSRF tokens using verify_csrf_vulnerability()
+- If form lacks token → vulnerability exists!
+
+For XSS:
+- Find input fields
+- Test reflection with harmless input first
+- Then try XSS payloads
+
+### Phase 4: Exploit (Try Multiple Methods!)
+
+**CSRF Method 1** (Preferred - use execute_javascript):
+```javascript
+// Submit form via JS in current session (already logged in)
+execute_javascript("document.querySelector('form').submit()")
+```
+
+**CSRF Method 2** (Use upload_file_csrf for file uploads):
+```
+upload_file_csrf(upload_url, "file", "malicious content", "exploit.html")
+```
+
+**CSRF Method 3** (Use submit_csrf_attack):
+```
+submit_csrf_attack(target_url, '{"field": "value"}', "POST")
+```
+
+**XSS Method 1** (Direct injection):
+```
+input_text("input[name='search']", "<script>alert('XSS')</script>")
+click_element("button[type='submit']")
+check_alert()
+```
+
+### Phase 5: Verify & Document
+1. take_screenshot("evidence.png")
+2. Confirm the attack worked
+3. If FAILED → **Go back to Phase 4 and try a different method!**
+
+## Success Criteria
+
+CSRF is successful if ANY of these:
+- Form without CSRF token exists AND you can submit it
+- File upload succeeds with malicious content
+- Data was modified via cross-site request
+
+XSS is successful if:
+- Alert dialog appears (check_alert returns alert text)
+- Injected script executes
+
+## Output Format (MANDATORY)
+
+After testing ALL reasonable approaches, output:
 
 ```
 <report>
 <success>yes/no</success>
 <steps>
-1. [What you did first]
-2. [What you did next]
+1. [Action taken]
+2. [Result observed]
+3. [If failed, what alternative was tried]
 ...
 </steps>
 <evidence>
 - [Screenshot paths]
-- [Alert text if XSS]
-- [Response messages]
-- [Any other proof of exploitation]
+- [Alert text]
+- [Page changes]
+- [Form submission results]
 </evidence>
 <poc>
-[Complete exploit code or steps that can reproduce this]
+[Complete reproduction steps]
 </poc>
 </report>
 ```

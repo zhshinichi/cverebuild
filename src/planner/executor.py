@@ -29,6 +29,7 @@ class DAGExecutor:
         self.capability_registry = capability_registry or {}
         self.artifacts: Dict[str, Any] = {}  # 运行时产物缓存
         self.completed_steps: Set[str] = set()
+        self.total_cost: float = 0.0  # 累计成本
 
     def execute(self) -> Dict[str, Any]:
         """执行整个 DAG，返回最终产物字典。"""
@@ -129,13 +130,33 @@ class DAGExecutor:
 
     def _evaluate_success_condition(self, condition: str, outputs: Dict[str, Any]) -> bool:
         """评估成功条件表达式。"""
-        # 简单实现：支持 "output_name.field == value" 语法
+        # 支持 "output_name.field == value" 语法
         try:
+            # 处理 true/false 到 True/False 的转换
+            condition = condition.replace(" true", " True").replace(" false", " False")
+            condition = condition.replace("=true", "=True").replace("=false", "=False")
+            
+            # 将点表示法转换为字典访问：verification_result.passed -> verification_result['passed']
+            import re
+            # 匹配 word.word 模式，转换为 word['word']
+            def dot_to_bracket(match):
+                parts = match.group(0).split('.')
+                result = parts[0]
+                for part in parts[1:]:
+                    result += f"['{part}']"
+                return result
+            
+            # 匹配像 verification_result.passed 这样的模式
+            condition = re.sub(r'\b(\w+(?:\.\w+)+)\b', dot_to_bracket, condition)
+            
             # 安全地在受限命名空间中执行条件
-            namespace = {"outputs": outputs}
+            namespace = {"outputs": outputs, "True": True, "False": False}
             namespace.update(outputs)
-            return eval(condition, {"__builtins__": {}}, namespace)
-        except Exception:
+            result = eval(condition, {"__builtins__": {}}, namespace)
+            print(f"[DEBUG] Condition '{condition}' evaluated to: {result}")
+            return result
+        except Exception as e:
+            print(f"[DEBUG] Condition evaluation error: {e}")
             return False
 
     @classmethod
