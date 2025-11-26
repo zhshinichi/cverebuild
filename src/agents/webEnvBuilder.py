@@ -113,7 +113,7 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
     4. 直接使用已知的服务 URL
     """
     
-    __LLM_MODEL__ = 'o4-mini'
+    __LLM_MODEL__ = 'gpt-4o-mini'
     __SYSTEM_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.user.j2'
     __OUTPUT_PARSER__ = WebEnvBuilderParser

