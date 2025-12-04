@@ -10,6 +10,6 @@ if (-not $running) {
     Start-Sleep -Seconds 2
 }
 
-Write-Host "Starting Web UI at http://localhost:5000"
+Write-Host "Starting Web UI at http://localhost:5001"
 cd web_ui
 python app.py

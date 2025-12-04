@@ -1,0 +1,33 @@
+## Target Application
+
+**Software Version**: {{ sw_version }}
+**Download URL**: {{ sw_version_wget }}
+
+## CVE Knowledge (READ THE INFERRED CONFIGURATION!)
+{{ cve_knowledge }}
+
+{% if prerequisites %}
+## Prerequisites
+{{ prerequisites | tojson(indent=2) }}
+{% endif %}
+
+{% if feedback %}
+## Previous Attempt Feedback
+{{ feedback }}
+{% endif %}
+
+## Your Task
+
+1. **Extract from "Inferred Environment Configuration" above**:
+   - Port number
+   - Startup Command (use this EXACTLY)
+   - Target Endpoint
+
+2. **Deploy**:
+   - Download source
+   - Install dependencies  
+   - Start service using the **Startup Command** from above
+
+3. **Verify**: Check the service is running
+
+Begin now.

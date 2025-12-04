@@ -1,0 +1,923 @@
+{
+    "CVE-2025-27719": {
+        "published_date": "2025-04-15T21:09:29.425Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "Unauthenticated attackers can query an API endpoint and get device details.",
+        "sec_adv": [
+            {
+                "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-25-105-04",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-639",
+                "value": "CWE-639 CWE-639 Authorization Bypass Through User-Controlled Key"
+            }
+        ],
+        "_meta": {
+            "product": "Cloud portal",
+            "vendor": "Growatt",
+            "cvss_score": 6.9,
+            "severity": "MEDIUM",
+            "complexity_score": 3,
+            "complexity_reason": "无需认证，直接查询API，复现相对简单。",
+            "github_repo": "",
+            "all_references": [
+                "https://www.cisa.gov/news-events/ics-advisories/icsa-25-105-04"
+            ]
+        }
+    },
+    "CVE-2025-54137": {
+        "published_date": "2025-07-22T21:34:20.201Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/haxtheweb/haxcms-nodejs/commit/6dc2441c876350ca6fe9fbaecb058d92ef442869",
+                "content": ""
+            }
+        ],
+        "sw_version": "11.0.9",
+        "sw_version_wget": "https://github.com/haxtheweb/haxcms-nodejs/archive/refs/tags/11.0.9.zip",
+        "description": "HAX CMS NodeJS allows users to manage their microsite universe with a NodeJS backend. Versions 11.0.9 and below were distributed with hardcoded default credentials for the user and superuser accounts. Additionally, the application has default private keys for JWTs. Users aren't prompted to change credentials or secrets during installation, and there is no way to change them through the UI. An unauthenticated attacker can read the default user credentials and JWT private keys from the public haxtheweb GitHub repositories. These credentials and keys can be used to access unconfigured self-hosted instances of the application, modify sites, and perform further attacks. This is fixed in version 11.0.10.",
+        "sec_adv": [
+            {
+                "url": "https://github.com/haxtheweb/issues/security/advisories/GHSA-5fpv-5qvh-7cf3",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-1392",
+                "value": "CWE-1392 CWE-1392: Use of Default Credentials"
+            }
+        ],
+        "_meta": {
+            "product": "issues",
+            "vendor": "haxtheweb",
+            "cvss_score": 7.3,
+            "severity": "HIGH",
+            "complexity_score": 3,
+            "complexity_reason": "环境搭建简单，漏洞利用无需认证，且有公开的PoC。",
+            "github_repo": "https://github.com/haxtheweb/haxcms-nodejs",
+            "all_references": [
+                "https://github.com/haxtheweb/issues/security/advisories/GHSA-5fpv-5qvh-7cf3",
+                "https://github.com/haxtheweb/haxcms-nodejs/commit/6dc2441c876350ca6fe9fbaecb058d92ef442869",
+                "https://github.com/haxtheweb/haxcms-nodejs/blob/main/src/lib/HAXCMS.js#L1614"
+            ]
+        }
+    },
+    "CVE-2025-1225": {
+        "published_date": "2025-02-12T20:00:19.103Z",
+        "patch_commits": [],
+        "sw_version": "2024.07.04",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as problematic, has been found in ywoa up to 2024.07.03. This issue affects the function extract of the file c-main/src/main/java/com/redmoon/weixin/aes/XMLParse.java of the component WXCallBack Interface. The manipulation leads to xml external entity reference. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used. Upgrading to version 2024.07.04 is able to address this issue. It is recommended to upgrade the affected component.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.295211",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.295211",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://gitee.com/r1bbit/yimioa/issues/IBI81R",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-611",
+                "value": "CWE-611 XML External Entity Reference"
+            },
+            {
+                "id": "CWE-610",
+                "value": "CWE-610 Externally Controlled Reference"
+            }
+        ],
+        "_meta": {
+            "product": "ywoa",
+            "vendor": "n/a",
+            "cvss_score": 5.3,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞已公开，且可远程利用，环境搭建简单。",
+            "github_repo": "",
+            "all_references": [
+                "https://vuldb.com/?id.295211",
+                "https://vuldb.com/?ctiid.295211",
+                "https://gitee.com/r1bbit/yimioa/issues/IBI81R"
+            ]
+        }
+    },
+    "CVE-2025-7122": {
+        "published_date": "2025-07-07T09:32:06.704Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "https://github.com/ez-lbz/poc/archive/refs/tags/1.0.zip",
+        "description": "A vulnerability was found in Campcodes Complaint Management System 1.0. It has been declared as critical. This vulnerability affects unknown code of the file /admin/index.php. The manipulation of the argument Username leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.315034",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.315034",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.605914",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89 SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74 Injection"
+            }
+        ],
+        "_meta": {
+            "product": "Complaint Management System",
+            "vendor": "Campcodes",
+            "cvss_score": 6.9,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可远程利用，且有公开的PoC，环境搭建简单。",
+            "github_repo": "https://github.com/ez-lbz/poc",
+            "all_references": [
+                "https://vuldb.com/?id.315034",
+                "https://vuldb.com/?ctiid.315034",
+                "https://vuldb.com/?submit.605914",
+                "https://github.com/ez-lbz/poc/issues/45",
+                "https://www.campcodes.com/"
+            ]
+        }
+    },
+    "CVE-2025-26345": {
+        "published_date": "2025-02-12T13:27:28.560Z",
+        "patch_commits": [],
+        "sw_version": "2.11.0",
+        "sw_version_wget": "",
+        "description": "A CWE-306 \"Missing Authentication for Critical Function\" in maxprofile/menu/routes.lua in Q-Free MaxTime less than or equal to version 2.11.0 allows an unauthenticated remote attacker to edit user group permissions via crafted HTTP requests.",
+        "sec_adv": [
+            {
+                "url": "https://www.nozominetworks.com/labs/vulnerability-advisories-cve-2025-26345",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-306",
+                "value": "CWE-306 CWE-306 Missing Authentication for Critical Function"
+            }
+        ],
+        "_meta": {
+            "product": "MaxTime",
+            "vendor": "Q-Free",
+            "cvss_score": 9.8,
+            "severity": "CRITICAL",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞无需认证，利用相对简单，但需特定版本。",
+            "github_repo": "",
+            "all_references": [
+                "https://www.nozominetworks.com/labs/vulnerability-advisories-cve-2025-26345"
+            ]
+        }
+    },
+    "CVE-2025-5212": {
+        "published_date": "2025-05-26T23:00:15.228Z",
+        "patch_commits": [],
+        "sw_version": "1.3",
+        "sw_version_wget": "https://github.com/ting-06a/myCVE/archive/refs/tags/1.3.zip",
+        "description": "A vulnerability was found in PHPGurukul Employee Record Management System 1.3. It has been classified as critical. Affected is an unknown function of the file /admin/editempexp.php. The manipulation of the argument emp1name leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.310308",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.310308",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.582812",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89 SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74 Injection"
+            }
+        ],
+        "_meta": {
+            "product": "Employee Record Management System",
+            "vendor": "PHPGurukul",
+            "cvss_score": 6.9,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可远程利用，且有公开的PoC，但需特定版本。",
+            "github_repo": "https://github.com/ting-06a/myCVE",
+            "all_references": [
+                "https://vuldb.com/?id.310308",
+                "https://vuldb.com/?ctiid.310308",
+                "https://vuldb.com/?submit.582812",
+                "https://github.com/ting-06a/myCVE/issues/3",
+                "https://phpgurukul.com/"
+            ]
+        }
+    },
+    "CVE-2025-9930": {
+        "published_date": "2025-09-03T21:32:09.494Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "https://github.com/Miker132/CVE-/archive/refs/tags/1.0.zip",
+        "description": "A security vulnerability has been detected in 1000projects Beauty Parlour Management System 1.0. This impacts an unknown function of the file /admin/contact-us.php. The manipulation of the argument mobnumber leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed publicly and may be used.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.322332",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.322332",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.642912",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89 SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74 Injection"
+            }
+        ],
+        "_meta": {
+            "product": "Beauty Parlour Management System",
+            "vendor": "1000projects",
+            "cvss_score": 6.9,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可远程触发，且有公开的利用信息，但需特定版本。",
+            "github_repo": "https://github.com/Miker132/CVE-",
+            "all_references": [
+                "https://vuldb.com/?id.322332",
+                "https://vuldb.com/?ctiid.322332",
+                "https://vuldb.com/?submit.642912",
+                "https://github.com/Miker132/CVE-/issues/2"
+            ]
+        }
+    },
+    "CVE-2025-34117": {
+        "published_date": "2025-07-16T21:02:57.281Z",
+        "patch_commits": [],
+        "sw_version": "任何2014年8月之前的版本",
+        "sw_version_wget": "",
+        "description": "A remote code execution vulnerability exists in multiple Netcore and Netis routers models with firmware released prior to August 2014 due to the presence of an undocumented backdoor listener on UDP port 53413. Exact version boundaries remain undocumented. An unauthenticated remote attacker can send specially crafted UDP packets to execute arbitrary commands on the affected device. This backdoor uses a hardcoded authentication mechanism and accepts shell commands post-authentication. Some device models include a non-standard implementation of the `echo` command, which may affect exploitability.",
+        "sec_adv": [
+            {
+                "url": "https://web.archive.org/web/20140828114943/http://blog.trendmicro.com/trendlabs-security-intelligence/netis-routers-leave-wide-open-backdoor/",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-912",
+                "value": "CWE-912 CWE-912 Hidden Functionality"
+            },
+            {
+                "id": "CWE-306",
+                "value": "CWE-306 CWE-306 Missing Authentication for Critical Function"
+            },
+            {
+                "id": "CWE-78",
+                "value": "CWE-78 CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+            }
+        ],
+        "_meta": {
+            "product": "Router firmware",
+            "vendor": "Netcore Technology",
+            "cvss_score": 9.3,
+            "severity": "CRITICAL",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可通过UDP发送数据包触发，环境搭建简单。",
+            "github_repo": "",
+            "all_references": [
+                "https://web.archive.org/web/20140828114943/http://blog.trendmicro.com/trendlabs-security-intelligence/netis-routers-leave-wide-open-backdoor/",
+                "https://www.seebug.org/vuldb/ssvid-90227",
+                "https://raw.githubusercontent.com/rapid7/metasploit-framework/master/modules/exploits/linux/misc/netcore_udp_53413_backdoor.rb",
+                "https://www.shadowserver.org/what-we-do/network-reporting/netcore-netis-router-vulnerability-scan-report/",
+                "https://vulners.com/metasploit/MSF:EXPLOIT-LINUX-MISC-NETCORE_UDP_53413_BACKDOOR-",
+                "https://www.vulncheck.com/advisories/netcore-netis-routers-backdoor-rce",
+                "https://www.exploit-db.com/exploits/43387"
+            ]
+        }
+    },
+    "CVE-2025-54871": {
+        "published_date": "2025-08-05T00:03:09.902Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/steveseguin/electroncapture/commit/3837f54e75911bb99fa45cfa138a5e401d16f531",
+                "content": ""
+            }
+        ],
+        "sw_version": "2.19.1",
+        "sw_version_wget": "https://github.com/steveseguin/electroncapture/archive/refs/tags/2.19.1.zip",
+        "description": "Electron Capture facilitates video playback for screen-sharing and capture. In versions 2.19.1 and below, the elecap app on macOS allows local unprivileged users to bypass macOS TCC privacy protections by enabling ELECTRON_RUN_AS_NODE. This environment variable allows arbitrary Node.js code to be executed via the -e flag, which runs inside the main Electron context, inheriting any previously granted TCC entitlements (such as access to Documents, Downloads, etc.). This issue is fixed in version 2.20.0.",
+        "sec_adv": [
+            {
+                "url": "https://github.com/steveseguin/electroncapture/security/advisories/GHSA-8849-p3j4-jq4h",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-284",
+                "value": "CWE-284 CWE-284: Improper Access Control"
+            }
+        ],
+        "_meta": {
+            "product": "electroncapture",
+            "vendor": "steveseguin",
+            "cvss_score": 5.5,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "环境搭建简单，漏洞利用相对直接，且有公开信息。",
+            "github_repo": "https://github.com/steveseguin/electroncapture",
+            "all_references": [
+                "https://github.com/steveseguin/electroncapture/security/advisories/GHSA-8849-p3j4-jq4h",
+                "https://github.com/steveseguin/electroncapture/commit/3837f54e75911bb99fa45cfa138a5e401d16f531",
+                "https://github.com/steveseguin/electroncapture/releases/tag/2.20.0"
+            ]
+        }
+    },
+    "CVE-2025-11079": {
+        "published_date": "2025-09-27T21:02:07.130Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "https://github.com/unicorn33355/cve/archive/refs/tags/1.0.zip",
+        "description": "A security flaw has been discovered in Campcodes Farm Management System 1.0. Affected by this issue is some unknown functionality. The manipulation results in file and directory information exposure. The attack may be performed from remote. The exploit has been released to the public and may be exploited.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.326119",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.326119",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.661199",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-538",
+                "value": "CWE-538 File and Directory Information Exposure"
+            },
+            {
+                "id": "CWE-200",
+                "value": "CWE-200 Information Disclosure"
+            }
+        ],
+        "_meta": {
+            "product": "Farm Management System",
+            "vendor": "Campcodes",
+            "cvss_score": 6.9,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞利用已公开，环境搭建简单，影响版本明确。",
+            "github_repo": "https://github.com/unicorn33355/cve",
+            "all_references": [
+                "https://vuldb.com/?id.326119",
+                "https://vuldb.com/?ctiid.326119",
+                "https://vuldb.com/?submit.661199",
+                "https://github.com/unicorn33355/cve/issues/1",
+                "https://www.campcodes.com/"
+            ]
+        }
+    },
+    "CVE-2025-10606": {
+        "published_date": "2025-09-17T18:02:05.701Z",
+        "patch_commits": [],
+        "sw_version": "2.0",
+        "sw_version_wget": "https://github.com/marcelomulder/CVE/archive/refs/tags/2.0.zip",
+        "description": "A weakness has been identified in Portabilis i-Educar up to 2.10. This issue affects some unknown processing of the file /module/Configuracao/ConfiguracaoMovimentoGeral. This manipulation of the argument tipoacao causes cross site scripting. Remote exploitation of the attack is possible. The exploit has been made available to the public and could be exploited.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.324626",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.324626",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.649874",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79 Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94 Code Injection"
+            }
+        ],
+        "_meta": {
+            "product": "i-Educar",
+            "vendor": "Portabilis",
+            "cvss_score": 5.3,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞利用公开，环境搭建简单，易于复现。",
+            "github_repo": "https://github.com/marcelomulder/CVE",
+            "all_references": [
+                "https://vuldb.com/?id.324626",
+                "https://vuldb.com/?ctiid.324626",
+                "https://vuldb.com/?submit.649874",
+                "https://github.com/marcelomulder/CVE/blob/main/i-educar/CVE-2025-10606.md",
+                "https://github.com/marcelomulder/CVE/blob/main/i-educar/Cross-Site%20Scripting%20(XSS)%20Reflected%20endpoint%20%60.module.Configuracao.ConfiguracaoMovimentoGeral%60%20parameter%20%60tipoacao%60.md"
+            ]
+        }
+    },
+    "CVE-2025-25300": {
+        "published_date": "2025-02-18T17:38:52.088Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/ain/smartbanner.js/commit/fce8c31dfe04033d9d005a89694d3e7a60784f89",
+                "content": ""
+            }
+        ],
+        "sw_version": "1.14.0",
+        "sw_version_wget": "https://github.com/ain/smartbanner.js/archive/refs/tags/1.14.0.zip",
+        "description": "smartbanner.js is a customizable smart app banner for iOS and Android. Prior to version 1.14.1, clicking on smartbanner `View` link and navigating to 3rd party page leaves `window.opener` exposed. It may allow hostile third parties to abuse `window.opener`, e.g. by redirection or injection on the original page with smartbanner. `rel=\"noopener\"` is automatically populated to links as of `v1.14.1` which is a recommended upgrade to resolve the vulnerability. Some workarounds are available for those who cannot upgrade. Ensure `View` link is only taking users to App Store or Google Play Store where security is guarded by respective app store security teams. If `View` link is going to a third party page, limit smartbanner.js to be used on iOS that decreases the scope of the vulnerability since as of Safari 12.1,  `rel=\"noopener\"` is imposed on all `target=\"_blank\"` links. Version 1.14.1 of smartbanner.js contains a fix for the issue.",
+        "sec_adv": [
+            {
+                "url": "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-601",
+                "value": "CWE-601 CWE-601: URL Redirection to Untrusted Site ('Open Redirect')"
+            },
+            {
+                "id": "CWE-79",
+                "value": "CWE-79 CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ],
+        "_meta": {
+            "product": "smartbanner.js",
+            "vendor": "ain",
+            "cvss_score": 1.3,
+            "severity": "LOW",
+            "complexity_score": 4,
+            "complexity_reason": "环境搭建简单，漏洞原理清晰，存在公开的PoC。",
+            "github_repo": "https://github.com/ain/smartbanner.js",
+            "all_references": [
+                "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+                "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+                "https://github.com/ain/smartbanner.js/commit/fce8c31dfe04033d9d005a89694d3e7a60784f89"
+            ]
+        }
+    },
+    "CVE-2025-58177": {
+        "published_date": "2025-09-15T16:49:06.949Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/n8n-io/n8n/commit/d4ef191be0b39b65efa68559a3b8d5dad2e102b2",
+                "content": ""
+            }
+        ],
+        "sw_version": "1.24.0",
+        "sw_version_wget": "https://github.com/n8n-io/n8n/archive/refs/tags/1.24.0.zip",
+        "description": "n8n is an open source workflow automation platform. From 1.24.0 to before 1.107.0, there is a stored cross-site scripting (XSS) vulnerability in @n8n/n8n-nodes-langchain.chatTrigger. An authorized user can configure the LangChain Chat Trigger node with malicious JavaScript in the initialMessages field and enable public access so that the payload is executed in the browser of any user who visits the resulting public chat URL. This can be used for phishing or to steal cookies or other sensitive data from users accessing the public chat link. The issue is fixed in version 1.107.0. Updating to 1.107.0 or later is recommended. As a workaround, the affected chatTrigger node can be disabled. No other workarounds are known.",
+        "sec_adv": [
+            {
+                "url": "https://github.com/n8n-io/n8n/security/advisories/GHSA-mvh4-2cm2-6hpg",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79 CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ],
+        "_meta": {
+            "product": "n8n",
+            "vendor": "n8n-io",
+            "cvss_score": 5.4,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "需要授权用户配置，且有公开的PoC，环境搭建相对简单。",
+            "github_repo": "https://github.com/n8n-io/n8n",
+            "all_references": [
+                "https://github.com/n8n-io/n8n/security/advisories/GHSA-mvh4-2cm2-6hpg",
+                "https://github.com/n8n-io/n8n/pull/18148",
+                "https://github.com/n8n-io/n8n/commit/d4ef191be0b39b65efa68559a3b8d5dad2e102b2"
+            ]
+        }
+    },
+    "CVE-2025-55007": {
+        "published_date": "2025-09-01T15:46:04.915Z",
+        "patch_commits": [],
+        "sw_version": "8.1.36",
+        "sw_version_wget": "https://github.com/KnowageLabs/Knowage-Server/archive/refs/tags/8.1.36.zip",
+        "description": "Knowage is an open source analytics and business intelligence suite. Prior to version 8.1.37, Knowage is vulnerable to server-side request forgery. The vulnerability allows attackers to send requests to arbitrary hosts/paths. Since the attacker is not able to read the response, the impact of this vulnerability is limited. However, an attacker could be able to leverage this vulnerability to scan the internal network. This issue has been patched in version 8.1.37.",
+        "sec_adv": [
+            {
+                "url": "https://github.com/KnowageLabs/Knowage-Server/security/advisories/GHSA-7f6m-ph57-52w6",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-918",
+                "value": "CWE-918 CWE-918: Server-Side Request Forgery (SSRF)"
+            }
+        ],
+        "_meta": {
+            "product": "Knowage-Server",
+            "vendor": "KnowageLabs",
+            "cvss_score": 3.5,
+            "severity": "LOW",
+            "complexity_score": 4,
+            "complexity_reason": "环境搭建简单，漏洞利用相对直接，但需一定权限。",
+            "github_repo": "https://github.com/KnowageLabs/Knowage-Server",
+            "all_references": [
+                "https://github.com/KnowageLabs/Knowage-Server/security/advisories/GHSA-7f6m-ph57-52w6"
+            ]
+        }
+    },
+    "CVE-2025-7162": {
+        "published_date": "2025-07-08T04:32:06.277Z",
+        "patch_commits": [],
+        "sw_version": "2.1",
+        "sw_version_wget": "https://github.com/f1rstb100d/myCVE/archive/refs/tags/2.1.zip",
+        "description": "A vulnerability, which was classified as critical, has been found in PHPGurukul Zoo Management System 2.1. This issue affects some unknown processing of the file /admin/add-foreigners-ticket.php. The manipulation of the argument cprice leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.315101",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.315101",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.606369",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89 SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74 Injection"
+            }
+        ],
+        "_meta": {
+            "product": "Zoo Management System",
+            "vendor": "PHPGurukul",
+            "cvss_score": 5.3,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞利用相对简单，且有公开的PoC，环境搭建较为简单。",
+            "github_repo": "https://github.com/f1rstb100d/myCVE",
+            "all_references": [
+                "https://vuldb.com/?id.315101",
+                "https://vuldb.com/?ctiid.315101",
+                "https://vuldb.com/?submit.606369",
+                "https://github.com/f1rstb100d/myCVE/issues/105",
+                "https://phpgurukul.com/"
+            ]
+        }
+    },
+    "CVE-2025-10390": {
+        "published_date": "2025-09-14T04:32:05.427Z",
+        "patch_commits": [],
+        "sw_version": "5.6.0",
+        "sw_version_wget": "https://github.com/August829/Yu/archive/refs/tags/5.6.0.zip",
+        "description": "A weakness has been identified in CRMEB up to 5.6.1. The affected element is the function editAddress of the file app/services/user/UserAddressServices.php. Executing manipulation of the argument ID can lead to improper authorization. The attack may be launched remotely. The exploit has been made available to the public and could be exploited. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.323825",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.323825",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.644578",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-285",
+                "value": "CWE-285 Improper Authorization"
+            },
+            {
+                "id": "CWE-266",
+                "value": "CWE-266 Incorrect Privilege Assignment"
+            }
+        ],
+        "_meta": {
+            "product": "CRMEB",
+            "vendor": "n/a",
+            "cvss_score": 5.3,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞利用链简单，且有公开的PoC可用。",
+            "github_repo": "https://github.com/August829/Yu",
+            "all_references": [
+                "https://vuldb.com/?id.323825",
+                "https://vuldb.com/?ctiid.323825",
+                "https://vuldb.com/?submit.644578",
+                "https://github.com/August829/Yu/blob/main/58ead8e7e08bfb014.md"
+            ]
+        }
+    },
+    "CVE-2025-1893": {
+        "published_date": "2025-03-04T00:00:13.888Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/open5gs/open5gs/commit/e31e9965f00d9c744a7f728497cb4f3e97744ee8",
+                "content": ""
+            }
+        ],
+        "sw_version": "2.7.0",
+        "sw_version_wget": "https://github.com/open5gs/open5gs/archive/refs/tags/2.7.0.zip",
+        "description": "A vulnerability was found in Open5GS up to 2.7.2. It has been declared as problematic. Affected by this vulnerability is the function gmm_state_authentication of the file src/amf/gmm-sm.c of the component AMF. The manipulation leads to denial of service. The attack can be launched remotely. This vulnerability allows a single UE to crash the AMF, resulting in the complete loss of mobility and session management services and causing a network-wide outage. All registered UEs will lose connectivity, and new registrations will be blocked until the AMF is restarted, leading to a high availability impact. The exploit has been disclosed to the public and may be used. The patch is named e31e9965f00d9c744a7f728497cb4f3e97744ee8. It is recommended to apply a patch to fix this issue.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.298411",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.298411",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.505952",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-404",
+                "value": "CWE-404 Denial of Service"
+            }
+        ],
+        "_meta": {
+            "product": "Open5GS",
+            "vendor": "n/a",
+            "cvss_score": 5.3,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可远程触发，且有公开的PoC，环境搭建相对简单。",
+            "github_repo": "https://github.com/open5gs/open5gs",
+            "all_references": [
+                "https://vuldb.com/?id.298411",
+                "https://vuldb.com/?ctiid.298411",
+                "https://vuldb.com/?submit.505952",
+                "https://github.com/open5gs/open5gs/issues/3707",
+                "https://github.com/open5gs/open5gs/issues/3707#issuecomment-2639620554",
+                "https://github.com/open5gs/open5gs/issues/3707#issue-2833194192",
+                "https://github.com/open5gs/open5gs/commit/e31e9965f00d9c744a7f728497cb4f3e97744ee8"
+            ]
+        }
+    },
+    "CVE-2025-53020": {
+        "published_date": "2025-07-10T16:59:06.340Z",
+        "patch_commits": [],
+        "sw_version": "2.4.64",
+        "sw_version_wget": "",
+        "description": "Late Release of Memory after Effective Lifetime vulnerability in Apache HTTP Server.\n\nThis issue affects Apache HTTP Server: from 2.4.17 up to 2.4.63.\n\nUsers are recommended to upgrade to version 2.4.64, which fixes the issue.",
+        "sec_adv": [
+            {
+                "url": "https://httpd.apache.org/security/vulnerabilities_24.html",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-401",
+                "value": "CWE-401 CWE-401 Missing Release of Memory after Effective Lifetime"
+            }
+        ],
+        "_meta": {
+            "product": "Apache HTTP Server",
+            "vendor": "Apache Software Foundation",
+            "cvss_score": null,
+            "severity": null,
+            "complexity_score": 4,
+            "complexity_reason": "环境搭建简单，漏洞原理清晰，但需特定版本。",
+            "github_repo": "",
+            "all_references": [
+                "https://httpd.apache.org/security/vulnerabilities_24.html"
+            ]
+        }
+    },
+    "CVE-2025-6162": {
+        "published_date": "2025-06-17T05:00:11.195Z",
+        "patch_commits": [],
+        "sw_version": "4.1.2cu.5232_B20210713",
+        "sw_version_wget": "https://github.com/Lena-lyy/cve/archive/refs/tags/4.1.2cu.5232_B20210713.zip",
+        "description": "A vulnerability has been found in TOTOLINK EX1200T 4.1.2cu.5232_B20210713 and classified as critical. Affected by this vulnerability is an unknown functionality of the file /boafrm/formMultiAP of the component HTTP POST Request Handler. The manipulation of the argument submit-url leads to buffer overflow. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [
+            {
+                "url": "https://vuldb.com/?id.312637",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?ctiid.312637",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            },
+            {
+                "url": "https://vuldb.com/?submit.593600",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-120",
+                "value": "CWE-120 Buffer Overflow"
+            },
+            {
+                "id": "CWE-119",
+                "value": "CWE-119 Memory Corruption"
+            }
+        ],
+        "_meta": {
+            "product": "EX1200T",
+            "vendor": "TOTOLINK",
+            "cvss_score": 8.7,
+            "severity": "HIGH",
+            "complexity_score": 4,
+            "complexity_reason": "漏洞可远程利用，且有公开的PoC，但需特定版本。",
+            "github_repo": "https://github.com/Lena-lyy/cve",
+            "all_references": [
+                "https://vuldb.com/?id.312637",
+                "https://vuldb.com/?ctiid.312637",
+                "https://vuldb.com/?submit.593600",
+                "https://github.com/Lena-lyy/cve/blob/main/688/8.md",
+                "https://github.com/Lena-lyy/cve/blob/main/688/8.md#poc",
+                "https://www.totolink.net/"
+            ]
+        }
+    },
+    "CVE-2025-48964": {
+        "published_date": "2025-07-22T00:00:00.000Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/iputils/iputils/commit/afa36390394a6e0cceba03b52b59b6d41710608c",
+                "content": ""
+            }
+        ],
+        "sw_version": "20250602",
+        "sw_version_wget": "https://github.com/iputils/iputils/archive/refs/tags/20250602.zip",
+        "description": "ping in iputils before 20250602 allows a denial of service (application error in adaptive ping mode or incorrect data collection) via a crafted ICMP Echo Reply packet, because a zero timestamp can lead to large intermediate values that have an integer overflow when squared during statistics calculations. NOTE: this issue exists because of an incomplete fix for CVE-2025-47268 (that fix was only about timestamp calculations, and it did not account for a specific scenario where the original timestamp in the ICMP payload is zero).",
+        "sec_adv": [
+            {
+                "url": "https://github.com/iputils/iputils/security/advisories/GHSA-25fr-jw29-74f9",
+                "content": "",
+                "effective": false,
+                "effective_reason": ""
+            }
+        ],
+        "cwe": [
+            {
+                "id": "CWE-190",
+                "value": "CWE-190 CWE-190 Integer Overflow or Wraparound"
+            }
+        ],
+        "_meta": {
+            "product": "iputils",
+            "vendor": "iputils",
+            "cvss_score": 6.5,
+            "severity": "MEDIUM",
+            "complexity_score": 4,
+            "complexity_reason": "需要特定的ICMP数据包，环境搭建相对简单。",
+            "github_repo": "https://github.com/iputils/iputils",
+            "all_references": [
+                "https://github.com/iputils/iputils/issues",
+                "https://github.com/iputils/iputils/security/advisories/GHSA-25fr-jw29-74f9",
+                "https://bugzilla.suse.com/show_bug.cgi?id=1243772",
+                "https://github.com/iputils/iputils/commit/afa36390394a6e0cceba03b52b59b6d41710608c",
+                "https://github.com/iputils/iputils/releases/tag/20250602"
+            ]
+        }
+    }
+}

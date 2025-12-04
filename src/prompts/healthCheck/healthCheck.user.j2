@@ -1,0 +1,13 @@
+## Task
+
+Verify the web service is running and accessible.
+
+## Service Information
+
+{{ service_result }}
+
+## Requirements
+
+1. Check HTTP response on port {{ port | default(9600) }}
+2. Success codes: 200, 302, 301 are acceptable
+3. If unhealthy, diagnose and report what went wrong

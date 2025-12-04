@@ -531,7 +531,7 @@ class ChatGenerationWithLLMOutput(ChatGeneration):
 class ChatApi(SimpleChatModel):
     __SUPPORTS_TOOL_CALLS__ = False
 
-    model_name: str = Field(default="gpt-4.5-turbo", alias="model")
+    model_name: str = Field(default="gpt-4o-mini", alias="model")
     """Model name to use."""
     temperature: float = 0
     """What sampling temperature to use."""

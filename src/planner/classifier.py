@@ -68,6 +68,7 @@ class VulnerabilityClassifier:
         mapping = {
             "native-local": ("InfoGenerator", "EnvironmentProvisioner", "ExploitExecutor", "FlagVerifier"),
             "web-basic": ("InfoGenerator", "PreReqAnalyzer", "EnvironmentDeployer", "BrowserProvisioner", "WebExploiter", "WebVerifier"),
+            "freestyle": ("InfoGenerator", "FreestyleExplorer"),  # 自由探索模式
             "cloud-config": ("InfoGenerator", "CloudEnvProvisioner", "ApiExploiter", "LogVerifier"),
             "iot-firmware": ("InfoGenerator", "FirmwareProvisioner", "ExploitExecutor", "TelemetryVerifier"),
         }

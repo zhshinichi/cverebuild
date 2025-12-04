@@ -30,7 +30,8 @@ class ResultBus:
         self.shared_root = shared_root
         self.project_root = project_root or os.path.dirname(os.path.dirname(__file__))
 
-        default_local = os.path.join(self.project_root, "src", "shared")
+        # 修复路径：project_root 已经是 src/ 目录，不需要再添加 src/
+        default_local = os.path.join(self.project_root, "shared")
         self.local_shared_dir = local_shared_dir or os.environ.get("LOCAL_SHARED_DIR", default_local)
 
         self.cve_dir = os.path.join(self.shared_root, self.cve_id)

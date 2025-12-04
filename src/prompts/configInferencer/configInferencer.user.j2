@@ -1,0 +1,18 @@
+## CVE Knowledge to Analyze
+
+{{ cve_knowledge }}
+
+{% if framework_hint %}
+## Framework Hint
+The software appears to be: {{ framework_hint }}
+{% endif %}
+
+## Instructions
+
+1. Find the target URL/endpoint in the PoC code
+2. Extract the port number
+3. Identify the framework
+4. Check if the endpoint requires special configuration (refer to the Framework Knowledge Base)
+5. Return the complete startup configuration as JSON
+
+Output your analysis as a JSON object.

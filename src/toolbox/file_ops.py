@@ -7,31 +7,42 @@ def write_to_file(content: str, filename: str):
     """
     Writes the provided content to the provided file.
     :param content: Content to put in the file
-    :param filename: Relative path to the file
+    :param filename: Relative path to the file (relative to project root, e.g., 'backend/setup.py')
     :return: If successful or not
     """
     
-    # print("Trying to write", content, "to", filename, "\nProceed? y/N")
-    # p = input()
-    # if p!='y':
-    #     return "Unable to execute, permission denied"
-
     cur_dir = os.getcwd()
-    os.chdir("simulation_environments/" + os.environ['REPO_PATH'])
+    repo_path = os.environ.get('REPO_PATH', '')
+    
+    # 智能路径处理：去除重复的项目目录前缀
+    # 如果 filename 以 repo_path 开头，去掉它
+    if repo_path:
+        repo_name = repo_path.rstrip('/')
+        if filename.startswith(repo_name + '/'):
+            filename = filename[len(repo_name) + 1:]
+            print(f"[write_to_file] Stripped duplicate prefix, using: {filename}")
+    
+    os.chdir("simulation_environments/" + repo_path)
 
     try:
-        os.makedirs('./'+os.path.dirname(filename), exist_ok=True)
-        outfile = open(filename, "w", encoding='utf-8')
-        for line in content.split("\n"):
-            outfile.write(line + "\n")
-        outfile.close()
+        # 确保目录存在
+        dir_name = os.path.dirname(filename)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+        
+        with open(filename, "w", encoding='utf-8') as outfile:
+            for line in content.split("\n"):
+                outfile.write(line + "\n")
         return "Success"
-    except FileNotFoundError:
-        print("Intermediate directory does not exist.")
-        return f"Error: Intermediate directory does not exist.."
+    except FileNotFoundError as e:
+        print(f"[write_to_file] FileNotFoundError: {e}")
+        return f"Error: Intermediate directory does not exist. Details: {e}"
     except PermissionError:
-        print("No permission")
+        print("[write_to_file] No permission")
         return f"Error: Permission denied to write to the file '{filename}'."
+    except Exception as e:
+        print(f"[write_to_file] Unexpected error: {e}")
+        return f"Error: {e}"
     finally:
         os.chdir(cur_dir)
 

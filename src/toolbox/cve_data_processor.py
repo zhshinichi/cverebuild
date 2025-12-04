@@ -54,32 +54,54 @@ class CVEDataProcessor:
             if patch_urls:
                 print(f"🔍 Found patch URLs: {patch_urls}")
 
-                version_data = _cve.get("version_data")
-                if version_data:
-                    try:
-                        version = cve_processor.get_software_versions(_cve['id'])[0]
-                    except Exception as e:
-                        version = (False, 'anomaly')
-                    
-                    if version[1] != 'n/a' and version[1] != 'anomaly':
-                        tag = cve_processor.affected_version_exist(patch_urls[0]['owner'], patch_urls[0]['project'], version[1], version[0])
-                    
-                    if tag:
-                        cve = {
-                            "published_date": cve_processor.get_published_date(_cve['id']),
-                            "patch_commits": [
-                                {
-                                    "url": patch['patch_commit_url'],
-                                    "content": cve_processor.get_patch_content(patch['owner'], patch['project'], patch['hash'])
-                                }
-                                for patch in _cve.get('patch_urls')
-                            ],
-                            "sw_version": f"{tag}",
-                            "sw_version_wget": f"{patch_urls[0]['repo_url']}/archive/refs/tags/{tag}.zip",
-                            "description": _cve.get('description')
-                        }
+                # 首先检查数据里是否已经有 sw_version 和 sw_version_wget
+                if _cve.get("sw_version") and _cve.get("sw_version_wget"):
+                    print(f"📦 Using pre-defined version: {_cve.get('sw_version')}")
+                    cve = {
+                        "published_date": _cve.get("published_date") or cve_processor.get_published_date(_cve['id']),
+                        "patch_commits": _cve.get("patch_commits") or [
+                            {
+                                "url": patch['patch_commit_url'],
+                                "content": cve_processor.get_patch_content(patch['owner'], patch['project'], patch['hash'])
+                            }
+                            for patch in _cve.get('patch_urls')
+                        ],
+                        "sw_version": _cve.get("sw_version"),
+                        "sw_version_wget": _cve.get("sw_version_wget"),
+                        "description": _cve.get('description'),
+                        "sec_adv": _cve.get("sec_adv"),
+                    }
+                else:
+                    # 尝试从 GitHub 获取版本 tag
+                    version_data = _cve.get("version_data")
+                    if version_data:
+                        try:
+                            version = cve_processor.get_software_versions(_cve['id'])[0]
+                        except Exception as e:
+                            version = (False, 'anomaly')
+                        
+                        tag = None
+                        if version[1] != 'n/a' and version[1] != 'anomaly':
+                            tag = cve_processor.affected_version_exist(patch_urls[0]['owner'], patch_urls[0]['project'], version[1], version[0])
+                        
+                        if tag:
+                            cve = {
+                                "published_date": cve_processor.get_published_date(_cve['id']),
+                                "patch_commits": [
+                                    {
+                                        "url": patch['patch_commit_url'],
+                                        "content": cve_processor.get_patch_content(patch['owner'], patch['project'], patch['hash'])
+                                    }
+                                    for patch in _cve.get('patch_urls')
+                                ],
+                                "sw_version": f"{tag}",
+                                "sw_version_wget": f"{patch_urls[0]['repo_url']}/archive/refs/tags/{tag}.zip",
+                                "description": _cve.get('description')
+                            }
+                        else:
+                            raise ValueError(f"❌ We were not able to find the affected version tag in the repo. Please provide the code_url argument")
                     else:
-                        raise ValueError(f"❌ We were not able to find the affected version tag in the repo. Please provide the code_url argument")
+                        raise ValueError(f"❌ No version_data found and no pre-defined sw_version. Please provide the code_url argument")
 
             else:
                 if code_url:
@@ -114,12 +136,113 @@ class CVEDataProcessor:
         # 3) download the vulnerable tag version of the repo
         subprocess.run("rm -rf simulation_environments/*", shell=True)
         os.chdir("simulation_environments/")
-        subprocess.run(f"wget {cve['sw_version_wget']}", shell=True)
+        
+        # 检查是否是 pip 包（新字段 pip_package）
+        pip_package = cve.get('pip_package')
+        pip_version = cve.get('pip_version')
+        
+        if pip_package and pip_version:
+            # 对于 pip 包，使用 pip download 下载源代码
+            print(f"📦 Detected pip package: {pip_package}=={pip_version}")
+            print(f"📥 Downloading pip package source...")
+            
+            # 使用 pip download 获取源代码分发包
+            pip_result = subprocess.run(
+                f"pip download {pip_package}=={pip_version} --no-deps --no-binary :all: -d .",
+                shell=True,
+                capture_output=True,
+                text=True
+            )
+            
+            if pip_result.returncode != 0:
+                # 如果没有源代码分发包，尝试下载 wheel
+                print("⚠️ Source distribution not available, downloading wheel...")
+                pip_result = subprocess.run(
+                    f"pip download {pip_package}=={pip_version} --no-deps -d .",
+                    shell=True,
+                    capture_output=True,
+                    text=True
+                )
+            
+            if pip_result.returncode != 0:
+                os.chdir(cur_dir)
+                raise RuntimeError(f"Failed to download pip package {pip_package}=={pip_version}: {pip_result.stderr}")
+            
+            # 解压下载的包
+            downloaded_files = os.listdir(".")
+            print(f"📂 Downloaded files: {downloaded_files}")
+            
+            # 处理 .tar.gz 或 .whl 文件
+            for file in downloaded_files:
+                if file.endswith('.tar.gz'):
+                    subprocess.run(f"tar xzf {file}", shell=True)
+                elif file.endswith('.whl'):
+                    subprocess.run(f"unzip {file} -d {pip_package.replace('-', '_')}", shell=True)
+            
+            # 找到解压后的目录
+            dirs = [f for f in os.listdir(".") if os.path.isdir(f)]
+            if not dirs:
+                os.chdir(cur_dir)
+                raise FileNotFoundError(f"No directory found after extracting pip package")
+            
+            dir_name = dirs[0]
+            print(f"📂 Using directory: {dir_name}")
+            os.chdir(dir_name)
+            os.environ['REPO_PATH'] = f"{dir_name}/"
+            
+            # 更新 cve 信息
+            cve['dir_tree'] = subprocess.run("tree -d", shell=True, capture_output=True).stdout.decode("utf-8")
+            cve['repo_path'] = f"{dir_name}/"
+            os.chdir(cur_dir)
+            
+            return cve
+        
+        download_url = cve['sw_version_wget']
+        print(f"📥 Downloading from: {download_url}")
+        
+        # 尝试下载，带超时和错误检查
+        wget_result = subprocess.run(
+            f"wget --timeout=120 --tries=3 {download_url}", 
+            shell=True, 
+            capture_output=True,
+            text=True
+        )
+        
+        if wget_result.returncode != 0:
+            print(f"⚠️ wget failed with return code {wget_result.returncode}")
+            print(f"stderr: {wget_result.stderr}")
+            # 尝试使用 curl 作为备选
+            print("🔄 Trying curl as fallback...")
+            zip_filename = download_url.split('/')[-1]
+            curl_result = subprocess.run(
+                f"curl -L -o {zip_filename} {download_url}",
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            if curl_result.returncode != 0:
+                os.chdir(cur_dir)
+                raise RuntimeError(f"Failed to download {download_url}: wget and curl both failed")
 
-        zip_name = [file for file in os.listdir(".") if file.endswith(".zip")][0]
+        # 检查是否有 zip 文件
+        zip_files = [file for file in os.listdir(".") if file.endswith(".zip")]
+        if not zip_files:
+            os.chdir(cur_dir)
+            raise FileNotFoundError(f"No .zip file found after downloading from {download_url}. Directory contents: {os.listdir('.')}")
+        
+        zip_name = zip_files[0]
+        print(f"📦 Found zip file: {zip_name}")
         subprocess.run(f"unzip {zip_name}", shell=True)
 
-        dir_name = [file for file in os.listdir(".") if os.path.isdir(file)][0]
+        # 检查是否有解压后的目录
+        dirs = [file for file in os.listdir(".") if os.path.isdir(file)]
+        if not dirs:
+            os.chdir(cur_dir)
+            raise FileNotFoundError(f"No directory found after unzipping {zip_name}. Directory contents: {os.listdir('.')}")
+        
+        dir_name = dirs[0]
+        print(f"📂 Using directory: {dir_name}")
         os.chdir(dir_name)
         os.environ['REPO_PATH'] = f"{dir_name}/"
 

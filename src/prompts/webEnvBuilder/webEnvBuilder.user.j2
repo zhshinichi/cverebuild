@@ -20,18 +20,86 @@ Please fix the issues mentioned above and try again.
 
 ## Your Task
 
-Deploy the vulnerable web application following these steps:
+Deploy the vulnerable web application following these STRICT steps:
 
-1. **Download** the source code from the provided URL (if available)
-2. **Extract** and analyze the repository structure
-3. **Deploy** using the most appropriate method (docker-compose > Dockerfile > pip > npm)
-4. **Verify** the service is accessible
-5. **Return** the deployment result as JSON
+### Step 1: Download and Extract
+```bash
+cd /tmp
+curl -L -o app.zip "{{ sw_version_wget }}"
+unzip -o app.zip
+cd <extracted_dir>
+```
+
+### Step 2: Analyze Project Structure (CRITICAL!)
+```bash
+# Check what kind of project this is
+ls -la pyproject.toml setup.py setup.cfg requirements*.txt docker-compose*.yml Dockerfile 2>/dev/null
+
+# Check for entry points
+grep -A 10 "\[project.scripts\]" pyproject.toml 2>/dev/null
+grep -A 10 "console_scripts" setup.py 2>/dev/null
+
+# Check README for startup instructions
+head -100 README.md README.rst 2>/dev/null | grep -i -A 5 "run\|start\|install\|usage"
+
+# Detect framework
+grep -l "mlflow\|django\|flask\|fastapi\|streamlit\|gradio" *.py pyproject.toml setup.py 2>/dev/null
+```
+
+### Step 3: Install Dependencies (CORRECT WAY!)
+```bash
+python3 -m venv /tmp/venv && source /tmp/venv/bin/activate
+
+# PREFERRED: For known packages (mlflow, django, flask, etc.), install from PyPI:
+pip install <package>==<version>  # e.g., pip install mlflow==2.20.1
+
+# ALTERNATIVE: For custom projects with setup.py/pyproject.toml:
+pip install .  # Use pip install . (NOT -e .) to avoid circular imports
+
+# FALLBACK: If no setup.py/pyproject.toml:
+pip install -r requirements.txt  # or requirements/core-requirements.txt
+```
+
+⚠️ **IMPORTANT**: 
+- Extract version from sw_version (e.g., "v2.20.1" → "2.20.1")
+- Prefer PyPI install over source install for stability
+- NEVER use `pip install -e .` (editable mode causes circular import errors)
+
+### Step 4: CLEAN UP OLD PROCESSES FIRST! (CRITICAL!)
+```bash
+# Kill any existing processes on port 9600
+fuser -k 9600/tcp 2>/dev/null || true
+pkill -9 -f "gunicorn|mlflow|flask|uvicorn|django" 2>/dev/null || true
+sleep 2  # Wait for ports to release
+```
+
+### Step 5: Start Service (FRAMEWORK-SPECIFIC!)
+**DO NOT blindly use `gunicorn project:app` - check the framework first!**
+
+- **MLflow**: `mlflow server --host 0.0.0.0 --port 9600`
+- **Django**: `python manage.py runserver 0.0.0.0:9600`
+- **Flask**: `flask run --host 0.0.0.0 --port 9600` or `python app.py`
+- **FastAPI**: `uvicorn main:app --host 0.0.0.0 --port 9600`
+- **General**: `nohup python app.py --port 9600 > /tmp/app.log 2>&1 &`
+
+### Step 6: Verify (PROPERLY!)
+```bash
+sleep 5  # Give service time to start
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:9600/)
+echo "HTTP Status: $HTTP_CODE"
+
+# Check if really running
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "302" ]; then
+  echo "Service may have issues, checking logs..."
+  tail -100 /tmp/app.log 2>/dev/null
+  ps aux | grep -E "mlflow|gunicorn|flask|uvicorn"
+fi
+```
 
 **IMPORTANT**: 
 - The service MUST be accessible via HTTP for the exploit agent to work
 - Use port 9600 if possible
 - Run services in background mode
-- Verify with curl before returning success
+- If curl returns 000 or exit code 7, the service is NOT running - check logs!
 
 Begin deployment now.

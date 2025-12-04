@@ -32,5 +32,10 @@ from .webExploitCritic import WebExploitCritic
 from .fixAdvisor import FixAdvisor
 from .webEnvBuilder import WebEnvBuilder
 
+# 新的分拆 Agents (Web 环境部署流水线)
+from .projectSetup import ProjectSetupAgent
+from .serviceStart import ServiceStartAgent
+from .healthCheck import HealthCheckAgent
+
 # 恢复原始 sys.path，确保其他模块（如 core）可以正常导入
 sys.path = _original_path
