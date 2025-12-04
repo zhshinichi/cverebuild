@@ -184,6 +184,7 @@ class ResultBus:
         return False
 
     def _detect_container_name(self) -> Optional[str]:
+        """Detect the main working container (not temporary containers like n8n_vuln)."""
         try:
             result = subprocess.run(
                 ["docker", "ps", "--format", "{{.Names}}"],
@@ -192,6 +193,17 @@ class ResultBus:
                 check=True,
             )
             containers = [name for name in result.stdout.strip().split("\n") if name]
+            
+            # Filter out temporary/test containers
+            excluded_prefixes = ['n8n_', 'simulation_', 'vuln_', 'test_']
+            main_containers = [
+                c for c in containers 
+                if not any(c.startswith(prefix) for prefix in excluded_prefixes)
+            ]
+            
+            # Prefer the main working container
+            if main_containers:
+                return main_containers[0]
             return containers[0] if containers else None
         except subprocess.CalledProcessError as exc:
             print(f"⚠️  Error executing docker ps: {exc}")

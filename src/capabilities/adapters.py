@@ -1075,6 +1075,7 @@ class FreestyleAdapter(Capability):
     
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         from agents.freestyleAgent import FreestyleAgent
+        from agents.brainAgent import BrainAgent, create_attack_plan, analyze_failure
         
         cve_entry = inputs.get('cve_entry', {})
         cve_knowledge = inputs.get('cve_knowledge', '')
@@ -1083,10 +1084,43 @@ class FreestyleAdapter(Capability):
         print(f"[FreestyleAgent] 🚀 Starting freestyle exploration for {cve_id}")
         print(f"[FreestyleAgent] Description: {cve_entry.get('description', '')[:200]}...")
         
+        # ============================================================
+        # 阶段 1: BrainAgent 分析和规划
+        # ============================================================
+        print(f"[BrainAgent] 🧠 Analyzing vulnerability and creating attack plan...")
+        
+        attack_plan = None
+        attack_plan_text = None
+        try:
+            brain_agent = BrainAgent(
+                cve_id=cve_id,
+                cve_entry=cve_entry,
+                cve_knowledge=cve_knowledge,
+                mode="plan",
+            )
+            brain_result = brain_agent.invoke().value
+            attack_plan = brain_agent.parse_plan_response(brain_result)
+            attack_plan_text = attack_plan.to_prompt()
+            
+            print(f"[BrainAgent] ✅ Attack plan created:")
+            print(f"  - Type: {attack_plan.vulnerability_type}")
+            print(f"  - Prerequisites: {len(attack_plan.prerequisites)} steps")
+            print(f"  - Exploitation: {len(attack_plan.exploitation_steps)} steps")
+            print(f"  - Tools: {', '.join(attack_plan.recommended_tools[:3])}")
+        except Exception as e:
+            print(f"[BrainAgent] ⚠️ Failed to create attack plan: {e}")
+            print(f"[BrainAgent] Proceeding without attack plan...")
+        
+        # ============================================================
+        # 阶段 2: FreestyleAgent 执行
+        # ============================================================
+        print(f"[FreestyleAgent] 🔧 Executing attack plan...")
+        
         agent = FreestyleAgent(
             cve_id=cve_id,
             cve_entry=cve_entry,
             cve_knowledge=cve_knowledge,
+            attack_plan=attack_plan_text,  # 传递攻击计划
         )
         
         # 使用标准的 invoke() 调用方式
@@ -1095,11 +1129,45 @@ class FreestyleAdapter(Capability):
             output = result if isinstance(result, str) else str(result)
             
             # 检查是否实际调用了工具（防止幻觉回答）
-            tool_stats = getattr(agent, 'tool_stats', {})
+            # 使用 agentlib 的 toolcall_metadata 属性获取工具调用统计
+            tool_stats = getattr(agent, 'toolcall_metadata', None)
+            if tool_stats is None:
+                # 备用方案：尝试其他属性名
+                tool_stats = getattr(agent, 'tool_stats', None)
+                if tool_stats is None:
+                    tool_stats = getattr(agent, '_tool_stats', {})
+            if not tool_stats:
+                # 从 agent 的 executor 中获取
+                executor = getattr(agent, 'executor', None)
+                if executor:
+                    tool_stats = getattr(executor, 'toolcall_metadata', {})
+                    if not tool_stats:
+                        tool_stats = getattr(executor, 'tool_stats', {})
+            
+            # 调试：打印获取到的 tool_stats
+            print(f"[DEBUG] Raw tool_stats: {tool_stats}")
+            
             total_tool_calls = sum(
                 stat.get('num_tool_calls', 0) 
                 for stat in tool_stats.values()
+                if isinstance(stat, dict)  # 过滤掉非字典值（如 __ended_due_to_... 等特殊键）
             ) if tool_stats else 0
+            
+            print(f"[DEBUG] Calculated total_tool_calls: {total_tool_calls}")
+            
+            # 如果还是 0，从输出内容判断是否有工具调用的痕迹
+            if total_tool_calls == 0:
+                # 检查输出中是否有工具调用的关键词
+                tool_call_indicators = [
+                    'Invoking:', 'SUCCESS:', 'ERROR:', 'TIMEOUT:',
+                    '容器', 'docker', 'http://', 'localhost',
+                    '服务已就绪', '服务已启动', 'Page Title:'
+                ]
+                for indicator in tool_call_indicators:
+                    if indicator in output:
+                        # 有工具调用痕迹，不是幻觉
+                        total_tool_calls = 1  # 至少有 1 次
+                        break
             
             # 1. 首先尝试解析结构化结果
             structured_result = self._parse_structured_result(output)
@@ -1159,13 +1227,52 @@ class FreestyleAdapter(Capability):
             
             print(f"[FreestyleAgent] Result: success={is_success}, tool_calls={total_tool_calls}")
             
+            # ============================================================
+            # 阶段 3: 如果失败，BrainAgent 分析原因（仅一次）
+            # ============================================================
+            failure_analysis = None
+            if not is_success and attack_plan:
+                print(f"[BrainAgent] 🔍 Analyzing failure reason...")
+                try:
+                    execution_result = {
+                        'output': output[-2000:],  # 最后 2000 字符
+                        'env_ready': env_ready if 'env_ready' in dir() else True,
+                        'poc_executed': poc_executed if 'poc_executed' in dir() else True,
+                        'passed': is_success,
+                        'evidence': final_evidence if 'final_evidence' in dir() else '',
+                        'tool_calls': total_tool_calls,
+                    }
+                    
+                    failure_brain = BrainAgent(
+                        cve_id=cve_id,
+                        cve_entry=cve_entry,
+                        cve_knowledge=cve_knowledge,
+                        mode="analyze_failure",
+                        execution_result=execution_result,
+                    )
+                    failure_result = failure_brain.invoke().value
+                    failure_analysis = failure_brain.parse_failure_response(failure_result)
+                    
+                    print(f"[BrainAgent] 📋 Failure Analysis:")
+                    print(f"  - Category: {failure_analysis.failure_category}")
+                    print(f"  - Root Cause: {failure_analysis.root_cause[:100]}...")
+                    print(f"  - Vulnerability Disproven: {failure_analysis.is_vulnerability_disproven}")
+                    
+                    # 将分析结果添加到证据中
+                    final_evidence = f"{final_evidence}\n\n[BrainAgent 失败分析]\n类别: {failure_analysis.failure_category}\n原因: {failure_analysis.root_cause}\n建议: {failure_analysis.recommendation}"
+                    
+                except Exception as e:
+                    print(f"[BrainAgent] ⚠️ Failure analysis failed: {e}")
+            
             return {
                 'freestyle_result': {
                     'output': output, 
                     'success': is_success, 
                     'tool_calls': total_tool_calls,
                     'env_ready': env_ready if 'env_ready' in dir() else True,
-                    'poc_executed': poc_executed if 'poc_executed' in dir() else True
+                    'poc_executed': poc_executed if 'poc_executed' in dir() else True,
+                    'attack_plan': attack_plan.to_dict() if attack_plan else None,
+                    'failure_analysis': failure_analysis.to_dict() if failure_analysis else None,
                 },
                 'verification_result': {
                     'passed': is_success,

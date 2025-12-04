@@ -37,3 +37,25 @@ RUN pip3 install \
     pyyaml \
     httpx \
     aiohttp
+
+# Install professional security testing tools
+RUN apt-get update && apt-get install -y \
+    nmap \
+    nikto \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python-based security tools
+RUN pip3 install \
+    sqlmap \
+    semgrep
+
+# Install Commix (Command Injection Exploiter)
+RUN git clone --depth 1 https://github.com/commixproject/commix.git /opt/commix && \
+    ln -s /opt/commix/commix.py /usr/local/bin/commix && \
+    chmod +x /opt/commix/commix.py
+
+# Install XSStrike (XSS Scanner)
+RUN git clone --depth 1 https://github.com/s0md3v/XSStrike.git /opt/xsstrike && \
+    pip3 install -r /opt/xsstrike/requirements.txt && \
+    ln -s /opt/xsstrike/xsstrike.py /usr/local/bin/xsstrike && \
+    chmod +x /opt/xsstrike/xsstrike.py

@@ -1,0 +1,41 @@
+{% if MODE == "plan" %}
+## Task: Create Attack Plan for {{ CVE_ID }}
+
+### CVE Information
+{{ CVE_ENTRY_JSON }}
+
+### Existing Knowledge
+{{ CVE_KNOWLEDGE if CVE_KNOWLEDGE else 'None available' }}
+
+Please analyze this vulnerability and output a detailed attack plan in JSON format.
+
+Focus on:
+1. What type of vulnerability is this?
+2. What prerequisites must be completed before exploitation?
+3. What are the exact steps to trigger the vulnerability?
+4. What tools should be used?
+5. How will we know if exploitation succeeded?
+6. What obstacles might we encounter?
+
+{% elif MODE == "analyze_failure" %}
+## Task: Analyze Exploitation Failure for {{ CVE_ID }}
+
+### CVE Information
+{{ CVE_ENTRY_JSON }}
+
+### Existing Knowledge
+{{ CVE_KNOWLEDGE if CVE_KNOWLEDGE else 'None available' }}
+
+### Execution Result (FAILED)
+{{ EXECUTION_RESULT }}
+
+Please analyze why the exploitation failed and output your analysis in JSON format.
+
+Consider:
+1. Was the environment set up correctly?
+2. Were all prerequisites completed?
+3. Was the POC actually executed or just partially?
+4. Does this failure indicate the vulnerability doesn't exist, or just incomplete execution?
+5. What specific steps were missing?
+
+{% endif %}
