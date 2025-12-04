@@ -23,6 +23,7 @@ from agents import (
     SanityGuy,
     WebEnvBuilder
 )
+from agents.configInferencer import ConfigInferencer
 
 
 # ============================================================
@@ -30,7 +31,13 @@ from agents import (
 # ============================================================
 
 class BrowserEnvironmentProvider(Capability):
-    """浏览器环境提供者 - 不需要 LLM，只是启动/配置浏览器环境"""
+    """浏览器环境提供者 - 不需要 LLM，只是启动/配置浏览器环境
+    
+    重要: 
+    1. 优先从 build_result.access 获取目标 URL
+    2. 如果没有 access，使用 build_result.port 构建 URL
+    3. 在配置浏览器前，等待服务完全就绪（Health Check）
+    """
     
     def __init__(self, result_bus: ResultBus, config: dict):
         self.result_bus = result_bus
@@ -39,18 +46,52 @@ class BrowserEnvironmentProvider(Capability):
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """启动浏览器环境，返回浏览器配置信息"""
         browser_engine = self.config.get('browser_engine', 'selenium')
-        target_url = self.config.get('target_url', 'http://localhost:9600')
+        
+        # ========== 从 build_result 动态获取 target_url ==========
+        build_result = inputs.get('build_result', {})
+        target_url = None
+        
+        if isinstance(build_result, dict):
+            # 1. 优先使用 access URL
+            deployed_url = build_result.get('access', '')
+            if deployed_url:
+                target_url = deployed_url
+                print(f"[Browser] ✅ Using deployed URL from build_result: {target_url}")
+            else:
+                # 2. 使用 build_result 中的 port 构建 URL
+                port = build_result.get('port', 0)
+                if port:
+                    target_url = f'http://localhost:{port}'
+                    print(f"[Browser] ✅ Using port from build_result: {target_url}")
+        
+        # 3. 回退到 config
+        if not target_url:
+            target_url = self.config.get('target_url', 'http://localhost:9600')
+            print(f"[Browser] ⚠️ No URL/port in build_result, using config/default: {target_url}")
+        
+        # ========== 关键: 等待服务就绪（Health Check）==========
+        # 在配置浏览器前，确保 Web 服务已完全启动
+        # 这避免了 "ERR_CONNECTION_REFUSED" 的问题
+        try:
+            from toolbox.command_ops import wait_for_service
+            health_result = wait_for_service(target_url, timeout=60, interval=3)
+            
+            if not health_result['ready']:
+                print(f"[Browser] ⚠️ Service may not be fully ready: {health_result['message']}")
+                # 不阻止执行，但记录警告
+        except Exception as e:
+            print(f"[Browser] ⚠️ Health check failed: {e}")
         
         print(f"[Browser] Configuring browser environment: {browser_engine}")
         print(f"[Browser] Target URL: {target_url}")
         
-        # 这里只是配置信息，实际的浏览器启动由 WebDriverAgent 处理
         browser_config = {
             'engine': browser_engine,
             'target_url': target_url,
             'headless': self.config.get('headless', True),
             'timeout': self.config.get('timeout', 30),
-            'ready': True
+            'ready': True,
+            'build_info': build_result
         }
         
         print(f"[Browser] Environment ready")
@@ -87,25 +128,65 @@ class CVEInfoExtractor(Capability):
 
 
 class WebAppDeployer(Capability):
-    """Web 应用部署器 - 使用 WebEnvBuilder Agent 部署 Web 应用
+    """Web 应用部署器 - 使用分拆的 3 个 Agent 部署 Web 应用
     
-    与 RepoBuilder 的区别：
-    - RepoBuilder: 需要 dir_tree，适合从源码编译的本地漏洞
-    - WebAppDeployer: 不需要 dir_tree，专门处理 Web 应用部署
-      - 优先使用预部署的目标 URL（通过 config['target_url'] 指定）
-      - 如果没有预部署，使用 LLM Agent (WebEnvBuilder) 智能部署
-      - 支持 docker-compose / pip / npm 多种部署
-      - 返回应用访问地址
+    部署流程：
+    1. ProjectSetupAgent: 准备环境（检测框架、安装依赖）
+    2. ServiceStartAgent: 启动服务
+    3. HealthCheckAgent: 验证服务（可选）
+    
+    这种分拆方式让每个 Agent 专注于单一职责，减少 token 消耗。
     """
+    
+    # 框架默认端口映射
+    FRAMEWORK_DEFAULT_PORTS = {
+        'open-webui': 8080,
+        'mlflow': 5000,
+        'flask': 5000,
+        'django': 8000,
+        'fastapi': 8000,
+        'streamlit': 8501,
+        'gradio': 7860,
+    }
     
     def __init__(self, result_bus: ResultBus, config: dict):
         self.result_bus = result_bus
         self.config = config
     
+    def _extract_port_from_knowledge(self, cve_knowledge: str) -> int:
+        """从 CVE Knowledge 中提取端口号"""
+        import re
+        # 尝试匹配常见的端口模式
+        patterns = [
+            r'port[:\s]+(\d{4,5})',           # port: 8080 or port 8080
+            r'localhost:(\d{4,5})',            # localhost:8080
+            r'0\.0\.0\.0:(\d{4,5})',           # 0.0.0.0:8080
+            r'--port[=\s]+(\d{4,5})',          # --port=8080 or --port 8080
+            r'-p[=\s]+(\d{4,5})',              # -p 8080
+            r'default port.*?(\d{4,5})',       # default port is 8080
+            r'runs on port (\d{4,5})',         # runs on port 8080
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, cve_knowledge, re.IGNORECASE)
+            if match:
+                port = int(match.group(1))
+                if 1024 <= port <= 65535:  # 有效端口范围
+                    return port
+        return 0  # 未找到
+    
+    def _detect_framework_from_knowledge(self, cve_knowledge: str) -> str:
+        """从 CVE Knowledge 中检测框架类型"""
+        knowledge_lower = cve_knowledge.lower()
+        for framework in self.FRAMEWORK_DEFAULT_PORTS.keys():
+            if framework.replace('-', '') in knowledge_lower.replace('-', ''):
+                return framework
+        return ''
+    
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cve_entry = inputs.get('cve_entry', {})
         cve_knowledge = inputs.get('cve_knowledge', '')
-        prerequisites = inputs.get('prerequisites', {})
+        cve_id = inputs.get('cve_id', '')
         
         # 获取软件信息
         sw_version_wget = cve_entry.get('sw_version_wget', '')
@@ -114,10 +195,31 @@ class WebAppDeployer(Capability):
         print(f"[WebAppDeployer] Deploying web application...")
         print(f"[WebAppDeployer] Software version: {sw_version}")
         
-        # 默认目标 URL
-        target_url = self.config.get('target_url', 'http://localhost:9600')
+        # ========== 智能端口检测 ==========
+        # 优先级: 1. CVE Knowledge 中明确指定 > 2. 框架默认端口 > 3. config 配置 > 4. 全局默认 9600
         
-        # ========== 优先检查目标是否已经可访问 ==========
+        # 1. 从 CVE Knowledge 提取端口
+        knowledge_port = self._extract_port_from_knowledge(cve_knowledge)
+        
+        # 2. 从框架检测获取默认端口
+        detected_framework = self._detect_framework_from_knowledge(cve_knowledge)
+        framework_port = self.FRAMEWORK_DEFAULT_PORTS.get(detected_framework, 0)
+        
+        # 3. 确定最终使用的端口
+        if knowledge_port:
+            port = knowledge_port
+            print(f"[WebAppDeployer] 📍 Port from CVE knowledge: {port}")
+        elif framework_port:
+            port = framework_port
+            print(f"[WebAppDeployer] 📍 Port from framework default ({detected_framework}): {port}")
+        else:
+            port = self.config.get('port', 9600)
+            print(f"[WebAppDeployer] 📍 Using config/default port: {port}")
+        
+        target_url = f'http://localhost:{port}'
+        print(f"[WebAppDeployer] 🎯 Target URL: {target_url}")
+        
+        # ========== 1. 优先检查目标是否已经可访问 ==========
         import subprocess
         try:
             result = subprocess.run(
@@ -138,75 +240,111 @@ class WebAppDeployer(Capability):
         except Exception as e:
             print(f"[WebAppDeployer] Target check failed: {e}")
         
-        # ========== 尝试使用部署脚本 ==========
-        deploy_script = '/workspaces/submission/src/simulation_environments/deploy.sh'
-        cve_id = inputs.get('cve_id', '')
-        
+        # ========== 2. 使用分拆的 Agent 流水线 ==========
         try:
-            # 尝试部署脚本
-            print(f"[WebAppDeployer] Trying deploy script for {cve_id}...")
-            result = subprocess.run(
-                ['bash', deploy_script, cve_id],
-                capture_output=True, text=True, timeout=60
-            )
-            if result.returncode == 0:
-                print(f"[WebAppDeployer] ✅ Deploy script succeeded")
-                return {
-                    'build_result': {
-                        'success': 'yes',
-                        'access': target_url,
-                        'method': 'deploy-script',
-                        'notes': result.stdout
-                    }
-                }
-        except Exception as e:
-            print(f"[WebAppDeployer] Deploy script failed: {e}")
-        
-        # ========== 如果有 dir_tree，使用 RepoBuilder ==========
-        has_dir_tree = bool(cve_entry.get('dir_tree'))
-        
-        if has_dir_tree:
-            print(f"[WebAppDeployer] Directory tree available, using RepoBuilder")
-            agent = RepoBuilder(
-                project_dir_tree=cve_entry.get('dir_tree', ''),
-                cve_knowledge=cve_knowledge,
-                build_pre_reqs=prerequisites or {
-                    'overview': f'Web application {sw_version}',
-                    'files': '',
-                    'services': 'Web server',
-                    'output': 'HTTP service'
-                },
-                feedback=None,
-                critic_feedback=None
-            )
-            result = agent.invoke().value
+            sw_name = sw_version_wget.split('/')[-1] if sw_version_wget else 'unknown'
             
-            if isinstance(result, dict) and result.get('success', '').lower() == 'yes':
-                target_url = result.get('access', target_url)
+            # ========== Stage 1: ProjectSetupAgent ==========
+            print(f"[WebAppDeployer] Stage 1: Project Setup")
+            
+            from agents.projectSetup import ProjectSetupAgent
+            setup_agent = ProjectSetupAgent(
+                cve_id=cve_id,
+                sw_name=sw_name,
+                sw_version=sw_version,
+                cve_knowledge=cve_knowledge
+            )
+            setup_result_raw = setup_agent.run()
+            
+            # 解析结果
+            import json
+            try:
+                setup_result = json.loads(setup_result_raw) if isinstance(setup_result_raw, str) else setup_result_raw
+            except:
+                setup_result = {'raw_output': setup_result_raw, 'success': False}
+            
+            print(f"[WebAppDeployer] Stage 1 Result: {setup_result.get('success', False)}")
+            
+            if not setup_result.get('success', False):
+                # 如果环境准备失败，尝试 fallback
+                print(f"[WebAppDeployer] ⚠️ Project setup failed, trying fallback...")
+            
+            # ========== Stage 2: ServiceStartAgent ==========
+            print(f"[WebAppDeployer] Stage 2: Service Start")
+            
+            from agents.serviceStart import ServiceStartAgent
+            start_agent = ServiceStartAgent(
+                setup_result=json.dumps(setup_result, indent=2),
+                port=port
+            )
+            service_result_raw = start_agent.run()
+            
+            try:
+                service_result = json.loads(service_result_raw) if isinstance(service_result_raw, str) else service_result_raw
+            except:
+                service_result = {'raw_output': service_result_raw, 'success': False}
+            
+            print(f"[WebAppDeployer] Stage 2 Result: {service_result.get('success', False)}")
+            
+            # ========== Stage 3: Health Check (Optional) ==========
+            # 简化为直接 HTTP 检查，不需要额外 Agent
+            access_url = service_result.get('access_url', target_url)
+            
+            try:
+                check_result = subprocess.run(
+                    ['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', f'{access_url}/'],
+                    capture_output=True, text=True, timeout=10
+                )
+                status_code = check_result.stdout.strip()
+                if status_code and not status_code.startswith('0'):
+                    print(f"[WebAppDeployer] ✅ Service is responding (HTTP {status_code})")
+                    return {
+                        'build_result': {
+                            'success': 'yes',
+                            'access': access_url,
+                            'method': 'agent-pipeline',
+                            'notes': f'Deployed via 3-agent pipeline, HTTP {status_code}'
+                        }
+                    }
+            except Exception as e:
+                print(f"[WebAppDeployer] Health check failed: {e}")
+            
+            # 即使健康检查失败，如果服务启动了，也返回成功
+            if service_result.get('success'):
                 return {
                     'build_result': {
                         'success': 'yes',
-                        'access': target_url,
-                        'method': 'repo-builder'
+                        'access': access_url,
+                        'method': 'agent-pipeline',
+                        'notes': service_result.get('notes', '')
                     }
                 }
+                
+        except Exception as e:
+            print(f"[WebAppDeployer] Agent pipeline failed: {e}")
+            import traceback
+            traceback.print_exc()
         
-        # ========== 最后尝试 WebEnvBuilder Agent ==========
-        print(f"[WebAppDeployer] No pre-deployed target, using WebEnvBuilder Agent")
+        # ========== 3. Fallback: 尝试旧的 WebEnvBuilder ==========
+        print(f"[WebAppDeployer] Trying legacy WebEnvBuilder as fallback...")
         
         try:
             agent = WebEnvBuilder(
                 cve_knowledge=cve_knowledge,
                 sw_version_wget=sw_version_wget,
                 sw_version=sw_version,
-                prerequisites=prerequisites,
+                prerequisites={},
             )
             result = agent.invoke()
             
             if hasattr(result, 'value') and isinstance(result.value, dict):
                 build_result = result.value
-                if build_result.get('success', '').lower() == 'yes':
-                    target_url = build_result.get('access', target_url)
+                deployed_url = build_result.get('access', '')
+                if deployed_url:
+                    target_url = deployed_url
+                
+                success = build_result.get('success', '').lower() == 'yes'
+                if success:
                     return {
                         'build_result': {
                             'success': 'yes',
@@ -216,16 +354,21 @@ class WebAppDeployer(Capability):
                         }
                     }
         except Exception as e:
-            print(f"[WebAppDeployer] WebEnvBuilder failed: {e}")
+            print(f"[WebAppDeployer] Legacy WebEnvBuilder failed: {e}")
         
-        # ========== Fallback: 返回默认 URL ==========
-        print(f"[WebAppDeployer] Falling back to pre-deployed target: {target_url}")
+        # ========== 4. Final Fallback ==========
+        # 注意：即使部署失败，也保持使用正确检测到的端口，不要回退到其他端口
+        # 因为项目本身需要特定端口才能正常工作
+        print(f"[WebAppDeployer] ⚠️ All deployment attempts failed")
+        print(f"[WebAppDeployer] 📍 Keeping target URL: {target_url} (port {port})")
+        print(f"[WebAppDeployer] 💡 The service may need manual intervention to start")
         return {
             'build_result': {
-                'success': 'yes',
+                'success': 'no',  # 标记为失败，不要假装成功
                 'access': target_url,
-                'method': 'pre-deployed',
-                'notes': 'Using pre-deployed target or default URL'
+                'port': port,
+                'method': 'fallback',
+                'notes': f'Deployment failed. Target should be {target_url} but service is not running.'
             }
         }
 
@@ -292,10 +435,22 @@ class HttpResponseVerifier(Capability):
                     'vulnerability confirmed', 'exploit worked', 'upload successful',
                     # XSS 相关
                     'xss triggered', 'alert detected', 'script executed',
+                    'xss vulnerability', 'reflected xss', 'stored xss',
                     # CSRF 相关
                     'csrf successful', 'csrf attack submitted', 'form submitted',
                     'no csrf protection', 'vulnerable (no csrf', 'missing csrf',
                     'csrf vulnerability', 'no csrf token',
+                    # LFI/路径遍历 相关
+                    'lfi detected', 'lfi vulnerability', 'path traversal',
+                    'root:', '/bin/bash', 'etc/passwd', 'win.ini',
+                    'file inclusion', 'directory traversal',
+                    # SQL 注入相关
+                    'sql injection', 'sqli', 'database error', 'syntax error',
+                    'union select', 'or 1=1',
+                    # SSRF 相关
+                    'ssrf', 'server-side request', 'internal service',
+                    # 文件上传相关
+                    'file uploaded', 'upload success', 'shell uploaded',
                     # 登录/会话相关
                     'login successful', 'logged in', 'profile:',
                 ]
@@ -401,11 +556,64 @@ class KnowledgeBuilderAdapter(Capability):
         )
         result = agent.invoke().value
         
+        # ========== 调用 ConfigInferencer 推理完整配置 ==========
+        # 使用本地规则推理（快速，不消耗 LLM token）
+        inferred_config = ConfigInferencer.infer_config_locally(result)
+        
+        # 如果推理出了启动命令，将其附加到 cve_knowledge 中
+        if inferred_config.get('startup_cmd'):
+            config_section = f"""
+
+## Inferred Environment Configuration
+- Port: {inferred_config.get('port', 'N/A')}
+- Startup Command: {inferred_config.get('startup_cmd', 'N/A')}
+- Target Endpoint: {inferred_config.get('target_endpoint', 'N/A')}
+- Framework: {inferred_config.get('framework', 'N/A')}
+- Special Mode: {inferred_config.get('special_mode', 'None')}
+- Reasoning: {'; '.join(inferred_config.get('notes', []))}
+"""
+            result = result + config_section
+            print(f"[ConfigInferencer] ✅ Inferred startup: {inferred_config.get('startup_cmd')}")
+        
         return {'cve_knowledge': result}
 
 
+class ConfigInferencerAdapter(Capability):
+    """
+    ConfigInferencer Adapter: 可独立使用的配置推理能力
+    
+    通常不需要单独调用，KnowledgeBuilderAdapter 已集成本地推理。
+    此 Adapter 用于需要 LLM 进行复杂推理的场景。
+    """
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        cve_knowledge = inputs.get('cve_knowledge', '')
+        framework_hint = inputs.get('framework_hint', '')
+        
+        # 优先使用本地推理（快速且免费）
+        if self.config.get('use_local_inference', True):
+            result = ConfigInferencer.infer_config_locally(cve_knowledge)
+            return {'inferred_config': result}
+        
+        # 使用 LLM 推理（更智能但消耗 token）
+        agent = ConfigInferencer(
+            cve_knowledge=cve_knowledge,
+            framework_hint=framework_hint
+        )
+        result = agent.invoke().value
+        return {'inferred_config': result}
+
+
 class PreReqBuilderAdapter(Capability):
-    """PreReqBuilder Agent 适配器"""
+    """PreReqBuilder Agent 适配器
+    
+    对于 Web CVE，dir_tree 通常为空。在这种情况下，我们使用基于 CVE 知识的
+    智能推断，而不是让 Agent 在空目录中探索。
+    """
     
     def __init__(self, result_bus: ResultBus, config: dict):
         self.result_bus = result_bus
@@ -414,15 +622,76 @@ class PreReqBuilderAdapter(Capability):
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cve_knowledge = inputs.get('cve_knowledge', '')
         cve_entry = inputs.get('cve_entry', {})
+        dir_tree = cve_entry.get('dir_tree', '')
+        sw_version = cve_entry.get('sw_version', '')
         
-        # PreReqBuilder 需要 cve_knowledge 和 project_dir_tree
+        # ========== 关键优化: 当 dir_tree 为空时，使用智能推断 ==========
+        # 这避免了 PreReqBuilder 在空目录中无限循环执行 ls 命令
+        if not dir_tree or not dir_tree.strip():
+            print(f"[PreReqBuilder] No dir_tree available, using smart inference")
+            
+            # 基于 CVE 知识推断基本需求
+            prerequisites = self._infer_prerequisites_from_knowledge(cve_knowledge, sw_version)
+            print(f"[PreReqBuilder] Inferred prerequisites: {prerequisites['overview'][:100]}...")
+            
+            return {'prerequisites': prerequisites}
+        
+        # 有 dir_tree 时，使用传统的 PreReqBuilder Agent 分析
+        print(f"[PreReqBuilder] Analyzing project with dir_tree...")
         agent = PreReqBuilder(
             cve_knowledge=cve_knowledge,
-            project_dir_tree=cve_entry.get('dir_tree', '')
+            project_dir_tree=dir_tree
         )
         result = agent.invoke().value
         
         return {'prerequisites': result}
+    
+    def _infer_prerequisites_from_knowledge(self, cve_knowledge: str, sw_version: str) -> dict:
+        """从 CVE 知识中智能推断项目需求
+        
+        当没有 dir_tree 时（常见于 Web CVE），我们使用启发式方法推断需求。
+        """
+        knowledge_lower = cve_knowledge.lower()
+        
+        # 检测框架类型
+        framework = "unknown"
+        services = "Web server"
+        output = "HTTP service on specified port"
+        
+        if 'mlflow' in knowledge_lower:
+            framework = "MLflow"
+            services = "MLflow tracking server with authentication if required"
+            if 'basic-auth' in knowledge_lower or 'authentication' in knowledge_lower:
+                services += " (requires --app-name basic-auth for authentication features)"
+            output = "MLflow server running on port 5000"
+        elif 'django' in knowledge_lower:
+            framework = "Django"
+            services = "Django development server (manage.py runserver)"
+            output = "Django server running on port 8000"
+        elif 'flask' in knowledge_lower:
+            framework = "Flask"
+            services = "Flask development server"
+            output = "Flask server running on port 5000"
+        elif 'fastapi' in knowledge_lower:
+            framework = "FastAPI"
+            services = "Uvicorn ASGI server"
+            output = "FastAPI server running on port 8000"
+        
+        overview = f"""Web application vulnerability in {sw_version or framework}.
+This is a web-based CVE that requires deploying a web application.
+The vulnerable software should be installed via pip or downloaded from source.
+Key focus areas based on CVE knowledge: Authentication, Authorization, CSRF, XSS, or API vulnerabilities."""
+        
+        files = f"""No local source directory available.
+Install from PyPI: pip install {sw_version.replace('v', '').replace('V', '') if sw_version else framework.lower()}
+Or download from GitHub and follow installation instructions."""
+        
+        return {
+            'overview': overview,
+            'files': files,
+            'services': services,
+            'output': output
+        }
 
 
 class RepoBuilderAdapter(Capability):
@@ -582,7 +851,16 @@ try:
         
         def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
             cve_knowledge = inputs.get('cve_knowledge', '')
-            target_url = self.config.get('target_url', 'http://localhost:9600')
+            
+            # ========== 关键修复: 从 browser_config 获取 target_url ==========
+            # browser_config 由 BrowserEnvironmentProvider 设置，包含实际部署的 URL
+            browser_config = inputs.get('browser_config', {})
+            if isinstance(browser_config, dict) and browser_config.get('target_url'):
+                target_url = browser_config['target_url']
+                print(f"[WebDriverAdapter] ✅ Using target_url from browser_config: {target_url}")
+            else:
+                target_url = self.config.get('target_url', 'http://localhost:9600')
+                print(f"[WebDriverAdapter] ⚠️ No browser_config, using config/default: {target_url}")
             
             agent = WebDriverAgent(
                 cve_knowledge=cve_knowledge,
@@ -615,3 +893,300 @@ except ImportError:
     # Web agents 可选
     WebDriverAdapter = None
     WebExploitCriticAdapter = None
+
+
+# ============================================================
+# 新的分拆 Agents: ProjectSetup, ServiceStart, HealthCheck
+# ============================================================
+
+class ProjectSetupAdapter(Capability):
+    """ProjectSetupAgent 适配器 - 环境准备
+    
+    负责：
+    1. 发现工作目录
+    2. 检测框架类型
+    3. 安装依赖
+    """
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        from agents.projectSetup import ProjectSetupAgent
+        
+        cve_entry = inputs.get('cve_entry', {})
+        cve_knowledge = inputs.get('cve_knowledge', '')
+        cve_id = inputs.get('cve_id', '')
+        
+        sw_name = cve_entry.get('sw_version_wget', '').split('/')[-1] if cve_entry.get('sw_version_wget') else 'unknown'
+        sw_version = cve_entry.get('sw_version', '')
+        
+        print(f"[ProjectSetup] Setting up: {sw_name} {sw_version}")
+        
+        agent = ProjectSetupAgent(
+            cve_id=cve_id,
+            sw_name=sw_name,
+            sw_version=sw_version,
+            cve_knowledge=cve_knowledge
+        )
+        result = agent.run()
+        
+        # 解析 JSON 结果
+        import json
+        try:
+            setup_result = json.loads(result) if isinstance(result, str) else result
+        except:
+            setup_result = {'raw_output': result, 'success': False}
+        
+        print(f"[ProjectSetup] Result: {setup_result.get('success', False)}")
+        return {'setup_result': setup_result}
+
+
+class ServiceStartAdapter(Capability):
+    """ServiceStartAgent 适配器 - 服务启动
+    
+    负责：
+    1. 清理旧进程
+    2. 启动服务
+    """
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        from agents.serviceStart import ServiceStartAgent
+        import json
+        
+        setup_result = inputs.get('setup_result', {})
+        port = self.config.get('port', 9600)
+        
+        print(f"[ServiceStart] Starting service on port {port}")
+        
+        agent = ServiceStartAgent(
+            setup_result=json.dumps(setup_result, indent=2) if isinstance(setup_result, dict) else str(setup_result),
+            port=port
+        )
+        result = agent.run()
+        
+        # 解析 JSON 结果
+        import json
+        try:
+            service_result = json.loads(result) if isinstance(result, str) else result
+        except:
+            service_result = {'raw_output': result, 'success': False}
+        
+        # 构建 build_result 以兼容后续步骤
+        target_url = f"http://localhost:{port}"
+        build_result = {
+            'success': 'yes' if service_result.get('success') else 'no',
+            'access': service_result.get('access_url', target_url),
+            'method': 'venv',
+            'notes': service_result.get('notes', '')
+        }
+        
+        print(f"[ServiceStart] Result: {service_result.get('success', False)}")
+        return {'service_result': service_result, 'build_result': build_result}
+
+
+class HealthCheckAdapter(Capability):
+    """HealthCheckAgent 适配器 - 健康检查
+    
+    负责：
+    1. HTTP 验证
+    2. 诊断问题
+    """
+    
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        from agents.healthCheck import HealthCheckAgent
+        import json
+        
+        service_result = inputs.get('service_result', {})
+        port = self.config.get('port', 9600)
+        
+        print(f"[HealthCheck] Checking service on port {port}")
+        
+        agent = HealthCheckAgent(
+            service_result=json.dumps(service_result, indent=2) if isinstance(service_result, dict) else str(service_result),
+            port=port
+        )
+        result = agent.run()
+        
+        # 解析 JSON 结果
+        import json
+        try:
+            health_result = json.loads(result) if isinstance(result, str) else result
+        except:
+            health_result = {'raw_output': result, 'healthy': False}
+        
+        print(f"[HealthCheck] Healthy: {health_result.get('healthy', False)}")
+        return {'health_result': health_result}
+
+
+# ============================================================
+# Freestyle Agent 适配器 - 自由探索模式
+# ============================================================
+
+class FreestyleAdapter(Capability):
+    """FreestyleAgent 适配器 - 自由探索模式
+    
+    用于处理不适合固定流程的漏洞:
+    - JavaScript/前端库漏洞
+    - 配置类漏洞
+    - 复杂的多步骤漏洞
+    """
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def _parse_structured_result(self, output: str) -> dict:
+        """从 Agent 输出中解析结构化的 verification_result"""
+        import json
+        import re
+        
+        # 尝试提取 JSON 块
+        json_patterns = [
+            r'```json\s*(\{.*?"verification_result".*?\})\s*```',
+            r'"verification_result"\s*:\s*(\{[^}]+\})',
+            r'\{[^{]*"env_ready"[^}]*"poc_executed"[^}]*"passed"[^}]*\}',
+        ]
+        
+        for pattern in json_patterns:
+            matches = re.findall(pattern, output, re.DOTALL | re.IGNORECASE)
+            for match in matches:
+                try:
+                    # 尝试解析匹配的 JSON
+                    if '"verification_result"' in match:
+                        data = json.loads(match)
+                        return data.get('verification_result', {})
+                    else:
+                        return json.loads(match)
+                except json.JSONDecodeError:
+                    continue
+        
+        return {}
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        from agents.freestyleAgent import FreestyleAgent
+        
+        cve_entry = inputs.get('cve_entry', {})
+        cve_knowledge = inputs.get('cve_knowledge', '')
+        cve_id = inputs.get('cve_id', '')
+        
+        print(f"[FreestyleAgent] 🚀 Starting freestyle exploration for {cve_id}")
+        print(f"[FreestyleAgent] Description: {cve_entry.get('description', '')[:200]}...")
+        
+        agent = FreestyleAgent(
+            cve_id=cve_id,
+            cve_entry=cve_entry,
+            cve_knowledge=cve_knowledge,
+        )
+        
+        # 使用标准的 invoke() 调用方式
+        try:
+            result = agent.invoke().value
+            output = result if isinstance(result, str) else str(result)
+            
+            # 检查是否实际调用了工具（防止幻觉回答）
+            tool_stats = getattr(agent, 'tool_stats', {})
+            total_tool_calls = sum(
+                stat.get('num_tool_calls', 0) 
+                for stat in tool_stats.values()
+            ) if tool_stats else 0
+            
+            # 1. 首先尝试解析结构化结果
+            structured_result = self._parse_structured_result(output)
+            
+            if structured_result:
+                # 使用结构化结果
+                env_ready = structured_result.get('env_ready', True)
+                poc_executed = structured_result.get('poc_executed', True)
+                passed = structured_result.get('passed', False)
+                evidence = structured_result.get('evidence', '')
+                error_message = structured_result.get('error_message', '')
+                
+                print(f"[FreestyleAgent] 📊 Structured result: env_ready={env_ready}, poc_executed={poc_executed}, passed={passed}")
+                
+                if not env_ready:
+                    print(f"[FreestyleAgent] ⚠️ Environment setup failed - this is NOT a vulnerability verification failure")
+                    is_success = False
+                    final_evidence = f"环境搭建失败: {error_message or evidence}"
+                elif not poc_executed:
+                    print(f"[FreestyleAgent] ⚠️ POC was not executed - cannot determine vulnerability status")
+                    is_success = False
+                    final_evidence = f"POC 未执行: {error_message or evidence}"
+                else:
+                    is_success = passed
+                    final_evidence = evidence
+                    
+            elif total_tool_calls == 0:
+                # 2. 没有调用任何工具 - 幻觉回答
+                print(f"[FreestyleAgent] ⚠️ No tools were actually called - this is likely a hallucinated response")
+                is_success = False
+                final_evidence = "警告: Agent 未调用任何工具就声称完成，这是无效的响应"
+                env_ready = False
+                poc_executed = False
+                
+            else:
+                # 3. 回退到关键词匹配（兼容旧格式）
+                success_indicators = ['成功', 'success', 'verified', '触发', 'exploited', 'confirmed', 'vulnerable', 'vulnerability confirmed', 'VULNERABLE']
+                failure_indicators = ['失败', 'failed', 'error', '无法', 'cannot', 'not vulnerable', 'unable', 'TIMEOUT', 'ERROR']
+                env_failure_indicators = ['connection refused', '连接被拒绝', 'service not ready', '服务未就绪', 'docker', 'container']
+                
+                success_score = sum(1 for ind in success_indicators if ind.lower() in output.lower())
+                failure_score = sum(1 for ind in failure_indicators if ind.lower() in output.lower())
+                env_failure_score = sum(1 for ind in env_failure_indicators if ind.lower() in output.lower())
+                
+                # 判断是环境问题还是验证结果
+                if env_failure_score > 2 and failure_score > success_score:
+                    env_ready = False
+                    poc_executed = False
+                    is_success = False
+                    print(f"[FreestyleAgent] ⚠️ Likely environment issue detected")
+                else:
+                    env_ready = True
+                    poc_executed = True
+                    is_success = success_score > failure_score
+                    
+                final_evidence = output[-1000:] if len(output) > 1000 else output
+            
+            print(f"[FreestyleAgent] Result: success={is_success}, tool_calls={total_tool_calls}")
+            
+            return {
+                'freestyle_result': {
+                    'output': output, 
+                    'success': is_success, 
+                    'tool_calls': total_tool_calls,
+                    'env_ready': env_ready if 'env_ready' in dir() else True,
+                    'poc_executed': poc_executed if 'poc_executed' in dir() else True
+                },
+                'verification_result': {
+                    'passed': is_success,
+                    'env_ready': env_ready if 'env_ready' in dir() else True,
+                    'poc_executed': poc_executed if 'poc_executed' in dir() else True,
+                    'evidence': final_evidence if 'final_evidence' in dir() else output[-1000:],
+                    'mode': 'freestyle',
+                    'tool_calls': total_tool_calls
+                }
+            }
+        except Exception as e:
+            print(f"[FreestyleAgent] ❌ Error: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                'freestyle_result': {'output': str(e), 'success': False, 'env_ready': False, 'poc_executed': False},
+                'verification_result': {
+                    'passed': False,
+                    'env_ready': False,
+                    'poc_executed': False,
+                    'evidence': str(e),
+                    'mode': 'freestyle'
+                }
+            }

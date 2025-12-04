@@ -14,13 +14,20 @@ from capabilities.adapters import (
     WebAppDeployer,
     # 需要 LLM 的 Agent 适配器
     KnowledgeBuilderAdapter,
+    ConfigInferencerAdapter,
     PreReqBuilderAdapter,
     RepoBuilderAdapter,
     RepoCriticAdapter,
     ExploiterAdapter,
     ExploitCriticAdapter,
     CTFVerifierAdapter,
-    SanityGuyAdapter
+    SanityGuyAdapter,
+    # 新的分拆 Agents
+    ProjectSetupAdapter,
+    ServiceStartAdapter,
+    HealthCheckAdapter,
+    # Freestyle 自由探索模式
+    FreestyleAdapter,
 )
 
 
@@ -78,6 +85,8 @@ class CapabilityRegistry:
         self.register("CVEInfoGenerator", KnowledgeBuilderAdapter)
         self.register("InfoGenerator", KnowledgeBuilderAdapter)
         self.register("KnowledgeBuilder", KnowledgeBuilderAdapter)
+        self.register("ConfigInferencer", ConfigInferencerAdapter)
+        self.register("infer-config", ConfigInferencerAdapter)
         self.register("PreReqBuilder", PreReqBuilderAdapter)
         self.register("RepoBuilder", RepoBuilderAdapter)
         self.register("RepoCritic", RepoCriticAdapter)
@@ -85,6 +94,28 @@ class CapabilityRegistry:
         self.register("ExploitCritic", ExploitCriticAdapter)
         self.register("CTFVerifier", CTFVerifierAdapter)
         self.register("SanityGuy", SanityGuyAdapter)
+        
+        # ============================================================
+        # 新的分拆 Agents (Web 环境部署流水线)
+        # ============================================================
+        self.register("project-setup", ProjectSetupAdapter)
+        self.register("ProjectSetup", ProjectSetupAdapter)
+        self.register("ProjectSetupAgent", ProjectSetupAdapter)
+        
+        self.register("service-start", ServiceStartAdapter)
+        self.register("ServiceStart", ServiceStartAdapter)
+        self.register("ServiceStartAgent", ServiceStartAdapter)
+        
+        self.register("health-check", HealthCheckAdapter)
+        self.register("HealthCheck", HealthCheckAdapter)
+        self.register("HealthCheckAgent", HealthCheckAdapter)
+        
+        # ============================================================
+        # Freestyle 自由探索模式
+        # ============================================================
+        self.register("freestyle-explore", FreestyleAdapter)
+        self.register("FreestyleExplorer", FreestyleAdapter)
+        self.register("FreestyleAgent", FreestyleAdapter)
         
         # Web 漏洞能力（延迟导入避免循环依赖）
         try:

@@ -3,6 +3,7 @@ import os
 import json
 import time
 import inspect
+import openai
 from uuid import uuid4
 from typing import Dict, Any, Union, Generic, Optional, List
 from pathlib import Path
@@ -1452,6 +1453,8 @@ Use this if you want to respond directly to the human. Markdown code snippet for
                 self.warn(f"Failed to record event! Please tell us: {str(e)}")
 
         num_tries = 0
+        api_connection_retries = 0
+        MAX_API_CONNECTION_RETRIES = 5
         while True:
             num_tries += 1
             # Reset the the callback handler so that we have a fresh state on retry
@@ -1460,6 +1463,21 @@ Use this if you want to respond directly to the human. Markdown code snippet for
             try:
 
                 output = chain.invoke(input, **kwargs)
+            except (
+                openai.APIConnectionError,
+                openai.APITimeoutError,
+                openai.InternalServerError,
+            ) as e:
+                # API connection errors - retry with exponential backoff
+                api_connection_retries += 1
+                if api_connection_retries > MAX_API_CONNECTION_RETRIES:
+                    self.warn(f"🔥 API connection error, max retries ({MAX_API_CONNECTION_RETRIES}) reached")
+                    raise e
+                sleep_time = min(2 ** api_connection_retries, 60)  # Exponential backoff, max 60s
+                self.warn(f"🔥 API connection error ({type(e).__name__}), retrying in {sleep_time}s ({api_connection_retries}/{MAX_API_CONNECTION_RETRIES})")
+                import time
+                time.sleep(sleep_time)
+                continue
             except (
                 ContextWindowExceededError,
                 LLMApiContextWindowExceededError

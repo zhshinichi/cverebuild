@@ -1,0 +1,21 @@
+## Task
+
+Set up the environment for: **{{ sw_name }}** version **{{ sw_version }}**
+
+## CVE Information
+
+- CVE ID: {{ cve_id }}
+- Software: {{ sw_name }}
+- Version: {{ sw_version }}
+
+{% if cve_knowledge %}
+## Additional Context
+{{ cve_knowledge }}
+{% endif %}
+
+## Requirements
+
+1. Find where the source code was downloaded
+2. Detect the framework type
+3. Install all dependencies in a virtual environment
+4. Return the setup information for the next agent

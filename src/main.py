@@ -434,6 +434,16 @@ class CVEReproducer:
                     "- b) 🏭 Repository Builder \n" \
                     "-------------------------------------------\n")
                 
+                # 🔍 启用中途反思机制
+                try:
+                    from toolbox.command_ops import enable_reflection, reset_reflection
+                    reflection_context = f"正在为 {self.cve_id} 构建仓库环境。\n知识库摘要：{self.cve_knowledge[:500]}..."
+                    enable_reflection(True, reflection_context)
+                    reset_reflection()  # 重置之前的状态
+                    print("🔍 Mid-Execution Reflection 已启用")
+                except ImportError:
+                    print("⚠️ Mid-Execution Reflection 模块未找到，跳过")
+                
                 repo_done = False
                 repo_feedback, critic_feedback = None, None
                 repo_try, critic_try = 1, 1
@@ -574,6 +584,15 @@ class CVEReproducer:
                     attack_type = get_attack_type(self.cve_info)
                     print(f"\n🌐 Detected web-based vulnerability (Type: {attack_type})")
                     print("   Using WebDriver for browser automation...\n")
+                
+                # 🔍 为 Exploit 阶段更新反思上下文
+                try:
+                    from toolbox.command_ops import enable_reflection, reset_reflection
+                    reflection_context = f"正在为 {self.cve_id} 进行漏洞利用。\n知识库摘要：{self.cve_knowledge[:500]}..."
+                    enable_reflection(True, reflection_context)
+                    reset_reflection()
+                except ImportError:
+                    pass
                 
                 print("\n########################################\n" \
                     "# 6) 🚀 Running Exploiter ...\n" \
@@ -874,9 +893,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--profile",
         type=str,
-        choices=['native-local', 'web-basic', 'cloud-config', 'auto'],
+        choices=['native-local', 'web-basic', 'freestyle', 'cloud-config', 'auto'],
         default='auto',
-        help="Execution profile for DAG mode ('auto' to classify automatically)"
+        help="Execution profile for DAG mode ('auto' to classify automatically, 'freestyle' for flexible exploration)"
     )
     parser.add_argument(
         "--target-url",
@@ -908,8 +927,8 @@ if __name__ == "__main__":
         
         cve_entry = all_cve_data[args.cve]
         
-        # 导入新架构模块
-        from planner.classifier import VulnerabilityClassifier
+        # 导入新架构模块 - 使用 LLM 增强的分类器
+        from planner.llm_classifier import LLMVulnerabilityClassifier, LLMClassifierConfig
         from planner.dag import PlanBuilder
         from planner.executor import DAGExecutor
         from capabilities.registry import CapabilityRegistry
@@ -935,9 +954,18 @@ if __name__ == "__main__":
         print(f"Model: {os.environ['MODEL']}")
         print(f"{'='*60}\n")
         
+        # 清理旧的 simulation environment，只保留当前 CVE 相关文件
+        # 这样可以节省存储空间，避免累积大量旧环境
         try:
-            # 1. 分类
-            classifier = VulnerabilityClassifier()
+            from toolbox.command_ops import cleanup_simulation_environment
+            cleanup_simulation_environment(keep_current_cve=args.cve)
+        except Exception as e:
+            print(f"⚠️ Failed to cleanup simulation environment: {e}")
+        
+        try:
+            # 1. 分类 (使用 LLM 增强的分类器)
+            config = LLMClassifierConfig(use_llm=True, fallback_to_rules=True)
+            classifier = LLMVulnerabilityClassifier(config)
             decision = classifier.classify(args.cve, cve_entry, args.profile if args.profile != 'auto' else None)
             
             print(f"🔍 Vulnerability classified as: {decision.profile}")
@@ -1014,6 +1042,51 @@ if __name__ == "__main__":
             traceback.print_exc()
             print(f"{'='*60}")
         finally:
+            # ========== 关键: 清理残留进程 ==========
+            # 无论成功失败，都清理后台进程，防止 CPU/内存占满
+            try:
+                from toolbox.command_ops import cleanup_running_processes
+                cleanup_running_processes()
+            except Exception as cleanup_e:
+                print(f"⚠️ Failed to cleanup processes: {cleanup_e}")
+            
+            # ========== 清理缓存目录，节省磁盘空间 ==========
+            try:
+                import shutil
+                cache_dirs = [
+                    '/root/.cache/pip',
+                    '/root/.npm/_cacache',
+                    '/root/.cache/huggingface',
+                    '/root/.cache/selenium',
+                    '/root/.nvm/.cache',
+                    '/tmp',  # 清理临时文件
+                ]
+                cleaned = 0
+                for cache_dir in cache_dirs:
+                    if os.path.exists(cache_dir):
+                        try:
+                            if cache_dir == '/tmp':
+                                # /tmp 只清理文件，不删除目录
+                                for item in os.listdir(cache_dir):
+                                    item_path = os.path.join(cache_dir, item)
+                                    try:
+                                        if os.path.isfile(item_path):
+                                            os.unlink(item_path)
+                                        elif os.path.isdir(item_path):
+                                            shutil.rmtree(item_path)
+                                        cleaned += 1
+                                    except:
+                                        pass
+                            else:
+                                shutil.rmtree(cache_dir)
+                                cleaned += 1
+                        except:
+                            pass
+                if cleaned > 0:
+                    print(f"🧹 Cleaned {cleaned} cache directories")
+            except Exception as cache_e:
+                pass  # 缓存清理失败不影响主流程
+            
             sys.stdout = original_stdout
             sys.stderr = original_stderr
             tee_logger.close()
@@ -1023,6 +1096,13 @@ if __name__ == "__main__":
     
     # ========== Legacy 模式 ==========
     print("🔧 Running in Legacy mode (original architecture)\n")
+    
+    # 清理旧的 simulation environment，只保留当前 CVE 相关文件
+    try:
+        from toolbox.command_ops import cleanup_simulation_environment
+        cleanup_simulation_environment(keep_current_cve=args.cve)
+    except Exception as e:
+        print(f"⚠️ Failed to cleanup simulation environment: {e}")
 
     run_types = [token.strip().lower() for token in args.run_type.split(',') if token.strip()]
     allowed_run_types = {'info', 'build', 'exploit', 'verify', 'fix'}

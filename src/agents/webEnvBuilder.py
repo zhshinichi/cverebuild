@@ -19,6 +19,7 @@ from agentlib.lib.common.parsers import BaseParser
 from typing import Optional
 
 from toolbox.tools import TOOLS
+from toolbox.web_service_tools import WEB_SERVICE_TOOLS
 
 
 OUTPUT_DESCRIPTION = '''
@@ -111,11 +112,18 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
     2. Dockerfile 构建
     3. 从 GitHub 下载并安装依赖 (pip/npm)
     4. 直接使用已知的服务 URL
+    
+    v2: 使用智能工具而不是冗长的 prompt
+    - detect_web_framework: 自动检测框架和启动方式
+    - install_web_project: 智能安装（PyPI 优先）
+    - cleanup_and_start_service: 清理+启动+健康检查
+    - diagnose_service_failure: 错误诊断
     """
     
     __LLM_MODEL__ = 'gpt-4o-mini'
-    __SYSTEM_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.system.j2'
-    __USER_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.user.j2'
+    # 使用简化版 prompt（v2 版本依赖智能工具，prompt 更短）
+    __SYSTEM_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.system.v2.j2'
+    __USER_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.user.v2.j2'
     __OUTPUT_PARSER__ = WebEnvBuilderParser
     __MAX_TOOL_ITERATIONS__ = 40
     
@@ -145,15 +153,29 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
         return vars
     
     def get_available_tools(self):
-        """返回可用工具 - 只使用 shell 工具，不使用 Python 解释器"""
-        allowed_tools = [
+        """
+        返回可用工具
+        
+        包含两类工具：
+        1. 基础工具：文件操作、命令执行
+        2. 智能工具：框架检测、服务管理（封装复杂逻辑，减少 prompt 负担）
+        """
+        # 基础工具
+        base_tools = [
             'get_file',
             'write_to_file',
             'execute_ls_command',
             'execute_linux_command',
             'set_environment_variable'
         ]
-        return [TOOLS[name] for name in allowed_tools if name in TOOLS]
+        tools_list = [TOOLS[name] for name in base_tools if name in TOOLS]
+        
+        # 添加智能 Web 服务工具
+        # 这些工具封装了复杂逻辑，让 Agent 按需调用而不是记忆冗长的规则
+        for tool in WEB_SERVICE_TOOLS.values():
+            tools_list.append(tool)
+        
+        return tools_list
     
     def get_cost(self, *args, **kw) -> float:
         total_cost = 0

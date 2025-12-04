@@ -1,0 +1,2271 @@
+[
+  {
+    "cve_id": "CVE-2025-4949",
+    "description": "In Eclipse JGit versions 7.2.0.202503040940-r and older, the ManifestParser class used by the repo command and the AmazonS3 class used to implement the experimental amazons3 git transport protocol allowing to store git pack files in an Amazon S3 bucket, are vulnerable to XML External Entity (XXE) attacks when parsing XML files. This vulnerability can lead to information disclosure, denial of service, and other security issues.",
+    "product": "Eclipse JGit",
+    "vendor": "Eclipse JGit",
+    "version": "7.2.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-611",
+        "value": "CWE-611 CWE-611 Improper Restriction of XML External Entity Reference"
+      },
+      {
+        "id": "CWE-827",
+        "value": "CWE-827 CWE-827 Improper Control of Document Type Definition"
+      }
+    ],
+    "cvss_score": 6.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://projects.eclipse.org/projects/technology.jgit/releases/7.2.1",
+      "https://projects.eclipse.org/projects/technology.jgit/releases/7.1.1",
+      "https://projects.eclipse.org/projects/technology.jgit/releases/7.0.1",
+      "https://projects.eclipse.org/projects/technology.jgit/releases/6.10.1",
+      "https://gitlab.eclipse.org/security/vulnerability-reports/-/issues/281",
+      "https://gitlab.eclipse.org/security/cve-assignement/-/issues/64",
+      "https://projects.eclipse.org/projects/technology.jgit/releases/5.13.4"
+    ],
+    "published_date": "2025-05-21T06:47:19.777Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\4xxx\\CVE-2025-4949.json"
+  },
+  {
+    "cve_id": "CVE-2025-1225",
+    "description": "A vulnerability, which was classified as problematic, has been found in ywoa up to 2024.07.03. This issue affects the function extract of the file c-main/src/main/java/com/redmoon/weixin/aes/XMLParse.java of the component WXCallBack Interface. The manipulation leads to xml external entity reference. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used. Upgrading to version 2024.07.04 is able to address this issue. It is recommended to upgrade the affected component.",
+    "product": "ywoa",
+    "vendor": "n/a",
+    "version": "2024.07.03",
+    "cwe_ids": [
+      {
+        "id": "CWE-611",
+        "value": "CWE-611 XML External Entity Reference"
+      },
+      {
+        "id": "CWE-610",
+        "value": "CWE-610 Externally Controlled Reference"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.295211",
+      "https://vuldb.com/?ctiid.295211",
+      "https://gitee.com/r1bbit/yimioa/issues/IBI81R"
+    ],
+    "published_date": "2025-02-12T20:00:19.103Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\1xxx\\CVE-2025-1225.json"
+  },
+  {
+    "cve_id": "CVE-2025-4577",
+    "description": "The Smash Balloon Social Post Feed – Simple Social Feeds for WordPress plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the data-color attribute in all versions up to, and including, 4.3.1 due to insufficient input sanitization and output escaping. This makes it possible for authenticated attackers, with Contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+    "product": "Smash Balloon Social Post Feed – Simple Social Feeds for WordPress",
+    "vendor": "smub",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/ec3de7e2-4a29-401f-af2c-0ce78d768eae?source=cve",
+      "https://plugins.trac.wordpress.org/browser/custom-facebook-feed/tags/4.3.0/assets/js/cff-scripts.js#L245",
+      "https://plugins.trac.wordpress.org/browser/custom-facebook-feed/tags/4.3.0/assets/js/cff-scripts.js#L254"
+    ],
+    "published_date": "2025-06-10T11:22:52.591Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\4xxx\\CVE-2025-4577.json"
+  },
+  {
+    "cve_id": "CVE-2025-23742",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Podamibe Nepal Podamibe Twilio Private Call allows Reflected XSS. This issue affects Podamibe Twilio Private Call: from n/a through 1.0.1.",
+    "product": "Podamibe Twilio Private Call",
+    "vendor": "Podamibe Nepal",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/podamibe-twilio-private-call/vulnerability/wordpress-podamibe-twilio-private-call-plugin-1-0-1-reflected-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-02-14T12:44:31.376Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\23xxx\\CVE-2025-23742.json"
+  },
+  {
+    "cve_id": "CVE-2025-5539",
+    "description": "The Simple Contact Form Plugin for WordPress – WP Easy Contact plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the plugin's 'emd_mb_meta' shortcode in all versions up to, and including, 4.0.0 due to insufficient input sanitization and output escaping on user supplied attributes. This makes it possible for authenticated attackers, with contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+    "product": "Simple Contact Form Plugin for WordPress – WP Easy Contact",
+    "vendor": "emarket-design",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/f584a439-3373-441c-a73e-5931ae63e7ae?source=cve",
+      "https://plugins.trac.wordpress.org/changeset?sfp_email=&sfph_mail=&reponame=&old=3296825%40wp-easy-contact&new=3296825%40wp-easy-contact&sfp_email=&sfph_mail="
+    ],
+    "published_date": "2025-06-04T04:22:41.667Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5539.json"
+  },
+  {
+    "cve_id": "CVE-2025-3766",
+    "description": "The Login Lockdown & Protection plugin for WordPress is vulnerable to unauthorized nonce access due to a missing capability check on the ajax_run_tool function in all versions up to, and including, 2.11. This makes it possible for authenticated attackers, with Subscriber-level access and above, to obtain a valid nonce that can be used to generate a global unlock key, which can in turn be used to add arbitrary IP address to the plugin allowlist. This can only by exploited on new installations where the site administrator hasn't visited the loginlockdown page yet.",
+    "product": "Login Lockdown & Protection",
+    "vendor": "webfactory",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-862",
+        "value": "CWE-862 CWE-862 Missing Authorization"
+      }
+    ],
+    "cvss_score": 5.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/ac9a3848-f486-475b-b2c7-ea1007bb30d3?source=cve",
+      "https://plugins.trac.wordpress.org/browser/login-lockdown/trunk/libs/ajax.php#L17",
+      "https://plugins.trac.wordpress.org/changeset/3286814/login-lockdown"
+    ],
+    "published_date": "2025-05-07T04:22:54.046Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\3xxx\\CVE-2025-3766.json"
+  },
+  {
+    "cve_id": "CVE-2025-46919",
+    "description": "Adobe Experience Manager versions 6.5.22 and earlier are affected by a stored Cross-Site Scripting (XSS) vulnerability that could be abused by a low privileged attacker to inject malicious scripts into vulnerable form fields. Malicious JavaScript may be executed in a victim’s browser when they browse to the page containing the vulnerable field.",
+    "product": "Adobe Experience Manager",
+    "vendor": "Adobe",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross-site Scripting (Stored XSS) (CWE-79)"
+      }
+    ],
+    "cvss_score": 5.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://helpx.adobe.com/security/products/experience-manager/apsb25-48.html"
+    ],
+    "published_date": "2025-06-10T22:19:22.427Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\46xxx\\CVE-2025-46919.json"
+  },
+  {
+    "cve_id": "CVE-2025-24683",
+    "description": "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') vulnerability in WPChill RSVP and Event Management Plugin allows SQL Injection. This issue affects RSVP and Event Management Plugin: from n/a through 2.7.14.",
+    "product": "RSVP and Event Management Plugin",
+    "vendor": "WPChill",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+      }
+    ],
+    "cvss_score": 7.6,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/rsvp/vulnerability/wordpress-rsvp-and-event-management-plugin-2-7-14-sql-injection-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-01-24T17:24:57.418Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\24xxx\\CVE-2025-24683.json"
+  },
+  {
+    "cve_id": "CVE-2025-7122",
+    "description": "A vulnerability was found in Campcodes Complaint Management System 1.0. It has been declared as critical. This vulnerability affects unknown code of the file /admin/index.php. The manipulation of the argument Username leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "Complaint Management System",
+    "vendor": "Campcodes",
+    "version": "1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.315034",
+      "https://vuldb.com/?ctiid.315034",
+      "https://vuldb.com/?submit.605914",
+      "https://github.com/ez-lbz/poc/issues/45",
+      "https://www.campcodes.com/"
+    ],
+    "published_date": "2025-07-07T09:32:06.704Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\7xxx\\CVE-2025-7122.json"
+  },
+  {
+    "cve_id": "CVE-2025-26345",
+    "description": "A CWE-306 \"Missing Authentication for Critical Function\" in maxprofile/menu/routes.lua in Q-Free MaxTime less than or equal to version 2.11.0 allows an unauthenticated remote attacker to edit user group permissions via crafted HTTP requests.",
+    "product": "MaxTime",
+    "vendor": "Q-Free",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-306",
+        "value": "CWE-306 CWE-306 Missing Authentication for Critical Function"
+      }
+    ],
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "references": [
+      "https://www.nozominetworks.com/labs/vulnerability-advisories-cve-2025-26345"
+    ],
+    "published_date": "2025-02-12T13:27:28.560Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\26xxx\\CVE-2025-26345.json"
+  },
+  {
+    "cve_id": "CVE-2025-5317",
+    "description": "An improper access restriction to a folder in Bitdefender Endpoint Security Tools for Mac (BEST) before 7.20.52.200087 allows local users with administrative privileges to bypass the configured uninstall password protection. An unauthorized user with sudo privileges can manually remove the application directory (/Applications/Endpoint Security for Mac.app/) and the related directories within /Library/Bitdefender/AVP without needing the uninstall password.",
+    "product": "Endpoint Security Tools for Mac",
+    "vendor": "Bitdefender",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-862",
+        "value": "CWE-862 CWE-862 Missing Authorization"
+      }
+    ],
+    "cvss_score": 6.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://bitdefender.com/consumer/security-advisories/improper-access-restriction-to-critical-folder-in-bitdefender-endpoint-security-tools-for-mac"
+    ],
+    "published_date": "2025-11-11T08:02:22.504Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5317.json"
+  },
+  {
+    "cve_id": "CVE-2025-53238",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Toast Plugins Toast Mobile Menu toast-responsive-menu allows Stored XSS.This issue affects Toast Mobile Menu: from n/a through <= 1.0.7.",
+    "product": "Toast Mobile Menu",
+    "vendor": "Toast Plugins",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": null,
+    "severity": null,
+    "references": [
+      "https://vdp.patchstack.com/database/Wordpress/Plugin/toast-responsive-menu/vulnerability/wordpress-toast-mobile-menu-plugin-1-0-7-cross-site-scripting-xss-vulnerability"
+    ],
+    "published_date": "2025-10-22T14:32:30.376Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\53xxx\\CVE-2025-53238.json"
+  },
+  {
+    "cve_id": "CVE-2025-2839",
+    "description": "The WP Import Export Lite plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the ‘wpiePreviewData’ function in all versions up to, and including, 3.9.27 due to insufficient input sanitization and output escaping. This makes it possible for authenticated attackers, with Contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+    "product": "WP Import Export Lite",
+    "vendor": "vjinfotech",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/a8ca1ead-1bc5-4ccc-9034-559db27f5e82?source=cve",
+      "https://plugins.trac.wordpress.org/browser/wp-import-export-lite/trunk/assets/js/wpie-export-admin.min.js",
+      "https://plugins.trac.wordpress.org/changeset/3274100/"
+    ],
+    "published_date": "2025-04-22T05:27:23.927Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\2xxx\\CVE-2025-2839.json"
+  },
+  {
+    "cve_id": "CVE-2025-21306",
+    "description": "Windows Telephony Service Remote Code Execution Vulnerability",
+    "product": "Windows 10 Version 1809",
+    "vendor": "Microsoft",
+    "version": "10.0.17763.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-122",
+        "value": "CWE-122 CWE-122: Heap-based Buffer Overflow"
+      }
+    ],
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "references": [
+      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-21306"
+    ],
+    "published_date": "2025-01-14T18:03:54.635Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\21xxx\\CVE-2025-21306.json"
+  },
+  {
+    "cve_id": "CVE-2025-43563",
+    "description": "ColdFusion versions 2025.1, 2023.13, 2021.19 and earlier are affected by an Improper Access Control vulnerability that could result in arbitrary file system read. A high-privileged attacker could leverage this vulnerability to access or modify sensitive data without proper authorization. Exploitation of this issue does not require user interaction, and scope is changed.",
+    "product": "ColdFusion",
+    "vendor": "Adobe",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-284",
+        "value": "CWE-284 Improper Access Control (CWE-284)"
+      }
+    ],
+    "cvss_score": 9.1,
+    "severity": "CRITICAL",
+    "references": [
+      "https://helpx.adobe.com/security/products/coldfusion/apsb25-52.html"
+    ],
+    "published_date": "2025-05-13T20:49:26.593Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\43xxx\\CVE-2025-43563.json"
+  },
+  {
+    "cve_id": "CVE-2025-5212",
+    "description": "A vulnerability was found in PHPGurukul Employee Record Management System 1.3. It has been classified as critical. Affected is an unknown function of the file /admin/editempexp.php. The manipulation of the argument emp1name leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "Employee Record Management System",
+    "vendor": "PHPGurukul",
+    "version": "1.3",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.310308",
+      "https://vuldb.com/?ctiid.310308",
+      "https://vuldb.com/?submit.582812",
+      "https://github.com/ting-06a/myCVE/issues/3",
+      "https://phpgurukul.com/"
+    ],
+    "published_date": "2025-05-26T23:00:15.228Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5212.json"
+  },
+  {
+    "cve_id": "CVE-2025-9451",
+    "description": "The Smartcat Translator for WPML plugin for WordPress is vulnerable to time-based SQL Injection via the ‘orderby’ parameter in all versions up to, and including, 3.1.69 due to insufficient escaping on the user supplied parameter and lack of sufficient preparation on the existing SQL query.  This makes it possible for authenticated attackers, with Author-level access and above, to append additional SQL queries into already existing queries that can be used to extract sensitive information from the database.",
+    "product": "Smartcat Translator for WPML",
+    "vendor": "smartcatai",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/c9ebc817-ccae-4ad2-8eea-eade1c2a1a0c?source=cve",
+      "https://plugins.trac.wordpress.org/browser/smartcat-wpml/trunk/includes/Services/App/Includes/TranslationRequestFinder.php#L30",
+      "https://wordpress.org/plugins/smartcat-wpml/#developers"
+    ],
+    "published_date": "2025-09-11T07:24:59.052Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\9xxx\\CVE-2025-9451.json"
+  },
+  {
+    "cve_id": "CVE-2025-32533",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Matat Technologies Deliver via Shipos for WooCommerce allows Reflected XSS. This issue affects Deliver via Shipos for WooCommerce: from n/a through 2.1.7.",
+    "product": "Deliver via Shipos for WooCommerce",
+    "vendor": "Matat Technologies",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/wc-shipos-delivery/vulnerability/wordpress-deliver-via-shipos-for-woocommerce-plugin-2-1-4-reflected-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-04-17T15:47:36.795Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\32xxx\\CVE-2025-32533.json"
+  },
+  {
+    "cve_id": "CVE-2025-54686",
+    "description": "Deserialization of Untrusted Data vulnerability in scriptsbundle Exertio allows Object Injection. This issue affects Exertio: from n/a through 1.3.2.",
+    "product": "Exertio",
+    "vendor": "scriptsbundle",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-502",
+        "value": "CWE-502 CWE-502 Deserialization of Untrusted Data"
+      }
+    ],
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "references": [
+      "https://patchstack.com/database/wordpress/theme/exertio/vulnerability/wordpress-exertio-theme-1-3-2-php-object-injection-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-08-14T10:34:48.233Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54686.json"
+  },
+  {
+    "cve_id": "CVE-2025-54460",
+    "description": "The vulnerability, if exploited, could allow an authenticated miscreant \n(with privileges to create or access publication targets of type Text \nFile or HDFS) to upload and persist files that could potentially be \nexecuted.",
+    "product": "PI Integrator",
+    "vendor": "AVEVA",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-434",
+        "value": "CWE-434 CWE-434"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://www.aveva.com/content/dam/aveva/documents/support/cyber-security-updates/SecurityBulletin_AVEVA-2025-004.pdf",
+      "https://www.cisa.gov/news-events/ics-advisories/icsa-25-224-04"
+    ],
+    "published_date": "2025-08-21T20:00:11.036Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54460.json"
+  },
+  {
+    "cve_id": "CVE-2025-30543",
+    "description": "Missing Authorization vulnerability in swayam.tejwani Menu Duplicator allows Exploiting Incorrectly Configured Access Control Security Levels. This issue affects Menu Duplicator: from n/a through 1.0.",
+    "product": "Menu Duplicator",
+    "vendor": "swayam.tejwani",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-862",
+        "value": "CWE-862 CWE-862 Missing Authorization"
+      }
+    ],
+    "cvss_score": 4.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/copy-menu/vulnerability/wordpress-menu-duplicator-plugin-1-0-broken-access-control-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-24T13:46:51.070Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\30xxx\\CVE-2025-30543.json"
+  },
+  {
+    "cve_id": "CVE-2025-58197",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in mra13 / Team Tips and Tricks HQ Simple Download Monitor allows Stored XSS. This issue affects Simple Download Monitor: from n/a through 3.9.34.",
+    "product": "Simple Download Monitor",
+    "vendor": "mra13 / Team Tips and Tricks HQ",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/simple-download-monitor/vulnerability/wordpress-simple-download-monitor-plugin-3-9-34-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-08-27T17:45:41.882Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58197.json"
+  },
+  {
+    "cve_id": "CVE-2025-9930",
+    "description": "A security vulnerability has been detected in 1000projects Beauty Parlour Management System 1.0. This impacts an unknown function of the file /admin/contact-us.php. The manipulation of the argument mobnumber leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed publicly and may be used.",
+    "product": "Beauty Parlour Management System",
+    "vendor": "1000projects",
+    "version": "1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.322332",
+      "https://vuldb.com/?ctiid.322332",
+      "https://vuldb.com/?submit.642912",
+      "https://github.com/Miker132/CVE-/issues/2"
+    ],
+    "published_date": "2025-09-03T21:32:09.494Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\9xxx\\CVE-2025-9930.json"
+  },
+  {
+    "cve_id": "CVE-2025-40836",
+    "description": "Ericsson Indoor Connect 8855 contains an improper input validation vulnerability which if exploited can allow an attacker to execute commands with escalated privileges.",
+    "product": "Indoor Connect 8855",
+    "vendor": "Ericsson",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-20",
+        "value": "CWE-20 CWE-20 Improper Input Validation"
+      }
+    ],
+    "cvss_score": 8.7,
+    "severity": "HIGH",
+    "references": [
+      "https://www.ericsson.com/en/about-us/security/psirt/e2025-09-25"
+    ],
+    "published_date": "2025-09-25T14:49:02.613Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\40xxx\\CVE-2025-40836.json"
+  },
+  {
+    "cve_id": "CVE-2025-34117",
+    "description": "A remote code execution vulnerability exists in multiple Netcore and Netis routers models with firmware released prior to August 2014 due to the presence of an undocumented backdoor listener on UDP port 53413. Exact version boundaries remain undocumented. An unauthenticated remote attacker can send specially crafted UDP packets to execute arbitrary commands on the affected device. This backdoor uses a hardcoded authentication mechanism and accepts shell commands post-authentication. Some device models include a non-standard implementation of the `echo` command, which may affect exploitability.",
+    "product": "Router firmware",
+    "vendor": "Netcore Technology",
+    "version": "Prior to August 2014",
+    "cwe_ids": [
+      {
+        "id": "CWE-912",
+        "value": "CWE-912 CWE-912 Hidden Functionality"
+      },
+      {
+        "id": "CWE-306",
+        "value": "CWE-306 CWE-306 Missing Authentication for Critical Function"
+      },
+      {
+        "id": "CWE-78",
+        "value": "CWE-78 CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+      }
+    ],
+    "cvss_score": 9.3,
+    "severity": "CRITICAL",
+    "references": [
+      "https://web.archive.org/web/20140828114943/http://blog.trendmicro.com/trendlabs-security-intelligence/netis-routers-leave-wide-open-backdoor/",
+      "https://www.seebug.org/vuldb/ssvid-90227",
+      "https://raw.githubusercontent.com/rapid7/metasploit-framework/master/modules/exploits/linux/misc/netcore_udp_53413_backdoor.rb",
+      "https://www.shadowserver.org/what-we-do/network-reporting/netcore-netis-router-vulnerability-scan-report/",
+      "https://vulners.com/metasploit/MSF:EXPLOIT-LINUX-MISC-NETCORE_UDP_53413_BACKDOOR-",
+      "https://www.vulncheck.com/advisories/netcore-netis-routers-backdoor-rce",
+      "https://www.exploit-db.com/exploits/43387"
+    ],
+    "published_date": "2025-07-16T21:02:57.281Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\34xxx\\CVE-2025-34117.json"
+  },
+  {
+    "cve_id": "CVE-2025-33056",
+    "description": "Improper access control in Microsoft Local Security Authority Server (lsasrv) allows an unauthorized attacker to deny service over a network.",
+    "product": "Windows 10 Version 1809",
+    "vendor": "Microsoft",
+    "version": "10.0.17763.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-284",
+        "value": "CWE-284 CWE-284: Improper Access Control"
+      }
+    ],
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "references": [
+      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33056"
+    ],
+    "published_date": "2025-06-10T17:02:33.076Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\33xxx\\CVE-2025-33056.json"
+  },
+  {
+    "cve_id": "CVE-2025-58320",
+    "description": "Delta Electronics DIALink has an Directory Traversal Authentication Bypass Vulnerability.",
+    "product": "DIALink",
+    "vendor": "Delta Electronics",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-22",
+        "value": "CWE-22 CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+      }
+    ],
+    "cvss_score": 7.3,
+    "severity": "HIGH",
+    "references": [
+      "https://filecenter.deltaww.com/news/download/doc/Delta-PCSA-2025-00016_DIALink%20-%20Directory%20Traversal%20Authentication%20Bypass%20Vulnerability.pdf"
+    ],
+    "published_date": "2025-09-11T08:51:49.981Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58320.json"
+  },
+  {
+    "cve_id": "CVE-2025-29909",
+    "description": "CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Extended Procedures (SDLS-EP) to secure communications between a spacecraft running the core Flight System (cFS) and a ground station. In versions 1.3.3 and prior, a heap buffer overflow vulnerability in CryptoLib's `Crypto_TC_ApplySecurity()` allows an attacker to craft a malicious TC frame that causes out-of-bounds memory writes. This can result in denial of service (DoS) or, under certain conditions, remote code execution (RCE). Any application or system that relies on CryptoLib for Telecommand (TC) processing and does not strictly validate incoming TC frames is at risk. This includes satellite ground stations or mission control software where attackers can inject malformed frames. A patch is available at commit c7e8a8745ff4b5e9bd7e500e91358e86d5abedcc.",
+    "product": "CryptoLib",
+    "vendor": "nasa",
+    "version": "<= 1.3.3",
+    "cwe_ids": [
+      {
+        "id": "CWE-191",
+        "value": "CWE-191 CWE-191: Integer Underflow (Wrap or Wraparound)"
+      },
+      {
+        "id": "CWE-787",
+        "value": "CWE-787 CWE-787: Out-of-bounds Write"
+      }
+    ],
+    "cvss_score": 8.9,
+    "severity": "HIGH",
+    "references": [
+      "https://github.com/nasa/CryptoLib/security/advisories/GHSA-q2pc-c3jx-3852",
+      "https://github.com/nasa/CryptoLib/commit/c7e8a8745ff4b5e9bd7e500e91358e86d5abedcc"
+    ],
+    "published_date": "2025-03-17T21:55:14.979Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\29xxx\\CVE-2025-29909.json"
+  },
+  {
+    "cve_id": "CVE-2025-54871",
+    "description": "Electron Capture facilitates video playback for screen-sharing and capture. In versions 2.19.1 and below, the elecap app on macOS allows local unprivileged users to bypass macOS TCC privacy protections by enabling ELECTRON_RUN_AS_NODE. This environment variable allows arbitrary Node.js code to be executed via the -e flag, which runs inside the main Electron context, inheriting any previously granted TCC entitlements (such as access to Documents, Downloads, etc.). This issue is fixed in version 2.20.0.",
+    "product": "electroncapture",
+    "vendor": "steveseguin",
+    "version": "< 2.20.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-284",
+        "value": "CWE-284 CWE-284: Improper Access Control"
+      }
+    ],
+    "cvss_score": 5.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://github.com/steveseguin/electroncapture/security/advisories/GHSA-8849-p3j4-jq4h",
+      "https://github.com/steveseguin/electroncapture/commit/3837f54e75911bb99fa45cfa138a5e401d16f531",
+      "https://github.com/steveseguin/electroncapture/releases/tag/2.20.0"
+    ],
+    "published_date": "2025-08-05T00:03:09.902Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54871.json"
+  },
+  {
+    "cve_id": "CVE-2025-11079",
+    "description": "A security flaw has been discovered in Campcodes Farm Management System 1.0. Affected by this issue is some unknown functionality. The manipulation results in file and directory information exposure. The attack may be performed from remote. The exploit has been released to the public and may be exploited.",
+    "product": "Farm Management System",
+    "vendor": "Campcodes",
+    "version": "1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-538",
+        "value": "CWE-538 File and Directory Information Exposure"
+      },
+      {
+        "id": "CWE-200",
+        "value": "CWE-200 Information Disclosure"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.326119",
+      "https://vuldb.com/?ctiid.326119",
+      "https://vuldb.com/?submit.661199",
+      "https://github.com/unicorn33355/cve/issues/1",
+      "https://www.campcodes.com/"
+    ],
+    "published_date": "2025-09-27T21:02:07.130Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11079.json"
+  },
+  {
+    "cve_id": "CVE-2025-4218",
+    "description": "A vulnerability was found in handrew browserpilot up to 0.2.51. It has been declared as critical. Affected by this vulnerability is the function GPTSeleniumAgent of the file browserpilot/browserpilot/agents/gpt_selenium_agent.py. The manipulation of the argument instructions leads to code injection. The attack needs to be approached locally. The exploit has been disclosed to the public and may be used.",
+    "product": "browserpilot",
+    "vendor": "handrew",
+    "version": "0.2.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 4.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.307195",
+      "https://vuldb.com/?ctiid.307195",
+      "https://vuldb.com/?submit.562383",
+      "https://github.com/handrew/browserpilot/issues/20",
+      "https://github.com/handrew/browserpilot/issues/20#issue-2999815850"
+    ],
+    "published_date": "2025-05-02T20:31:06.936Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\4xxx\\CVE-2025-4218.json"
+  },
+  {
+    "cve_id": "CVE-2025-10606",
+    "description": "A weakness has been identified in Portabilis i-Educar up to 2.10. This issue affects some unknown processing of the file /module/Configuracao/ConfiguracaoMovimentoGeral. This manipulation of the argument tipoacao causes cross site scripting. Remote exploitation of the attack is possible. The exploit has been made available to the public and could be exploited.",
+    "product": "i-Educar",
+    "vendor": "Portabilis",
+    "version": "2.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross Site Scripting"
+      },
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.324626",
+      "https://vuldb.com/?ctiid.324626",
+      "https://vuldb.com/?submit.649874",
+      "https://github.com/marcelomulder/CVE/blob/main/i-educar/CVE-2025-10606.md",
+      "https://github.com/marcelomulder/CVE/blob/main/i-educar/Cross-Site%20Scripting%20(XSS)%20Reflected%20endpoint%20%60.module.Configuracao.ConfiguracaoMovimentoGeral%60%20parameter%20%60tipoacao%60.md"
+    ],
+    "published_date": "2025-09-17T18:02:05.701Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\10xxx\\CVE-2025-10606.json"
+  },
+  {
+    "cve_id": "CVE-2025-39458",
+    "description": "Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion') vulnerability in Mikado-Themes Foton allows PHP Local File Inclusion.This issue affects Foton: from n/a through 2.5.2.",
+    "product": "Foton",
+    "vendor": "Mikado-Themes",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-98",
+        "value": "CWE-98 CWE-98 Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')"
+      }
+    ],
+    "cvss_score": 8.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/theme/foton/vulnerability/wordpress-foton-theme-2-5-2-local-file-inclusion-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-05-19T18:47:55.062Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\39xxx\\CVE-2025-39458.json"
+  },
+  {
+    "cve_id": "CVE-2025-26537",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in NotFound GDPR Tools allows Stored XSS. This issue affects GDPR Tools: from n/a through 1.0.2.",
+    "product": "GDPR Tools",
+    "vendor": "NotFound",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/gdpr-tools/vulnerability/wordpress-gdpr-tools-plugin-1-0-2-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-26T14:24:18.188Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\26xxx\\CVE-2025-26537.json"
+  },
+  {
+    "cve_id": "CVE-2025-25300",
+    "description": "smartbanner.js is a customizable smart app banner for iOS and Android. Prior to version 1.14.1, clicking on smartbanner `View` link and navigating to 3rd party page leaves `window.opener` exposed. It may allow hostile third parties to abuse `window.opener`, e.g. by redirection or injection on the original page with smartbanner. `rel=\"noopener\"` is automatically populated to links as of `v1.14.1` which is a recommended upgrade to resolve the vulnerability. Some workarounds are available for those who cannot upgrade. Ensure `View` link is only taking users to App Store or Google Play Store where security is guarded by respective app store security teams. If `View` link is going to a third party page, limit smartbanner.js to be used on iOS that decreases the scope of the vulnerability since as of Safari 12.1,  `rel=\"noopener\"` is imposed on all `target=\"_blank\"` links. Version 1.14.1 of smartbanner.js contains a fix for the issue.",
+    "product": "smartbanner.js",
+    "vendor": "ain",
+    "version": "< 1.14.1",
+    "cwe_ids": [
+      {
+        "id": "CWE-601",
+        "value": "CWE-601 CWE-601: URL Redirection to Untrusted Site ('Open Redirect')"
+      },
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 1.3,
+    "severity": "LOW",
+    "references": [
+      "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+      "https://github.com/ain/smartbanner.js/security/advisories/GHSA-9mrq-cjgh-32g2",
+      "https://github.com/ain/smartbanner.js/commit/fce8c31dfe04033d9d005a89694d3e7a60784f89"
+    ],
+    "published_date": "2025-02-18T17:38:52.088Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\25xxx\\CVE-2025-25300.json"
+  },
+  {
+    "cve_id": "CVE-2025-58177",
+    "description": "n8n is an open source workflow automation platform. From 1.24.0 to before 1.107.0, there is a stored cross-site scripting (XSS) vulnerability in @n8n/n8n-nodes-langchain.chatTrigger. An authorized user can configure the LangChain Chat Trigger node with malicious JavaScript in the initialMessages field and enable public access so that the payload is executed in the browser of any user who visits the resulting public chat URL. This can be used for phishing or to steal cookies or other sensitive data from users accessing the public chat link. The issue is fixed in version 1.107.0. Updating to 1.107.0 or later is recommended. As a workaround, the affected chatTrigger node can be disabled. No other workarounds are known.",
+    "product": "n8n",
+    "vendor": "n8n-io",
+    "version": ">= 1.24.0, < 1.107.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 5.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://github.com/n8n-io/n8n/security/advisories/GHSA-mvh4-2cm2-6hpg",
+      "https://github.com/n8n-io/n8n/pull/18148",
+      "https://github.com/n8n-io/n8n/commit/d4ef191be0b39b65efa68559a3b8d5dad2e102b2"
+    ],
+    "published_date": "2025-09-15T16:49:06.949Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58177.json"
+  },
+  {
+    "cve_id": "CVE-2025-55007",
+    "description": "Knowage is an open source analytics and business intelligence suite. Prior to version 8.1.37, Knowage is vulnerable to server-side request forgery. The vulnerability allows attackers to send requests to arbitrary hosts/paths. Since the attacker is not able to read the response, the impact of this vulnerability is limited. However, an attacker could be able to leverage this vulnerability to scan the internal network. This issue has been patched in version 8.1.37.",
+    "product": "Knowage-Server",
+    "vendor": "KnowageLabs",
+    "version": "< 8.1.37",
+    "cwe_ids": [
+      {
+        "id": "CWE-918",
+        "value": "CWE-918 CWE-918: Server-Side Request Forgery (SSRF)"
+      }
+    ],
+    "cvss_score": 3.5,
+    "severity": "LOW",
+    "references": [
+      "https://github.com/KnowageLabs/Knowage-Server/security/advisories/GHSA-7f6m-ph57-52w6"
+    ],
+    "published_date": "2025-09-01T15:46:04.915Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\55xxx\\CVE-2025-55007.json"
+  },
+  {
+    "cve_id": "CVE-2025-7162",
+    "description": "A vulnerability, which was classified as critical, has been found in PHPGurukul Zoo Management System 2.1. This issue affects some unknown processing of the file /admin/add-foreigners-ticket.php. The manipulation of the argument cprice leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "Zoo Management System",
+    "vendor": "PHPGurukul",
+    "version": "2.1",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.315101",
+      "https://vuldb.com/?ctiid.315101",
+      "https://vuldb.com/?submit.606369",
+      "https://github.com/f1rstb100d/myCVE/issues/105",
+      "https://phpgurukul.com/"
+    ],
+    "published_date": "2025-07-08T04:32:06.277Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\7xxx\\CVE-2025-7162.json"
+  },
+  {
+    "cve_id": "CVE-2025-60001",
+    "description": "An Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Juniper Networks Junos Space allows an attacker to inject script tags in the Generate Report page that, when visited by another user, enables the attacker to execute commands with the target's permissions, including an administrator.\nThis issue affects all versions of Junos Space before 24.1R4.",
+    "product": "Junos Space",
+    "vendor": "Juniper Networks",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation (XSS or 'Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.1,
+    "severity": "MEDIUM",
+    "references": [
+      "https://supportportal.juniper.net/JSA103140"
+    ],
+    "published_date": "2025-10-09T16:17:11.512Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\60xxx\\CVE-2025-60001.json"
+  },
+  {
+    "cve_id": "CVE-2025-10390",
+    "description": "A weakness has been identified in CRMEB up to 5.6.1. The affected element is the function editAddress of the file app/services/user/UserAddressServices.php. Executing manipulation of the argument ID can lead to improper authorization. The attack may be launched remotely. The exploit has been made available to the public and could be exploited. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "product": "CRMEB",
+    "vendor": "n/a",
+    "version": "5.6.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-285",
+        "value": "CWE-285 Improper Authorization"
+      },
+      {
+        "id": "CWE-266",
+        "value": "CWE-266 Incorrect Privilege Assignment"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.323825",
+      "https://vuldb.com/?ctiid.323825",
+      "https://vuldb.com/?submit.644578",
+      "https://github.com/August829/Yu/blob/main/58ead8e7e08bfb014.md"
+    ],
+    "published_date": "2025-09-14T04:32:05.427Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\10xxx\\CVE-2025-10390.json"
+  },
+  {
+    "cve_id": "CVE-2025-4573",
+    "description": "Mattermost versions 10.7.x <= 10.7.1, 10.6.x <= 10.6.3, 10.5.x <= 10.5.4, 9.11.x <= 9.11.13 fail to properly validate LDAP group ID attributes, allowing an authenticated administrator with PermissionSysconsoleWriteUserManagementGroups permission to execute LDAP search filter injection via the PUT /api/v4/ldap/groups/{remote_id}/link API when objectGUID is configured as the Group ID Attribute.",
+    "product": "Mattermost",
+    "vendor": "Mattermost",
+    "version": "10.7.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-90",
+        "value": "CWE-90 CWE-90: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')"
+      }
+    ],
+    "cvss_score": 4.1,
+    "severity": "MEDIUM",
+    "references": [
+      "https://mattermost.com/security-updates"
+    ],
+    "published_date": "2025-06-11T10:22:24.103Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\4xxx\\CVE-2025-4573.json"
+  },
+  {
+    "cve_id": "CVE-2025-1893",
+    "description": "A vulnerability was found in Open5GS up to 2.7.2. It has been declared as problematic. Affected by this vulnerability is the function gmm_state_authentication of the file src/amf/gmm-sm.c of the component AMF. The manipulation leads to denial of service. The attack can be launched remotely. This vulnerability allows a single UE to crash the AMF, resulting in the complete loss of mobility and session management services and causing a network-wide outage. All registered UEs will lose connectivity, and new registrations will be blocked until the AMF is restarted, leading to a high availability impact. The exploit has been disclosed to the public and may be used. The patch is named e31e9965f00d9c744a7f728497cb4f3e97744ee8. It is recommended to apply a patch to fix this issue.",
+    "product": "Open5GS",
+    "vendor": "n/a",
+    "version": "2.7.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-404",
+        "value": "CWE-404 Denial of Service"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.298411",
+      "https://vuldb.com/?ctiid.298411",
+      "https://vuldb.com/?submit.505952",
+      "https://github.com/open5gs/open5gs/issues/3707",
+      "https://github.com/open5gs/open5gs/issues/3707#issuecomment-2639620554",
+      "https://github.com/open5gs/open5gs/issues/3707#issue-2833194192",
+      "https://github.com/open5gs/open5gs/commit/e31e9965f00d9c744a7f728497cb4f3e97744ee8"
+    ],
+    "published_date": "2025-03-04T00:00:13.888Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\1xxx\\CVE-2025-1893.json"
+  },
+  {
+    "cve_id": "CVE-2025-53020",
+    "description": "Late Release of Memory after Effective Lifetime vulnerability in Apache HTTP Server.\n\nThis issue affects Apache HTTP Server: from 2.4.17 up to 2.4.63.\n\nUsers are recommended to upgrade to version 2.4.64, which fixes the issue.",
+    "product": "Apache HTTP Server",
+    "vendor": "Apache Software Foundation",
+    "version": "2.4.17",
+    "cwe_ids": [
+      {
+        "id": "CWE-401",
+        "value": "CWE-401 CWE-401 Missing Release of Memory after Effective Lifetime"
+      }
+    ],
+    "cvss_score": null,
+    "severity": null,
+    "references": [
+      "https://httpd.apache.org/security/vulnerabilities_24.html"
+    ],
+    "published_date": "2025-07-10T16:59:06.340Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\53xxx\\CVE-2025-53020.json"
+  },
+  {
+    "cve_id": "CVE-2025-6162",
+    "description": "A vulnerability has been found in TOTOLINK EX1200T 4.1.2cu.5232_B20210713 and classified as critical. Affected by this vulnerability is an unknown functionality of the file /boafrm/formMultiAP of the component HTTP POST Request Handler. The manipulation of the argument submit-url leads to buffer overflow. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "EX1200T",
+    "vendor": "TOTOLINK",
+    "version": "4.1.2cu.5232_B20210713",
+    "cwe_ids": [
+      {
+        "id": "CWE-120",
+        "value": "CWE-120 Buffer Overflow"
+      },
+      {
+        "id": "CWE-119",
+        "value": "CWE-119 Memory Corruption"
+      }
+    ],
+    "cvss_score": 8.7,
+    "severity": "HIGH",
+    "references": [
+      "https://vuldb.com/?id.312637",
+      "https://vuldb.com/?ctiid.312637",
+      "https://vuldb.com/?submit.593600",
+      "https://github.com/Lena-lyy/cve/blob/main/688/8.md",
+      "https://github.com/Lena-lyy/cve/blob/main/688/8.md#poc",
+      "https://www.totolink.net/"
+    ],
+    "published_date": "2025-06-17T05:00:11.195Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\6xxx\\CVE-2025-6162.json"
+  },
+  {
+    "cve_id": "CVE-2025-23985",
+    "description": "Cross-Site Request Forgery (CSRF) vulnerability in Brainvireinfo Dynamic URL SEO allows Cross Site Request Forgery. This issue affects Dynamic URL SEO: from n/a through 1.0.",
+    "product": "Dynamic URL SEO",
+    "vendor": "Brainvireinfo",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-352",
+        "value": "CWE-352 CWE-352 Cross-Site Request Forgery (CSRF)"
+      }
+    ],
+    "cvss_score": 5.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/dynamic-url-seo/vulnerability/wordpress-dynamic-url-seo-plugin-1-0-cross-site-request-forgery-csrf-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-01-31T08:23:56.375Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\23xxx\\CVE-2025-23985.json"
+  },
+  {
+    "cve_id": "CVE-2025-7248",
+    "description": "IrfanView CADImage Plugin DWG File Parsing Memory Corruption Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of IrfanView CADImage Plugin. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the parsing of DWG files. The issue results from the lack of proper validation of user-supplied data, which can result in a memory corruption condition. An attacker can leverage this vulnerability to execute code in the context of the current process. Was ZDI-CAN-26098.",
+    "product": "IrfanView",
+    "vendor": "IrfanView",
+    "version": "4.70.0.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-119",
+        "value": "CWE-119 CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer"
+      }
+    ],
+    "cvss_score": null,
+    "severity": null,
+    "references": [
+      "https://www.zerodayinitiative.com/advisories/ZDI-25-501/"
+    ],
+    "published_date": "2025-07-21T19:56:11.888Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\7xxx\\CVE-2025-7248.json"
+  },
+  {
+    "cve_id": "CVE-2025-58223",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Chris Taylor VoucherPress allows Stored XSS. This issue affects VoucherPress: from n/a through 1.5.7.",
+    "product": "VoucherPress",
+    "vendor": "Chris Taylor",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 5.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/voucherpress/vulnerability/wordpress-voucherpress-plugin-1-5-7-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-09-22T18:23:46.209Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58223.json"
+  },
+  {
+    "cve_id": "CVE-2025-22648",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Plugin Devs Blog, Posts and Category Filter for Elementor allows Stored XSS.This issue affects Blog, Posts and Category Filter for Elementor: from n/a through 2.0.1.",
+    "product": "Blog, Posts and Category Filter for Elementor",
+    "vendor": "Plugin Devs",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/blog-posts-and-category-for-elementor/vulnerability/wordpress-blog-posts-and-category-filter-for-elementor-plugin-2-0-1-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-27T15:06:29.755Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\22xxx\\CVE-2025-22648.json"
+  },
+  {
+    "cve_id": "CVE-2025-48964",
+    "description": "ping in iputils before 20250602 allows a denial of service (application error in adaptive ping mode or incorrect data collection) via a crafted ICMP Echo Reply packet, because a zero timestamp can lead to large intermediate values that have an integer overflow when squared during statistics calculations. NOTE: this issue exists because of an incomplete fix for CVE-2025-47268 (that fix was only about timestamp calculations, and it did not account for a specific scenario where the original timestamp in the ICMP payload is zero).",
+    "product": "iputils",
+    "vendor": "iputils",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-190",
+        "value": "CWE-190 CWE-190 Integer Overflow or Wraparound"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://github.com/iputils/iputils/issues",
+      "https://github.com/iputils/iputils/security/advisories/GHSA-25fr-jw29-74f9",
+      "https://bugzilla.suse.com/show_bug.cgi?id=1243772",
+      "https://github.com/iputils/iputils/commit/afa36390394a6e0cceba03b52b59b6d41710608c",
+      "https://github.com/iputils/iputils/releases/tag/20250602"
+    ],
+    "published_date": "2025-07-22T00:00:00.000Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\48xxx\\CVE-2025-48964.json"
+  },
+  {
+    "cve_id": "CVE-2025-5178",
+    "description": "A vulnerability classified as critical has been found in Realce Tecnologia Queue Ticket Kiosk up to 20250517. Affected is an unknown function of the file /adm/ajax.php of the component Image File Handler. The manipulation of the argument files[] leads to unrestricted upload. It is possible to launch the attack remotely. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "product": "Queue Ticket Kiosk",
+    "vendor": "Realce Tecnologia",
+    "version": "20250517",
+    "cwe_ids": [
+      {
+        "id": "CWE-434",
+        "value": "CWE-434 Unrestricted Upload"
+      },
+      {
+        "id": "CWE-284",
+        "value": "CWE-284 Improper Access Controls"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.310266",
+      "https://vuldb.com/?ctiid.310266",
+      "https://vuldb.com/?submit.579851"
+    ],
+    "published_date": "2025-05-26T09:00:08.875Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5178.json"
+  },
+  {
+    "cve_id": "CVE-2025-27719",
+    "description": "Unauthenticated attackers can query an API endpoint and get device details.",
+    "product": "Cloud portal",
+    "vendor": "Growatt",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-639",
+        "value": "CWE-639 CWE-639 Authorization Bypass Through User-Controlled Key"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.cisa.gov/news-events/ics-advisories/icsa-25-105-04"
+    ],
+    "published_date": "2025-04-15T21:09:29.425Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\27xxx\\CVE-2025-27719.json"
+  },
+  {
+    "cve_id": "CVE-2025-62032",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in tagDiv tagDiv Cloud Library td-cloud-library allows DOM-Based XSS.This issue affects tagDiv Cloud Library: from n/a through < 3.9.2.",
+    "product": "tagDiv Cloud Library",
+    "vendor": "tagDiv",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": null,
+    "severity": null,
+    "references": [
+      "https://vdp.patchstack.com/database/Wordpress/Plugin/td-cloud-library/vulnerability/wordpress-tagdiv-cloud-library-plugin-3-9-cross-site-scripting-xss-vulnerability"
+    ],
+    "published_date": "2025-11-06T15:55:29.230Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\62xxx\\CVE-2025-62032.json"
+  },
+  {
+    "cve_id": "CVE-2025-1867",
+    "description": "Inconsistent Interpretation of HTTP Requests ('HTTP Request/Response Smuggling') vulnerability in ithewei libhv allows HTTP Response Smuggling.This issue affects libhv: through 1.3.3.",
+    "product": "libhv",
+    "vendor": "ithewei",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-444",
+        "value": "CWE-444 CWE-444 Inconsistent Interpretation of HTTP Requests ('HTTP Request/Response Smuggling')"
+      }
+    ],
+    "cvss_score": 10,
+    "severity": "CRITICAL",
+    "references": [
+      "https://github.com/ithewei/libhv/pull/689"
+    ],
+    "published_date": "2025-03-03T08:48:56.284Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\1xxx\\CVE-2025-1867.json"
+  },
+  {
+    "cve_id": "CVE-2025-53634",
+    "description": "Chall-Manager is a platform-agnostic system able to start Challenges on Demand of a player. The HTTP Gateway processes headers, but with no timeout set. With a slow loris attack, an attacker could cause Denial of Service (DoS). Exploitation does not require authentication nor authorization, so anyone can exploit it. It should nonetheless not be exploitable as it is highly recommended to bury Chall-Manager deep within the infrastructure due to its large capabilities, so no users could reach the system. Patch has been implemented by commit 1385bd8 and shipped in v0.1.4.",
+    "product": "chall-manager",
+    "vendor": "ctfer-io",
+    "version": "< 0.1.4",
+    "cwe_ids": [
+      {
+        "id": "CWE-770",
+        "value": "CWE-770 CWE-770: Allocation of Resources Without Limits or Throttling"
+      }
+    ],
+    "cvss_score": 8.7,
+    "severity": "HIGH",
+    "references": [
+      "https://github.com/ctfer-io/chall-manager/security/advisories/GHSA-ggmv-j932-q89q",
+      "https://github.com/ctfer-io/chall-manager/commit/1385bd869142651146cd0b123085f91cec698636",
+      "https://github.com/ctfer-io/chall-manager/releases/tag/v0.1.4"
+    ],
+    "published_date": "2025-07-10T19:39:57.816Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\53xxx\\CVE-2025-53634.json"
+  },
+  {
+    "cve_id": "CVE-2025-32680",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Grade Us, Inc. Review Stream allows Stored XSS. This issue affects Review Stream: from n/a through 1.6.7.",
+    "product": "Review Stream",
+    "vendor": "Grade Us, Inc.",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 5.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/review-stream/vulnerability/wordpress-review-stream-plugin-1-6-7-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-04-09T16:09:13.264Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\32xxx\\CVE-2025-32680.json"
+  },
+  {
+    "cve_id": "CVE-2025-31927",
+    "description": "Deserialization of Untrusted Data vulnerability in themeton Acerola allows Object Injection. This issue affects Acerola: from n/a through 1.6.5.",
+    "product": "Acerola",
+    "vendor": "themeton",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-502",
+        "value": "CWE-502 CWE-502 Deserialization of Untrusted Data"
+      }
+    ],
+    "cvss_score": 9.8,
+    "severity": "CRITICAL",
+    "references": [
+      "https://patchstack.com/database/wordpress/theme/acerola/vulnerability/wordpress-acerola-1-6-5-php-object-injection-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-05-23T12:44:00.642Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\31xxx\\CVE-2025-31927.json"
+  },
+  {
+    "cve_id": "CVE-2025-11107",
+    "description": "A vulnerability was found in code-projects Simple Scheduling System 1.0. This issue affects some unknown processing of the file /schedulingsystem/addcourse.php. Performing manipulation of the argument corcode results in sql injection. The attack is possible to be carried out remotely. The exploit has been made public and could be used.",
+    "product": "Simple Scheduling System",
+    "vendor": "code-projects",
+    "version": "1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.326188",
+      "https://vuldb.com/?ctiid.326188",
+      "https://vuldb.com/?submit.662444",
+      "https://github.com/WANGshuyan2025/cve/issues/4",
+      "https://code-projects.org/"
+    ],
+    "published_date": "2025-09-28T14:32:06.045Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11107.json"
+  },
+  {
+    "cve_id": "CVE-2025-32257",
+    "description": "Exposure of Sensitive System Information Due to Uncleared Debug Information vulnerability in 1clickmigration 1 Click WordPress Migration allows Retrieve Embedded Sensitive Data. This issue affects 1 Click WordPress Migration: from n/a through 2.2.",
+    "product": "1 Click WordPress Migration",
+    "vendor": "1clickmigration",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-1258",
+        "value": "CWE-1258 CWE-1258 Exposure of Sensitive System Information Due to Uncleared Debug Information"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/1-click-migration/vulnerability/wordpress-1-click-wordpress-migration-plugin-2-1-sensitive-data-exposure-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-04-04T15:59:30.490Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\32xxx\\CVE-2025-32257.json"
+  },
+  {
+    "cve_id": "CVE-2025-43836",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in confuzzledduck Syndicate Out allows Reflected XSS.This issue affects Syndicate Out: from n/a through 0.9.",
+    "product": "Syndicate Out",
+    "vendor": "confuzzledduck",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/syndicate-out/vulnerability/wordpress-syndicate-out-0-9-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-05-19T18:22:02.030Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\43xxx\\CVE-2025-43836.json"
+  },
+  {
+    "cve_id": "CVE-2025-32172",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Yuri Baranov YaMaps for WordPress allows Stored XSS. This issue affects YaMaps for WordPress: from n/a through 0.6.31.",
+    "product": "YaMaps for WordPress",
+    "vendor": "Yuri Baranov",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/yamaps/vulnerability/wordpress-yamaps-for-wordpress-plugin-0-6-31-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-04-04T15:58:52.335Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\32xxx\\CVE-2025-32172.json"
+  },
+  {
+    "cve_id": "CVE-2025-54137",
+    "description": "HAX CMS NodeJS allows users to manage their microsite universe with a NodeJS backend. Versions 11.0.9 and below were distributed with hardcoded default credentials for the user and superuser accounts. Additionally, the application has default private keys for JWTs. Users aren't prompted to change credentials or secrets during installation, and there is no way to change them through the UI. An unauthenticated attacker can read the default user credentials and JWT private keys from the public haxtheweb GitHub repositories. These credentials and keys can be used to access unconfigured self-hosted instances of the application, modify sites, and perform further attacks. This is fixed in version 11.0.10.",
+    "product": "issues",
+    "vendor": "haxtheweb",
+    "version": "< 11.0.10",
+    "cwe_ids": [
+      {
+        "id": "CWE-1392",
+        "value": "CWE-1392 CWE-1392: Use of Default Credentials"
+      }
+    ],
+    "cvss_score": 7.3,
+    "severity": "HIGH",
+    "references": [
+      "https://github.com/haxtheweb/issues/security/advisories/GHSA-5fpv-5qvh-7cf3",
+      "https://github.com/haxtheweb/haxcms-nodejs/commit/6dc2441c876350ca6fe9fbaecb058d92ef442869",
+      "https://github.com/haxtheweb/haxcms-nodejs/blob/main/src/lib/HAXCMS.js#L1614"
+    ],
+    "published_date": "2025-07-22T21:34:20.201Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54137.json"
+  },
+  {
+    "cve_id": "CVE-2025-12468",
+    "description": "The FunnelKit Automations – Email Marketing Automation and CRM for WordPress & WooCommerce plugin for WordPress is vulnerable to Sensitive Information Exposure in all versions up to, and including, 3.6.4.1 via the '/wc-coupons/' REST API endpoint. This is due to the endpoint being marked as a public API (`public_api = true`), which results in the endpoint being registered with `permission_callback => '__return_true'`, bypassing all authentication and capability checks. This makes it possible for unauthenticated attackers to extract sensitive data including all WooCommerce coupon codes, coupon IDs, and expiration status.",
+    "product": "FunnelKit Automations – Email Marketing Automation and CRM for WordPress & WooCommerce",
+    "vendor": "amans2k",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-200",
+        "value": "CWE-200 CWE-200 Exposure of Sensitive Information to an Unauthorized Actor"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/1d2a2032-3d39-4195-8e6c-ab884164721a?source=cve",
+      "https://plugins.trac.wordpress.org/browser/wp-marketing-automations/trunk/includes/api/wc/class-bwfan-api-wc-coupons.php#L19",
+      "https://plugins.trac.wordpress.org/browser/wp-marketing-automations/trunk/includes/class-bwfan-api-loader.php#L119"
+    ],
+    "published_date": "2025-11-05T09:27:39.398Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\12xxx\\CVE-2025-12468.json"
+  },
+  {
+    "cve_id": "CVE-2025-0060",
+    "description": "SAP BusinessObjects Business Intelligence Platform allows an authenticated user with restricted access to inject malicious JS code which can read sensitive information from the server and send it to the attacker. The attacker could further use this information to impersonate as a high privileged user causing high impact on confidentiality and integrity of the application.",
+    "product": "SAP BusinessObjects Business Intelligence Platform",
+    "vendor": "SAP_SE",
+    "version": "ENTERPRISE 420",
+    "cwe_ids": [
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 CWE-94: Improper Control of Generation of Code"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://me.sap.com/notes/3474398",
+      "https://url.sap/sapsecuritypatchday"
+    ],
+    "published_date": "2025-01-14T00:09:14.051Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0060.json"
+  },
+  {
+    "cve_id": "CVE-2025-11027",
+    "description": "A vulnerability was identified in givanz Vvveb up to 1.0.7.2. Affected by this issue is some unknown functionality of the component SVG File Handler. Such manipulation leads to cross site scripting. The attack may be launched remotely. The exploit is publicly available and might be used. Once again the project maintainer reacted very professional: \"I accept the existence of these vulnerabilities. (...) I fixed the code to remove these vulnerabilities and will push the code to github and make a new release.\"",
+    "product": "Vvveb",
+    "vendor": "givanz",
+    "version": "1.0.7.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross Site Scripting"
+      },
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      }
+    ],
+    "cvss_score": 4.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.325965",
+      "https://vuldb.com/?ctiid.325965",
+      "https://vuldb.com/?submit.657184",
+      "https://gist.github.com/KhanMarshaI/b90045ee823866a52f33615776b5a6ec"
+    ],
+    "published_date": "2025-09-26T16:02:05.547Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11027.json"
+  },
+  {
+    "cve_id": "CVE-2025-28900",
+    "description": "Cross-Site Request Forgery (CSRF) vulnerability in webgarb TabGarb Pro allows Stored XSS. This issue affects TabGarb Pro: from n/a through 2.6.",
+    "product": "TabGarb Pro",
+    "vendor": "webgarb",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-352",
+        "value": "CWE-352 CWE-352 Cross-Site Request Forgery (CSRF)"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/tabgarb/vulnerability/wordpress-tabgarb-pro-plugin-2-6-csrf-to-stored-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-11T21:00:51.708Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\28xxx\\CVE-2025-28900.json"
+  },
+  {
+    "cve_id": "CVE-2025-11909",
+    "description": "A weakness has been identified in Shenzhen Ruiming Technology Streamax Crocus 1.3.40. The impacted element is the function queryLast of the file /RepairRecord.do?Action=QueryLast. Executing manipulation of the argument orderField can lead to sql injection. The attack may be performed from remote. The exploit has been made available to the public and could be exploited. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "product": "Streamax Crocus",
+    "vendor": "Shenzhen Ruiming Technology",
+    "version": "1.3.40",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.328919",
+      "https://vuldb.com/?ctiid.328919",
+      "https://vuldb.com/?submit.671412",
+      "https://github.com/FightingLzn9/vul/blob/main/%E6%B7%B1%E5%9C%B3%E5%B8%82%E9%94%90%E6%98%8E%E6%8A%80%E6%9C%AF%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8Crocus%E7%B3%BB%E7%BB%9F-2.md"
+    ],
+    "published_date": "2025-10-17T18:32:07.643Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11909.json"
+  },
+  {
+    "cve_id": "CVE-2025-54712",
+    "description": "Missing Authorization vulnerability in hashthemes Easy Elementor Addons allows Exploiting Incorrectly Configured Access Control Security Levels. This issue affects Easy Elementor Addons: from n/a through 2.2.7.",
+    "product": "Easy Elementor Addons",
+    "vendor": "hashthemes",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-862",
+        "value": "CWE-862 CWE-862 Missing Authorization"
+      }
+    ],
+    "cvss_score": 4.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/easy-elementor-addons/vulnerability/wordpress-easy-elementor-addons-plugin-plugin-2-2-7-broken-access-control-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-08-14T18:21:46.895Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54712.json"
+  },
+  {
+    "cve_id": "CVE-2025-12920",
+    "description": "A flaw has been found in qianfox FoxCMS up to 1.2.16. Affected by this vulnerability is the function add/edit of the file app/admin/controller/Product.php. This manipulation of the argument Title causes cross site scripting. It is possible to initiate the attack remotely. The exploit has been published and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "product": "FoxCMS",
+    "vendor": "qianfox",
+    "version": "1.2.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross Site Scripting"
+      },
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      }
+    ],
+    "cvss_score": 4.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.331640",
+      "https://vuldb.com/?ctiid.331640",
+      "https://vuldb.com/?submit.680851",
+      "https://vuldb.com/?submit.680852",
+      "https://vuldb.com/?submit.680853",
+      "https://github.com/21151213732/CVE/blob/main/FoxCMS-XSS2.md",
+      "https://github.com/21151213732/CVE/blob/main/FoxCMS-XSS3.md"
+    ],
+    "published_date": "2025-11-09T23:02:05.902Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\12xxx\\CVE-2025-12920.json"
+  },
+  {
+    "cve_id": "CVE-2025-54467",
+    "description": "When a Java command with password parameters is executed and terminated by NeuVector for Process rule violation the password will appear in the NeuVector security event log.",
+    "product": "neuvector",
+    "vendor": "SUSE",
+    "version": "5.0.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-522",
+        "value": "CWE-522 CWE-522: Insufficiently Protected Credentials"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://bugzilla.suse.com/show_bug.cgi?id=CVE-2025-54467",
+      "https://github.com/neuvector/neuvector/security/advisories/GHSA-w54x-xfxg-4gxq"
+    ],
+    "published_date": "2025-09-17T12:29:36.480Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54467.json"
+  },
+  {
+    "cve_id": "CVE-2025-47659",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in voidcoders WPBakery Visual Composer WHMCS Elements allows Stored XSS. This issue affects WPBakery Visual Composer WHMCS Elements: from n/a through 1.0.4.1.",
+    "product": "WPBakery Visual Composer WHMCS Elements",
+    "vendor": "voidcoders",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/void-visual-whmcs-element/vulnerability/wordpress-wpbakery-visual-composer-whmcs-elements-1-0-4-1-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-05-07T14:20:47.065Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\47xxx\\CVE-2025-47659.json"
+  },
+  {
+    "cve_id": "CVE-2025-4390",
+    "description": "The WP Private Content Plus plugin for WordPress is vulnerable to Sensitive Information Exposure in all versions up to, and including, 3.6.2 via the 'validate_restrictions' function. This makes it possible for unauthenticated attackers to extract sensitive data including the content of resticted posts on archive and feed pages.",
+    "product": "WP Private Content Plus",
+    "vendor": "nimeshrmr",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-200",
+        "value": "CWE-200 CWE-200 Exposure of Sensitive Information to an Unauthorized Actor"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/4c305546-1548-4b77-a484-d7c51d829792?source=cve",
+      "https://plugins.trac.wordpress.org/browser/wp-private-content-plus/trunk/classes/class-wppcp-private-posts-pages.php#L138",
+      "https://plugins.trac.wordpress.org/browser/wp-private-content-plus/trunk/classes/class-wppcp-private-posts-pages.php#L211"
+    ],
+    "published_date": "2025-08-12T02:24:46.766Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\4xxx\\CVE-2025-4390.json"
+  },
+  {
+    "cve_id": "CVE-2025-54061",
+    "description": "WeGIA is an open source web manager with a focus on the Portuguese language and charitable institutions. A SQL Injection vulnerability was identified in versions prior to 3.4.6 in the `idatendido_familiares` parameter of the `/html/funcionario/dependente_editarDoc.php` endpoint. This vulnerability allows attacker to manipulate SQL queries and access sensitive database information, such as table names and sensitive data. Version 3.4.6 fixes the issue.",
+    "product": "WeGIA",
+    "vendor": "LabRedesCefetRJ",
+    "version": "< 3.4.6",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+      }
+    ],
+    "cvss_score": 9.4,
+    "severity": "CRITICAL",
+    "references": [
+      "https://github.com/LabRedesCefetRJ/WeGIA/security/advisories/GHSA-g47q-vfpj-g9mr"
+    ],
+    "published_date": "2025-07-17T14:30:21.098Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\54xxx\\CVE-2025-54061.json"
+  },
+  {
+    "cve_id": "CVE-2025-1509",
+    "description": "The The Show Me The Cookies plugin for WordPress is vulnerable to arbitrary shortcode execution in all versions up to, and including, 1.0. This is due to the software allowing users to execute an action that does not properly validate a value before running do_shortcode. This makes it possible for unauthenticated attackers to execute arbitrary shortcodes.",
+    "product": "Show Me The Cookies",
+    "vendor": "versluis",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 CWE-94 Improper Control of Generation of Code ('Code Injection')"
+      }
+    ],
+    "cvss_score": 7.3,
+    "severity": "HIGH",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/65d15ceb-ab39-4088-a289-7244063aedf8?source=cve",
+      "https://wordpress.org/plugins/show-me-the-cookies/"
+    ],
+    "published_date": "2025-02-22T03:20:59.817Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\1xxx\\CVE-2025-1509.json"
+  },
+  {
+    "cve_id": "CVE-2025-48093",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Calvaweb Password only login password-only-login allows Reflected XSS.This issue affects Password only login: from n/a through <= 0.2.",
+    "product": "Password only login",
+    "vendor": "Calvaweb",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": null,
+    "severity": null,
+    "references": [
+      "https://vdp.patchstack.com/database/Wordpress/Plugin/password-only-login/vulnerability/wordpress-password-only-login-plugin-0-2-reflected-cross-site-scripting-xss-vulnerability"
+    ],
+    "published_date": "2025-10-22T14:32:06.499Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\48xxx\\CVE-2025-48093.json"
+  },
+  {
+    "cve_id": "CVE-2025-58291",
+    "description": "Denial of service (DoS) vulnerability in the office service. Successful exploitation of this vulnerability may affect availability.",
+    "product": "HarmonyOS",
+    "vendor": "Huawei",
+    "version": "5.1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-29",
+        "value": "CWE-29 CWE-29 Path Traversal: '\\..\\filename'"
+      }
+    ],
+    "cvss_score": 3.3,
+    "severity": "LOW",
+    "references": [
+      "https://consumer.huawei.com/en/support/bulletin/2025/10/"
+    ],
+    "published_date": "2025-10-11T08:51:04.949Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58291.json"
+  },
+  {
+    "cve_id": "CVE-2025-57963",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in Zoho Subscriptions Zoho Billing allows DOM-Based XSS. This issue affects Zoho Billing: from n/a through 4.1.",
+    "product": "Zoho Billing",
+    "vendor": "Zoho Subscriptions",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/zoho-subscriptions/vulnerability/wordpress-zoho-billing-plugin-4-1-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-09-22T18:24:42.363Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\57xxx\\CVE-2025-57963.json"
+  },
+  {
+    "cve_id": "CVE-2025-46385",
+    "description": "CWE-918 Server-Side Request Forgery (SSRF)",
+    "product": "Windows",
+    "vendor": "Emby",
+    "version": "4.8",
+    "cwe_ids": [
+      {
+        "id": "CWE-918",
+        "value": "CWE-918 CWE-918 Server-Side Request Forgery (SSRF)"
+      }
+    ],
+    "cvss_score": 8.6,
+    "severity": "HIGH",
+    "references": [
+      "https://www.gov.il/en/departments/dynamiccollectors/cve_advisories_listing?skip=0"
+    ],
+    "published_date": "2025-07-20T14:42:32.213Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\46xxx\\CVE-2025-46385.json"
+  },
+  {
+    "cve_id": "CVE-2025-58584",
+    "description": "In the HTTP request, the username and password are transferred directly in the URL as parameters. However, URLs can be stored in various systems such as server logs, browser histories or proxy servers. As a result, there is a high risk that this sensitive data will be disclosed unintentionally.",
+    "product": "Baggage Analytics",
+    "vendor": "SICK AG",
+    "version": "all versions",
+    "cwe_ids": [
+      {
+        "id": "CWE-598",
+        "value": "CWE-598 CWE-598 Use of GET Request Method With Sensitive Query Strings"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://sick.com/psirt",
+      "https://www.sick.com/media/docs/9/19/719/special_information_sick_operating_guidelines_cybersecurity_by_sick_en_im0106719.pdf",
+      "https://www.cisa.gov/resources-tools/resources/ics-recommended-practices",
+      "https://www.first.org/cvss/calculator/3.1",
+      "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0010.json",
+      "https://www.sick.com/.well-known/csaf/white/2025/sca-2025-0010.pdf"
+    ],
+    "published_date": "2025-10-06T07:01:04.945Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58584.json"
+  },
+  {
+    "cve_id": "CVE-2025-1707",
+    "description": "The Review Schema plugin for WordPress is vulnerable to Local File Inclusion in all versions up to, and including, 2.2.4 via post meta. This makes it possible for authenticated attackers, with contributor-level and above permissions, to include and execute arbitrary files on the server, allowing the execution of any PHP code in those files. This can be used to bypass access controls, obtain sensitive data, or achieve code execution in cases where php file type can be uploaded and included.",
+    "product": "Review Schema – Review & Structure Data Schema Plugin",
+    "vendor": "techlabpro1",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-98",
+        "value": "CWE-98 CWE-98 Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')"
+      }
+    ],
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/9b4de243-d337-4f29-a766-bcafb3848d1c?source=cve",
+      "https://plugins.trac.wordpress.org/browser/review-schema/tags/2.2.4/app/Shortcodes/ReviewSchema.php#L108",
+      "https://plugins.trac.wordpress.org/changeset/3253799/review-schema"
+    ],
+    "published_date": "2025-03-11T21:21:12.899Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\1xxx\\CVE-2025-1707.json"
+  },
+  {
+    "cve_id": "CVE-2025-6587",
+    "description": "System environment variables are recorded in Docker Desktop diagnostic logs, when using shell auto-completion. This leads to unintentional disclosure of sensitive information such as api keys, passwords, etc. \nA malicious actor with read access to these logs could obtain secrets and further use them to gain unauthorized access to other systems. Starting with version 4.43.0 Docker Desktop no longer logs system environment variables as part of diagnostics log collection.",
+    "product": "Docker Desktop",
+    "vendor": "Docker",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-532",
+        "value": "CWE-532 CWE-532 Insertion of Sensitive Information into Log File"
+      }
+    ],
+    "cvss_score": 5.2,
+    "severity": "MEDIUM",
+    "references": [
+      "https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/#check-the-logs"
+    ],
+    "published_date": "2025-07-03T10:03:27.155Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\6xxx\\CVE-2025-6587.json"
+  },
+  {
+    "cve_id": "CVE-2025-30818",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in mlaza jAlbum Bridge allows DOM-Based XSS. This issue affects jAlbum Bridge: from n/a through 2.0.17.",
+    "product": "jAlbum Bridge",
+    "vendor": "mlaza",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/jalbum-bridge/vulnerability/wordpress-jalbum-bridge-plugin-2-0-17-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-27T10:55:06.304Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\30xxx\\CVE-2025-30818.json"
+  },
+  {
+    "cve_id": "CVE-2025-6791",
+    "description": "In the monitoring event logs page, it is possible to alter the http request to insert a reflect payload in the DB. Caused by an Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') vulnerability in Centreon web (Monitoring event logs modules) allows SQL Injection.This issue affects web: 24.10.0, 24.04.0, 23.10.0.",
+    "product": "web",
+    "vendor": "Centreon",
+    "version": "24.10.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+      }
+    ],
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "references": [
+      "https://github.com/centreon/centreon/releases",
+      "https://thewatch.centreon.com/latest-security-bulletins-64/cve-2025-6791-centreon-web-all-versions-high-severity-4900"
+    ],
+    "published_date": "2025-08-22T18:56:28.027Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\6xxx\\CVE-2025-6791.json"
+  },
+  {
+    "cve_id": "CVE-2025-26677",
+    "description": "Uncontrolled resource consumption in Remote Desktop Gateway Service allows an unauthorized attacker to deny service over a network.",
+    "product": "Windows Server 2019",
+    "vendor": "Microsoft",
+    "version": "10.0.17763.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-400",
+        "value": "CWE-400 CWE-400: Uncontrolled Resource Consumption"
+      }
+    ],
+    "cvss_score": 7.5,
+    "severity": "HIGH",
+    "references": [
+      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-26677"
+    ],
+    "published_date": "2025-05-13T16:58:54.471Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\26xxx\\CVE-2025-26677.json"
+  },
+  {
+    "cve_id": "CVE-2025-11327",
+    "description": "A security vulnerability has been detected in Tenda AC18 15.03.05.19(6318). This vulnerability affects unknown code of the file /goform/SetUpnpCfg. The manipulation of the argument upnpEn leads to stack-based buffer overflow. It is possible to initiate the attack remotely. The exploit has been disclosed publicly and may be used.",
+    "product": "AC18",
+    "vendor": "Tenda",
+    "version": "15.03.05.19(6318)",
+    "cwe_ids": [
+      {
+        "id": "CWE-121",
+        "value": "CWE-121 Stack-based Buffer Overflow"
+      },
+      {
+        "id": "CWE-119",
+        "value": "CWE-119 Memory Corruption"
+      }
+    ],
+    "cvss_score": 8.7,
+    "severity": "HIGH",
+    "references": [
+      "https://vuldb.com/?id.327210",
+      "https://vuldb.com/?ctiid.327210",
+      "https://vuldb.com/?submit.664532",
+      "https://github.com/noahze01/IoT-vulnerable/blob/main/Tenda/AC18/SetUpnpCfg.md",
+      "https://www.tenda.com.cn/"
+    ],
+    "published_date": "2025-10-06T08:02:06.994Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11327.json"
+  },
+  {
+    "cve_id": "CVE-2025-58787",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in themifyme Themify Popup allows Stored XSS. This issue affects Themify Popup: from n/a through 1.4.4.",
+    "product": "Themify Popup",
+    "vendor": "themifyme",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 6.5,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/themify-popup/vulnerability/wordpress-themify-popup-plugin-1-4-4-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-09-05T13:44:56.560Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58787.json"
+  },
+  {
+    "cve_id": "CVE-2025-58641",
+    "description": "Server-Side Request Forgery (SSRF) vulnerability in kamleshyadav Exit Intent Popup allows Server Side Request Forgery. This issue affects Exit Intent Popup: from n/a through 1.0.1.",
+    "product": "Exit Intent Popup",
+    "vendor": "kamleshyadav",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-918",
+        "value": "CWE-918 CWE-918 Server-Side Request Forgery (SSRF)"
+      }
+    ],
+    "cvss_score": 5.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/exitintentpopup/vulnerability/wordpress-exit-intent-popup-plugin-1-0-1-server-side-request-forgery-ssrf-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-09-03T14:36:58.536Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\58xxx\\CVE-2025-58641.json"
+  },
+  {
+    "cve_id": "CVE-2025-11292",
+    "description": "A weakness has been identified in Belkin F9K1015 1.00.10. Affected is an unknown function of the file /goform/formBSSetSitesurvey. Executing manipulation of the argument wan_ipaddr can lead to command injection. The attack can be launched remotely. The exploit has been made available to the public and could be exploited. The vendor was contacted early about this disclosure but did not respond in any way.",
+    "product": "F9K1015",
+    "vendor": "Belkin",
+    "version": "1.00.10",
+    "cwe_ids": [
+      {
+        "id": "CWE-77",
+        "value": "CWE-77 Command Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.327173",
+      "https://vuldb.com/?ctiid.327173",
+      "https://vuldb.com/?submit.661295",
+      "https://github.com/panda666-888/vuls/blob/main/belkin/f9k1015/formBSSetSitesurvey.md",
+      "https://github.com/panda666-888/vuls/blob/main/belkin/f9k1015/formBSSetSitesurvey.md#poc"
+    ],
+    "published_date": "2025-10-05T14:02:05.574Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11292.json"
+  },
+  {
+    "cve_id": "CVE-2025-23563",
+    "description": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting') vulnerability in NotFound Explore pages allows Reflected XSS. This issue affects Explore pages: from n/a through 1.01.",
+    "product": "Explore pages",
+    "vendor": "NotFound",
+    "version": "n/a",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+      }
+    ],
+    "cvss_score": 7.1,
+    "severity": "HIGH",
+    "references": [
+      "https://patchstack.com/database/wordpress/plugin/explore-pages/vulnerability/wordpress-explore-pages-plugin-1-01-reflected-cross-site-scripting-xss-vulnerability?_s_id=cve"
+    ],
+    "published_date": "2025-03-03T13:30:12.026Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\23xxx\\CVE-2025-23563.json"
+  },
+  {
+    "cve_id": "CVE-2025-5011",
+    "description": "A vulnerability classified as problematic was found in moonlightL hexo-boot 4.3.0. This vulnerability affects unknown code of the file /admin/home/index.html of the component Dynamic List Page. The manipulation leads to cross site scripting. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "hexo-boot",
+    "vendor": "moonlightL",
+    "version": "4.3.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross Site Scripting"
+      },
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      }
+    ],
+    "cvss_score": 4.8,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.309664",
+      "https://vuldb.com/?ctiid.309664",
+      "https://vuldb.com/?submit.580588",
+      "https://github.com/trengh222/hexo-boot-xss2.0"
+    ],
+    "published_date": "2025-05-21T00:00:09.678Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5011.json"
+  },
+  {
+    "cve_id": "CVE-2025-23257",
+    "description": "NVIDIA DOCA contains a vulnerability in the collectx-clxapidev Debian package that could allow an actor with low privileges to escalate privileges. A successful exploit of this vulnerability might lead to escalation of privileges.",
+    "product": "NVIDIA DOCA with collectx-clxapidev",
+    "vendor": "NVIDIA",
+    "version": "All 2.9 versions prior to 2.9.3",
+    "cwe_ids": [
+      {
+        "id": "CWE-732",
+        "value": "CWE-732 CWE-732 Incorrect Permission Assignment for Critical Resource"
+      }
+    ],
+    "cvss_score": 7.3,
+    "severity": "HIGH",
+    "references": [
+      "https://nvd.nist.gov/vuln/detail/CVE-2025-23257",
+      "https://www.cve.org/CVERecord?id=CVE-2025-23257",
+      "https://nvidia.custhelp.com/app/answers/detail/a_id/5655"
+    ],
+    "published_date": "2025-09-04T15:51:16.367Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\23xxx\\CVE-2025-23257.json"
+  },
+  {
+    "cve_id": "CVE-2025-5790",
+    "description": "A vulnerability classified as critical was found in TOTOLINK X15 1.0.0-B20230714.1105. This vulnerability affects unknown code of the file /boafrm/formIpQoS of the component HTTP POST Request Handler. The manipulation of the argument mac leads to buffer overflow. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "X15",
+    "vendor": "TOTOLINK",
+    "version": "1.0.0-B20230714.1105",
+    "cwe_ids": [
+      {
+        "id": "CWE-120",
+        "value": "CWE-120 Buffer Overflow"
+      },
+      {
+        "id": "CWE-119",
+        "value": "CWE-119 Memory Corruption"
+      }
+    ],
+    "cvss_score": 8.7,
+    "severity": "HIGH",
+    "references": [
+      "https://vuldb.com/?id.311338",
+      "https://vuldb.com/?ctiid.311338",
+      "https://vuldb.com/?submit.591219",
+      "https://github.com/awindog/cve/blob/main/12.md",
+      "https://www.totolink.net/"
+    ],
+    "published_date": "2025-06-06T17:31:11.039Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5790.json"
+  },
+  {
+    "cve_id": "CVE-2025-12235",
+    "description": "A vulnerability was found in Tenda CH22 1.0.0.1. This vulnerability affects the function fromSetIpBind of the file /goform/SetIpBind. The manipulation of the argument page results in buffer overflow. The attack must originate from the local network. The exploit has been made public and could be used.",
+    "product": "CH22",
+    "vendor": "Tenda",
+    "version": "1.0.0.1",
+    "cwe_ids": [
+      {
+        "id": "CWE-120",
+        "value": "CWE-120 Buffer Overflow"
+      },
+      {
+        "id": "CWE-119",
+        "value": "CWE-119 Memory Corruption"
+      }
+    ],
+    "cvss_score": 8.6,
+    "severity": "HIGH",
+    "references": [
+      "https://vuldb.com/?id.329905",
+      "https://vuldb.com/?ctiid.329905",
+      "https://vuldb.com/?submit.673720",
+      "https://github.com/QIU-DIE/CVE/issues/16",
+      "https://www.tenda.com.cn/"
+    ],
+    "published_date": "2025-10-27T06:22:44.013Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\12xxx\\CVE-2025-12235.json"
+  },
+  {
+    "cve_id": "CVE-2025-53855",
+    "description": "An out-of-bounds write vulnerability exists in the XML parser functionality of GCC Productions Inc. Fade In 4.2.0. A specially crafted .fadein file can lead to an out-of-bounds write. An attacker can provide a malicious file to trigger this vulnerability.",
+    "product": "Fade In",
+    "vendor": "GCC Productions Inc.",
+    "version": "4.2.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-787",
+        "value": "CWE-787 CWE-787: Out-of-bounds Write"
+      }
+    ],
+    "cvss_score": 7.8,
+    "severity": "HIGH",
+    "references": [
+      "https://talosintelligence.com/vulnerability_reports/TALOS-2025-2250"
+    ],
+    "published_date": "2025-10-28T13:45:40.355Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\53xxx\\CVE-2025-53855.json"
+  },
+  {
+    "cve_id": "CVE-2025-5712",
+    "description": "A vulnerability has been found in SourceCodester Open Source Clinic Management System 1.0 and classified as critical. Affected by this vulnerability is an unknown functionality of the file /appointment.php. The manipulation of the argument patient leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "Open Source Clinic Management System",
+    "vendor": "SourceCodester",
+    "version": "1.0",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.311233",
+      "https://vuldb.com/?ctiid.311233",
+      "https://vuldb.com/?submit.590530",
+      "https://github.com/mysq13/CVE/issues/2",
+      "https://www.sourcecodester.com/"
+    ],
+    "published_date": "2025-06-06T02:31:07.348Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\5xxx\\CVE-2025-5712.json"
+  },
+  {
+    "cve_id": "CVE-2025-3979",
+    "description": "A vulnerability classified as problematic has been found in dazhouda lecms 3.0.3. This affects an unknown part of the file /index.php?my-password-ajax-1 of the component Password Change Handler. The manipulation leads to cross-site request forgery. It is possible to initiate the attack remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "lecms",
+    "vendor": "dazhouda",
+    "version": "3.0.3",
+    "cwe_ids": [
+      {
+        "id": "CWE-352",
+        "value": "CWE-352 Cross-Site Request Forgery"
+      },
+      {
+        "id": "CWE-862",
+        "value": "CWE-862 Missing Authorization"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.306315",
+      "https://vuldb.com/?ctiid.306315",
+      "https://vuldb.com/?submit.557787",
+      "https://github.com/dtwin88/cve-md/blob/main/lecms%20V3.0.3/lecms_3.md"
+    ],
+    "published_date": "2025-04-27T17:31:04.107Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\3xxx\\CVE-2025-3979.json"
+  },
+  {
+    "cve_id": "CVE-2025-9657",
+    "description": "A vulnerability was detected in O2OA up to 10.0-410. This issue affects some unknown processing of the file /x_program_center/jaxrs/script of the component Personal Profile Page. The manipulation of the argument name/alias/description results in cross site scripting. The attack may be launched remotely. The exploit is now public and may be used. The vendor replied in the GitHub issue (translated from simplified Chinese): \"This issue will be fixed in the new version.\"",
+    "product": "O2OA",
+    "vendor": "n/a",
+    "version": "10.0-410",
+    "cwe_ids": [
+      {
+        "id": "CWE-79",
+        "value": "CWE-79 Cross Site Scripting"
+      },
+      {
+        "id": "CWE-94",
+        "value": "CWE-94 Code Injection"
+      }
+    ],
+    "cvss_score": 5.1,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.321865",
+      "https://vuldb.com/?ctiid.321865",
+      "https://vuldb.com/?submit.637218",
+      "https://github.com/o2oa/o2oa/issues/173",
+      "https://github.com/o2oa/o2oa/issues/173#issuecomment-3212881726",
+      "https://github.com/o2oa/o2oa/issues/173#issue-3332925583"
+    ],
+    "published_date": "2025-08-29T15:32:09.592Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\9xxx\\CVE-2025-9657.json"
+  },
+  {
+    "cve_id": "CVE-2025-6930",
+    "description": "A vulnerability classified as critical has been found in PHPGurukul Zoo Management System 2.1. Affected is an unknown function of the file /admin/manage-foreigners-ticket.php. The manipulation of the argument ID leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+    "product": "Zoo Management System",
+    "vendor": "PHPGurukul",
+    "version": "2.1",
+    "cwe_ids": [
+      {
+        "id": "CWE-89",
+        "value": "CWE-89 SQL Injection"
+      },
+      {
+        "id": "CWE-74",
+        "value": "CWE-74 Injection"
+      }
+    ],
+    "cvss_score": 5.3,
+    "severity": "MEDIUM",
+    "references": [
+      "https://vuldb.com/?id.314442",
+      "https://vuldb.com/?ctiid.314442",
+      "https://vuldb.com/?submit.605579",
+      "https://github.com/f1rstb100d/myCVE/issues/100",
+      "https://phpgurukul.com/"
+    ],
+    "published_date": "2025-06-30T22:02:06.332Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\6xxx\\CVE-2025-6930.json"
+  },
+  {
+    "cve_id": "CVE-2025-30257",
+    "description": "Unauthenticated attackers can retrieve serial number of smart meters associated to a specific user account.",
+    "product": "Cloud portal",
+    "vendor": "Growatt",
+    "version": "0",
+    "cwe_ids": [
+      {
+        "id": "CWE-639",
+        "value": "CWE-639 CWE-639 Authorization Bypass Through User-Controlled Key"
+      }
+    ],
+    "cvss_score": 6.9,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.cisa.gov/news-events/ics-advisories/icsa-25-105-04"
+    ],
+    "published_date": "2025-04-15T21:53:13.608Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\30xxx\\CVE-2025-30257.json"
+  },
+  {
+    "cve_id": "CVE-2025-11241",
+    "description": "The Yoast SEO Premium plugin for WordPress is vulnerable to Stored Cross-Site Scripting in versions 25.7 to 25.9 due to a flawed regex used to remove an attribute in post content, which can be abused to inject arbitrary HTML attributes, including JavaScript event handlers. This vulnerability allows a user with Contributor access or higher to create a post containing a malicious JavaScript payload.",
+    "product": "Yoast SEO Premium",
+    "vendor": "n/a",
+    "version": "25.7",
+    "cwe_ids": [
+      {
+        "id": "CWE-80",
+        "value": "CWE-80 CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"
+      }
+    ],
+    "cvss_score": 6.4,
+    "severity": "MEDIUM",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/a6e3645d-ed1b-4c51-a463-c2691cb7168d?source=cve",
+      "https://developer.yoast.com/changelog/yoast-seo-premium/26.0/",
+      "https://sec.stealthcopter.com/regexss/"
+    ],
+    "published_date": "2025-10-03T01:56:44.222Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\11xxx\\CVE-2025-11241.json"
+  },
+  {
+    "cve_id": "CVE-2025-6038",
+    "description": "The Lisfinity Core - Lisfinity Core plugin used for pebas® Lisfinity WordPress theme plugin for WordPress is vulnerable to privilege escalation via password update in all versions up to, and including, 1.4.0. This is due to the plugin not properly validating a user's identity prior to updating their password. This makes it possible for authenticated attackers, with Subscriber-level access and above, to change arbitrary user's passwords, including those of administrators.",
+    "product": "Lisfinity Core - Lisfinity Core plugin used for pebas® Lisfinity WordPress theme",
+    "vendor": "pebas",
+    "version": "*",
+    "cwe_ids": [
+      {
+        "id": "CWE-639",
+        "value": "CWE-639 CWE-639 Authorization Bypass Through User-Controlled Key"
+      }
+    ],
+    "cvss_score": 8.8,
+    "severity": "HIGH",
+    "references": [
+      "https://www.wordfence.com/threat-intel/vulnerabilities/id/a3cd1c3e-5bb0-4653-8764-2ca38d9a7c77?source=cve",
+      "https://themeforest.net/item/lisfinity-classified-ads-wordpress-theme/26342611"
+    ],
+    "published_date": "2025-10-09T03:23:30.369Z",
+    "file_path": "c:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\6xxx\\CVE-2025-6038.json"
+  }
+]

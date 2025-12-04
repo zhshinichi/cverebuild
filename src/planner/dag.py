@@ -89,6 +89,8 @@ class PlanBuilder:
             yield from self._web_basic_steps(overrides)
         elif profile == "cloud-config":
             yield from self._cloud_steps(overrides)
+        elif profile == "freestyle":
+            yield from self._freestyle_steps(overrides)
         else:
             yield from self._native_steps(overrides)
 
@@ -223,4 +225,29 @@ class PlanBuilder:
             requires=["exploit-api"],
             environment="cloud",
             success_condition="verification.anomaly_detected == true",
+        )
+
+    def _freestyle_steps(self, overrides: Dict[str, object]):
+        """Freestyle 自由探索模式：简化的两步流程。
+        
+        1. 收集 CVE 信息
+        2. FreestyleAgent 自主完成分析、复现、验证全过程
+        """
+        yield PlanStep(
+            id="collect-info",
+            capability="InfoGenerator",
+            implementation=overrides.get("InfoGenerator", "KnowledgeBuilder"),
+            inputs=["cve_id", "cve_entry"],
+            outputs=["cve_knowledge"],
+            environment="control",
+        )
+        yield PlanStep(
+            id="freestyle-explore",
+            capability="FreestyleExplorer",
+            implementation=overrides.get("FreestyleExplorer", "FreestyleAgent"),
+            inputs=["cve_id", "cve_entry", "cve_knowledge"],
+            outputs=["freestyle_result", "verification_result"],
+            requires=["collect-info"],
+            environment="target",
+            success_condition="verification_result.passed == true",
         )

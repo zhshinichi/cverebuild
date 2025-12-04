@@ -2,10 +2,55 @@ import os
 import subprocess
 import json
 import csv
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 # 使用挂载目录，确保日志自动同步到本地
 # 如果在容器内且有挂载目录，使用挂载路径；否则使用 /shared
 LOGS_DIR = os.environ.get('SHARED_DIR', '/workspaces/submission/src/shared')
+
+# Prompts 目录路径
+PROMPTS_DIR = os.environ.get('PROMPTS_DIR', '/workspaces/submission/src/prompts')
+if not os.path.exists(PROMPTS_DIR):
+    # 尝试相对路径
+    _script_dir = os.path.dirname(os.path.abspath(__file__))
+    PROMPTS_DIR = os.path.join(_script_dir, '..', 'prompts')
+
+# Jinja2 环境 (延迟初始化)
+_jinja_env = None
+
+def _get_jinja_env():
+    """获取或初始化 Jinja2 环境"""
+    global _jinja_env
+    if _jinja_env is None:
+        _jinja_env = Environment(
+            loader=FileSystemLoader(PROMPTS_DIR),
+            autoescape=select_autoescape(['html', 'xml']),
+            trim_blocks=True,
+            lstrip_blocks=True
+        )
+    return _jinja_env
+
+
+def load_jinja_template(template_path: str, variables: dict = None) -> str:
+    """
+    加载并渲染 Jinja2 模板
+    
+    Args:
+        template_path: 模板相对路径，如 'projectSetup/projectSetup.system.j2'
+        variables: 模板变量字典
+    
+    Returns:
+        渲染后的字符串
+    
+    Example:
+        >>> prompt = load_jinja_template('exploiter/exploiter.system.j2', {'cve_id': 'CVE-2024-1234'})
+    """
+    if variables is None:
+        variables = {}
+    
+    env = _get_jinja_env()
+    template = env.get_template(template_path)
+    return template.render(**variables)
 if not os.path.exists(LOGS_DIR):
     LOGS_DIR = "/shared"  # 回退到原来的路径
 
