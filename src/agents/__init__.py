@@ -31,6 +31,7 @@ from .webDriverAgent import WebDriverAgent
 from .webExploitCritic import WebExploitCritic
 from .fixAdvisor import FixAdvisor
 from .webEnvBuilder import WebEnvBuilder
+from .webEnvCritic import WebEnvCritic
 
 # 新的分拆 Agents (Web 环境部署流水线)
 from .projectSetup import ProjectSetupAgent

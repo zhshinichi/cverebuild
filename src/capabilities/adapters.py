@@ -21,7 +21,8 @@ from agents import (
     ExploitCritic,
     CTFVerifier,
     SanityGuy,
-    WebEnvBuilder
+    WebEnvBuilder,
+    WebEnvCritic
 )
 from agents.configInferencer import ConfigInferencer
 
@@ -194,6 +195,7 @@ class WebAppDeployer(Capability):
         
         print(f"[WebAppDeployer] Deploying web application...")
         print(f"[WebAppDeployer] Software version: {sw_version}")
+        explicit_target_url = self.config.get('target_url')
         
         # ========== 智能端口检测 ==========
         # 优先级: 1. CVE Knowledge 中明确指定 > 2. 框架默认端口 > 3. config 配置 > 4. 全局默认 9600
@@ -219,8 +221,37 @@ class WebAppDeployer(Capability):
         target_url = f'http://localhost:{port}'
         print(f"[WebAppDeployer] 🎯 Target URL: {target_url}")
         
+        # 如果外部显式提供 target_url，直接使用并跳过自动启动
+        if explicit_target_url:
+            print(f"[WebAppDeployer] 🛠 Using provided target URL (skip auto-start): {explicit_target_url}")
+            import subprocess as sp_check
+            try:
+                check_result = sp_check.run(
+                    ['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', f'{explicit_target_url}/'],
+                    capture_output=True, text=True, timeout=10
+                )
+                status_code = check_result.stdout.strip()
+                if status_code and not status_code.startswith('0'):
+                    return {
+                        'build_result': {
+                            'success': 'yes',
+                            'access': explicit_target_url,
+                            'method': 'pre-deployed',
+                            'notes': f'User-provided target reachable, HTTP {status_code}'
+                        }
+                    }
+            except Exception as e:
+                print(f"[WebAppDeployer] Provided target unreachable: {e}")
+            return {
+                'build_result': {
+                    'success': 'no',
+                    'access': explicit_target_url,
+                    'method': 'pre-deployed',
+                    'notes': 'Provided target_url is not reachable; auto-start skipped as requested.'
+                }
+            }
+        
         # ========== 1. 优先检查目标是否已经可访问 ==========
-        import subprocess
         try:
             result = subprocess.run(
                 ['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', f'{target_url}/'],
@@ -325,36 +356,108 @@ class WebAppDeployer(Capability):
             import traceback
             traceback.print_exc()
         
-        # ========== 3. Fallback: 尝试旧的 WebEnvBuilder ==========
-        print(f"[WebAppDeployer] Trying legacy WebEnvBuilder as fallback...")
+        # ========== 3. Fallback: WebEnvBuilder with Critic Loop ==========
+        print(f"[WebAppDeployer] Trying WebEnvBuilder with feedback loop...")
         
-        try:
-            agent = WebEnvBuilder(
-                cve_knowledge=cve_knowledge,
-                sw_version_wget=sw_version_wget,
-                sw_version=sw_version,
-                prerequisites={},
-            )
-            result = agent.invoke()
-            
-            if hasattr(result, 'value') and isinstance(result.value, dict):
-                build_result = result.value
-                deployed_url = build_result.get('access', '')
-                if deployed_url:
-                    target_url = deployed_url
+        web_env_done = False
+        feedback = None
+        critic_feedback = None
+        max_tries = 3
+        attempt = 1
+        
+        while not web_env_done and attempt <= max_tries:
+            try:
+                if feedback or critic_feedback:
+                    print(f"\n[WebAppDeployer] 🔄 Retry #{attempt} with feedback")
                 
-                success = build_result.get('success', '').lower() == 'yes'
-                if success:
-                    return {
-                        'build_result': {
-                            'success': 'yes',
-                            'access': target_url,
-                            'method': build_result.get('method', 'web-env-builder'),
-                            'notes': build_result.get('notes', '')
+                # 执行 WebEnvBuilder
+                agent = WebEnvBuilder(
+                    cve_knowledge=cve_knowledge,
+                    sw_version_wget=sw_version_wget,
+                    sw_version=sw_version,
+                    prerequisites={},
+                    feedback=critic_feedback or feedback,
+                )
+                result = agent.invoke()
+                
+                if hasattr(result, 'value') and isinstance(result.value, dict):
+                    build_result = result.value
+                    deployed_url = build_result.get('access', '')
+                    if deployed_url:
+                        target_url = deployed_url
+                    
+                    success = build_result.get('success', '').lower() == 'yes'
+                    
+                    # 提取部署日志
+                    from toolbox import helper
+                    deployment_logs = helper.parse_chat_messages(agent.chat_history, include_human=True)
+                    
+                    if success:
+                        print(f"[WebAppDeployer] ✅ Deployment succeeded on attempt #{attempt}")
+                        return {
+                            'build_result': {
+                                'success': 'yes',
+                                'access': target_url,
+                                'method': f'web-env-builder-retry-{attempt}',
+                                'notes': build_result.get('notes', '')
+                            }
                         }
-                    }
-        except Exception as e:
-            print(f"[WebAppDeployer] Legacy WebEnvBuilder failed: {e}")
+                    
+                    # 失败 - 调用 Critic
+                    print(f"[WebAppDeployer] 👀 Deployment failed, invoking WebEnvCritic...")
+                    
+                    from agents.webEnvCritic import WebEnvCritic
+                    critic = WebEnvCritic(deployment_logs=deployment_logs)
+                    critic_result = critic.invoke()
+                    
+                    if hasattr(critic_result, 'value'):
+                        critic_result = critic_result.value
+                    
+                    print(f"[WebAppDeployer] Critic Decision: {critic_result.get('decision', 'unknown')}")
+                    print(f"[WebAppDeployer] Fixable: {critic_result.get('possible', 'unknown')}")
+                    
+                    # 保存 critic 分析
+                    try:
+                        helper.save_response(cve_id, critic_result, f"web_env_critic_attempt_{attempt}", struct=True)
+                    except:
+                        pass
+                    
+                    if critic_result.get('decision', '').lower() == 'yes':
+                        # Critic 认为实际上成功了（可能是误判）
+                        print(f"[WebAppDeployer] ✅ Critic says deployment actually succeeded")
+                        web_env_done = True
+                        return {
+                            'build_result': {
+                                'success': 'yes',
+                                'access': target_url,
+                                'method': f'web-env-builder-retry-{attempt}',
+                                'notes': 'Critic confirmed success'
+                            }
+                        }
+                    elif critic_result.get('possible', '').lower() == 'no':
+                        # 无法修复，停止重试
+                        print(f"[WebAppDeployer] ❌ Critic says issue is not fixable")
+                        break
+                    else:
+                        # 可以修复，获取反馈并重试
+                        critic_feedback = critic_result.get('feedback', '')
+                        if not critic_feedback or critic_feedback.lower() == 'n/a':
+                            print(f"[WebAppDeployer] ⚠️ No actionable feedback from critic")
+                            break
+                        
+                        print(f"[WebAppDeployer] 📋 Feedback: {critic_feedback[:200]}...")
+                        feedback = None  # 清除旧 feedback
+                        attempt += 1
+                        continue
+                
+                # 如果没有返回有效结果，停止
+                break
+                
+            except Exception as e:
+                print(f"[WebAppDeployer] WebEnvBuilder attempt #{attempt} failed: {e}")
+                import traceback
+                traceback.print_exc()
+                break
         
         # ========== 4. Final Fallback ==========
         # 注意：即使部署失败，也保持使用正确检测到的端口，不要回退到其他端口
@@ -509,7 +612,7 @@ class HttpResponseVerifier(Capability):
 # ============================================================
 
 class KnowledgeBuilderAdapter(Capability):
-    """KnowledgeBuilder Agent 适配器"""
+    """KnowledgeBuilder Agent 适配器（增强版：集成部署策略分析）"""
     
     def __init__(self, result_bus: ResultBus, config: dict):
         self.result_bus = result_bus
@@ -519,6 +622,40 @@ class KnowledgeBuilderAdapter(Capability):
         cve_id = inputs.get('cve_id')
         cve_entry = inputs.get('cve_entry', {})
         
+        # ========== 1. 调用部署策略分析器（新增）==========
+        print(f"[KnowledgeBuilder] 🔍 Analyzing deployment strategy...")
+        deployment_strategy = None
+        
+        try:
+            # 获取 CVE 描述
+            description = cve_entry.get('description', '')
+            
+            # 动态导入避免循环依赖
+            import sys
+            import os
+            sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'agents'))
+            from deploymentStrategyAnalyzer import DeploymentStrategyAnalyzer
+            
+            analyzer = DeploymentStrategyAnalyzer(cve_id=cve_id, cve_description=description)
+            deployment_strategy = analyzer.invoke()
+            
+            if deployment_strategy:
+                print(f"[KnowledgeBuilder] ✅ Deployment strategy: {deployment_strategy['strategy_type']}")
+                print(f"[KnowledgeBuilder] 📦 Repository: {deployment_strategy.get('repository_url', 'N/A')}")
+                
+                # 如果是硬件漏洞，直接返回错误
+                if deployment_strategy.get('is_hardware'):
+                    print(f"[KnowledgeBuilder] ⚠️ Hardware vulnerability detected - skipping")
+                    return {
+                        'cve_knowledge': f"## Hardware Vulnerability\n\n{deployment_strategy['deployment_notes']}",
+                        'deployment_strategy': deployment_strategy
+                    }
+        except Exception as e:
+            print(f"[KnowledgeBuilder] ⚠️ Deployment strategy analysis failed: {e}")
+            import traceback
+            traceback.print_exc()
+        
+        # ========== 2. 原有的 KnowledgeBuilder 逻辑 ==========
         # 解析 cve_entry 中的字段，与 legacy 模式保持一致
         cwe_list = cve_entry.get('cwe', [])
         cwe = '\n'.join([f"* {c['id']} - {c['value']}" for c in cwe_list]) if cwe_list else ''
@@ -575,7 +712,43 @@ class KnowledgeBuilderAdapter(Capability):
             result = result + config_section
             print(f"[ConfigInferencer] ✅ Inferred startup: {inferred_config.get('startup_cmd')}")
         
-        return {'cve_knowledge': result}
+        # ========== 3. 附加部署策略信息到 cve_knowledge（新增）==========
+        if deployment_strategy and deployment_strategy.get('repository_url'):
+            strategy_section = f"""
+
+## 🚀 DEPLOYMENT STRATEGY (USE THIS - DO NOT GUESS!)
+
+**Repository URL**: {deployment_strategy['repository_url']}
+**Platform**: {deployment_strategy.get('platform', 'N/A')}
+**Language**: {deployment_strategy.get('language', 'Unknown')}
+**Build Tool**: {deployment_strategy.get('build_tool', 'Unknown')}
+
+### Build Commands:
+```bash
+{chr(10).join(deployment_strategy.get('build_commands', ['# No specific build commands']))}
+```
+
+### Start Commands:
+```bash
+{chr(10).join(deployment_strategy.get('start_commands', ['# No specific start commands']))}
+```
+
+### Deployment Notes:
+{deployment_strategy.get('deployment_notes', 'N/A')}
+
+⚠️ **CRITICAL INSTRUCTIONS**:
+1. DO NOT try to find Docker images or guess repository URLs
+2. USE THE REPOSITORY URL PROVIDED ABOVE
+3. Clone from the specified repository and follow build/start commands
+4. If build commands fail, analyze error and adapt (but keep using the same repo)
+"""
+            result = result + strategy_section
+            print(f"[KnowledgeBuilder] ✅ Deployment strategy appended to cve_knowledge")
+        
+        return {
+            'cve_knowledge': result,
+            'deployment_strategy': deployment_strategy or {}
+        }
 
 
 class ConfigInferencerAdapter(Capability):
@@ -1080,9 +1253,33 @@ class FreestyleAdapter(Capability):
         cve_entry = inputs.get('cve_entry', {})
         cve_knowledge = inputs.get('cve_knowledge', '')
         cve_id = inputs.get('cve_id', '')
+        deployment_strategy = inputs.get('deployment_strategy', {})  # 新增：获取部署策略
         
         print(f"[FreestyleAgent] 🚀 Starting freestyle exploration for {cve_id}")
         print(f"[FreestyleAgent] Description: {cve_entry.get('description', '')[:200]}...")
+        
+        # 检查是否是硬件漏洞（提前退出）
+        if deployment_strategy.get('is_hardware'):
+            print(f"[FreestyleAgent] ⚠️ Hardware vulnerability detected - skipping reproduction")
+            return {
+                'freestyle_result': {
+                    'success': False,
+                    'output': 'Hardware vulnerability - cannot reproduce with software',
+                },
+                'verification_result': {
+                    'passed': False,
+                    'env_ready': False,
+                    'poc_executed': False,
+                    'error_message': deployment_strategy.get('deployment_notes', 'Hardware vulnerability'),
+                }
+            }
+        
+        # 显示部署策略信息
+        if deployment_strategy.get('repository_url'):
+            print(f"[FreestyleAgent] 📦 Deployment Strategy:")
+            print(f"  - Repository: {deployment_strategy['repository_url']}")
+            print(f"  - Language: {deployment_strategy.get('language', 'Unknown')}")
+            print(f"  - Strategy: {deployment_strategy.get('strategy_type', 'Unknown')}")
         
         # ============================================================
         # 阶段 1: BrainAgent 分析和规划
@@ -1112,15 +1309,32 @@ class FreestyleAdapter(Capability):
             print(f"[BrainAgent] Proceeding without attack plan...")
         
         # ============================================================
-        # 阶段 2: FreestyleAgent 执行
+        # 阶段 2.5: DeploymentAdvisor生成部署指南
+        # ============================================================
+        if deployment_strategy and deployment_strategy.get('repository_url'):
+            try:
+                from agents.deploymentAdvisor import DeploymentAdvisor
+                advisor = DeploymentAdvisor(deployment_strategy)
+                deployment_guide = advisor.generate_deployment_guide()
+                
+                # 将部署指南注入到cve_knowledge中，让LLM看到防错建议
+                if deployment_guide:
+                    cve_knowledge = cve_knowledge + "\n\n" + deployment_guide
+                    print("[DeploymentAdvisor] ✅ Deployment guide injected into knowledge")
+            except Exception as e:
+                print(f"[DeploymentAdvisor] ⚠️ Failed to generate guide: {e}")
+        
+        # ============================================================
+        # 阶段 3: FreestyleAgent 执行
         # ============================================================
         print(f"[FreestyleAgent] 🔧 Executing attack plan...")
         
         agent = FreestyleAgent(
             cve_id=cve_id,
             cve_entry=cve_entry,
-            cve_knowledge=cve_knowledge,
+            cve_knowledge=cve_knowledge,  # 包含部署指南
             attack_plan=attack_plan_text,  # 传递攻击计划
+            deployment_strategy=deployment_strategy,  # 新增：传递部署策略
         )
         
         # 使用标准的 invoke() 调用方式

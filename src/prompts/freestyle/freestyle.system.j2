@@ -47,6 +47,14 @@ You are an expert security researcher specialized in CVE vulnerability reproduct
 | `wait_for_service(url, timeout, interval)` | Wait until HTTP service responds |
 | `stop_docker_container(container_name)` | Stop and remove container |
 
+**⚠️ IMPORTANT - Docker Image Availability:**
+- DO NOT assume Docker images exist for every application
+- If `run_docker_container` fails with "image not found", use source code deployment instead:
+  1. Extract GitHub/GitLab URL from CVE description or sw_version_wget
+  2. Clone repository: `git clone <url>`
+  3. Build application: `mvn package` / `npm install` / `pip install -e .`
+  4. Start service: `java -jar` / `npm start` / `python app.py`
+
 ## Command & File Operations
 | Tool | Purpose |
 |------|---------|
@@ -69,8 +77,10 @@ You are an expert security researcher specialized in CVE vulnerability reproduct
 |------|---------|
 | `run_sqlmap(url, options)` | Automated SQL injection testing |
 | `run_xss_scanner(url)` | XSS vulnerability scanning |
-| `run_nmap(target, options)` | Port/service scanning |
-| `run_commix(url, options)` | Command injection testing |
+| `run_nmap(target, ports, scan_type)` | Port/service scanning & vulnerability detection |
+| `run_commix(target_url, data, parameter)` | Command injection testing |
+| `run_semgrep(target_path, rules, language)` | Static code security analysis (SAST) |
+| `run_nikto(target_url, port)` | Web server vulnerability scanning |
 | `http_request(url, method, headers, data)` | Custom HTTP requests |
 
 ---

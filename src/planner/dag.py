@@ -162,12 +162,22 @@ class PlanBuilder:
             environment="builder",
         )
         yield PlanStep(
+            id="health-check",
+            capability="HealthCheck",
+            implementation=overrides.get("HealthCheck", "HealthCheck"),  # 单独健康检查，阻断后续步骤
+            inputs=["build_result"],
+            outputs=["health_result"],
+            requires=["deploy-env"],
+            environment="builder",
+            success_condition="health_result.healthy == True",
+        )
+        yield PlanStep(
             id="browser-provision",
             capability="BrowserProvisioner",
             implementation=overrides.get("BrowserProvisioner", "BrowserEnvironmentProvider"),
             inputs=["build_result"],
             outputs=["browser_config"],
-            requires=["deploy-env"],
+            requires=["health-check"],
             environment="browser",
         )
         yield PlanStep(
@@ -182,12 +192,12 @@ class PlanBuilder:
         yield PlanStep(
             id="verify-web",
             capability="WebVerifier",
-            implementation=overrides.get("WebVerifier", "HttpResponseVerifier"),
+            implementation=overrides.get("WebVerifier", "CombinedVerifier"),
             inputs=["web_exploit_result"],
             outputs=["verification_result"],
             requires=["exploit-web"],
             environment="browser",
-            success_condition="verification_result.passed == true",
+            success_condition="verification_result.success == True",
         )
 
     def _cloud_steps(self, overrides: Dict[str, object]):
@@ -230,22 +240,22 @@ class PlanBuilder:
     def _freestyle_steps(self, overrides: Dict[str, object]):
         """Freestyle 自由探索模式：简化的两步流程。
         
-        1. 收集 CVE 信息
-        2. FreestyleAgent 自主完成分析、复现、验证全过程
+        1. 收集 CVE 信息 + 部署策略分析
+        2. FreestyleAgent 使用明确的部署策略完成复现
         """
         yield PlanStep(
             id="collect-info",
             capability="InfoGenerator",
             implementation=overrides.get("InfoGenerator", "KnowledgeBuilder"),
             inputs=["cve_id", "cve_entry"],
-            outputs=["cve_knowledge"],
+            outputs=["cve_knowledge", "deployment_strategy"],  # 新增 deployment_strategy 输出
             environment="control",
         )
         yield PlanStep(
             id="freestyle-explore",
             capability="FreestyleExplorer",
             implementation=overrides.get("FreestyleExplorer", "FreestyleAgent"),
-            inputs=["cve_id", "cve_entry", "cve_knowledge"],
+            inputs=["cve_id", "cve_entry", "cve_knowledge", "deployment_strategy"],  # 新增 deployment_strategy 输入
             outputs=["freestyle_result", "verification_result"],
             requires=["collect-info"],
             environment="target",

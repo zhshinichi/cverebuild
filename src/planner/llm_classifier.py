@@ -67,6 +67,7 @@ CLASSIFICATION_PROMPT = """你是一个专业的安全漏洞分类专家。请�
 
 <classification>
 <profile>选择一个: native-local / web-basic / freestyle / cloud-config / iot-firmware</profile>
+<execution_mode>选择一个: legacy / dag / freestyle</execution_mode>
 <confidence>0.0-1.0 之间的置信度</confidence>
 <reasoning>简要说明分类理由</reasoning>
 <reproduction_method>简要描述复现方法</reproduction_method>
@@ -77,7 +78,7 @@ CLASSIFICATION_PROMPT = """你是一个专业的安全漏洞分类专家。请�
 @dataclass 
 class LLMClassifierConfig(ClassifierConfig):
     """Configuration for LLM-enhanced classifier."""
-    model: str = "gpt-4o-mini"  # 使用轻量级模型节省成本
+    model: str = "gpt-5"  # 使用轻量级模型节省成本
     temperature: float = 0.0
     use_llm: bool = True
     fallback_to_rules: bool = True  # 如果 LLM 失败，回退到规则
@@ -93,9 +94,58 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
     3. 结合 CWE 和描述进行综合判断
     """
     
+    # CVE 报告仓库特征 - 这些仓库只包含漏洞报告，不是实际软件源码
+    CVE_REPORT_REPO_PATTERNS = [
+        '/myCVE',      # f1rstb100d/myCVE, ting-06a/myCVE 等
+        '/CVE-',       # CVE 报告仓库
+        '/poc',        # PoC 报告仓库
+        '/cve',        # CVE 报告
+        '/Yu/',        # 特定的报告仓库
+    ]
+    
     def __init__(self, config: Optional[LLMClassifierConfig] = None) -> None:
         self.config = config or LLMClassifierConfig()
         super().__init__(self.config)
+    
+    def _is_cve_report_repo(self, sw_version_wget: str) -> bool:
+        """检测 sw_version_wget 是否指向 CVE 报告仓库而非实际软件源码。"""
+        if not sw_version_wget:
+            return False
+        for pattern in self.CVE_REPORT_REPO_PATTERNS:
+            if pattern.lower() in sw_version_wget.lower():
+                return True
+        return False
+    
+    def _check_data_quality(self, cve_entry: Dict[str, object]) -> tuple[bool, str]:
+        """
+        检查 CVE 数据质量，判断是否可以自动复现。
+        
+        Returns:
+            (is_deployable, reason)
+        """
+        sw_version_wget = cve_entry.get("sw_version_wget", "")
+        github_repo = cve_entry.get("_meta", {}).get("github_repo", "")
+        
+        # 检查 1: sw_version_wget 为空
+        if not sw_version_wget:
+            return False, "No sw_version_wget provided - cannot auto-deploy"
+        
+        # 检查 2: sw_version_wget 指向 CVE 报告仓库
+        if self._is_cve_report_repo(sw_version_wget):
+            return False, f"sw_version_wget points to CVE report repo, not actual software"
+        
+        # 检查 3: github_repo 和 sw_version_wget 不匹配（可能是报告仓库）
+        if github_repo and sw_version_wget:
+            # 从 sw_version_wget 提取 owner/repo
+            wget_match = re.search(r'github\.com/([^/]+/[^/]+)/', sw_version_wget)
+            repo_match = re.search(r'github\.com/([^/]+/[^/]+)', github_repo)
+            if wget_match and repo_match:
+                wget_repo = wget_match.group(1).lower()
+                actual_repo = repo_match.group(1).lower()
+                if wget_repo != actual_repo:
+                    return False, f"Mismatched repos: wget={wget_repo}, github_repo={actual_repo}"
+        
+        return True, "OK"
         
     def classify(self, cve_id: str, cve_entry: Dict[str, object], profile_override: Optional[str] = None) -> ClassifierDecision:
         """分类漏洞，优先使用 LLM，失败时回退到规则。"""
@@ -118,6 +168,22 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
     
     def _classify_with_llm(self, cve_id: str, cve_entry: Dict[str, object]) -> ClassifierDecision:
         """使用 LLM 进行分类。"""
+        
+        # ===== 数据质量检查 =====
+        is_deployable, quality_reason = self._check_data_quality(cve_entry)
+        if not is_deployable:
+            print(f"⚠️ Data quality issue: {quality_reason}")
+            print(f"   → Forcing 'freestyle' profile (no auto-deploy possible)")
+            
+            # 直接返回 freestyle，跳过 LLM 分类
+            return ClassifierDecision(
+                cve_id=cve_id,
+                profile="freestyle",
+                confidence=0.9,
+                required_capabilities=["InfoGenerator", "FreestyleAgent"],
+                resource_hints={"needs_browser": False, "data_quality_issue": quality_reason},
+                execution_mode="freestyle",
+            )
         
         # 准备输入
         description = cve_entry.get("description", "No description available")
@@ -175,6 +241,10 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
         # 提取 profile - 添加 freestyle 支持
         profile_match = re.search(r'<profile>\s*(native-local|web-basic|freestyle|cloud-config|iot-firmware)\s*</profile>', response, re.IGNORECASE)
         profile = profile_match.group(1).lower() if profile_match else self.config.default_profile
+
+        # 提取 execution_mode
+        exec_match = re.search(r'<execution_mode>\s*(legacy|dag|freestyle)\s*</execution_mode>', response, re.IGNORECASE)
+        execution_mode = exec_match.group(1).lower() if exec_match else self._infer_execution_mode(profile, {})
         
         # 提取 confidence
         confidence_match = re.search(r'<confidence>\s*([\d.]+)\s*</confidence>', response)
@@ -205,6 +275,7 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
             confidence=confidence,
             required_capabilities=capabilities,
             resource_hints=hints,
+            execution_mode=execution_mode,
         )
 
 

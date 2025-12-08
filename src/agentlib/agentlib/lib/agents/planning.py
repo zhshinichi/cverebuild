@@ -611,7 +611,7 @@ class PlanExecutor(Generic[Input,Output], Agent[Input, str]):
             MessagesPlaceholder("chat_history"),
             '# Describe Results\nPlease now describe the process, results, and important features.',
             output=str,
-            model='gpt-4-turbo',
+            model='gpt-4o-mini',
         )
         chat_history = step.get_conversation(last=self.__ATTEMPT_HISTORY_LENGTH__)
         return f(

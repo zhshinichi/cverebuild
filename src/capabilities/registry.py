@@ -29,6 +29,12 @@ from capabilities.adapters import (
     # Freestyle 自由探索模式
     FreestyleAdapter,
 )
+from capabilities.verifier_adapters import (
+    HttpResponseVerifierCapability,
+    CookieVerifierCapability,
+    FlagVerifierCapability,
+    CombinedVerifierCapability,
+)
 
 
 class CapabilityRegistry:
@@ -54,14 +60,21 @@ class CapabilityRegistry:
         # ============================================================
         self.register("browser-provision", BrowserEnvironmentProvider)
         self.register("BrowserEnvironmentProvider", BrowserEnvironmentProvider)
+        self.register("BrowserEnvironmentCapability", BrowserEnvironmentProvider)  # distinct from orchestrator provider
         self.register("BrowserProvisioner", BrowserEnvironmentProvider)
         self.register("extract-cve-info", CVEInfoExtractor)
         self.register("CVEInfoExtractor", CVEInfoExtractor)
         self.register("simple-validate", SimpleValidator)
         self.register("SimpleValidator", SimpleValidator)
-        self.register("http-verify", HttpResponseVerifier)
-        self.register("HttpResponseVerifier", HttpResponseVerifier)
-        self.register("HttpVerifier", HttpResponseVerifier)  # DAG 使用的名称
+        # Canonical verifiers delegate to verification.strategies.*
+        self.register("http-verify", HttpResponseVerifierCapability)
+        self.register("HttpResponseVerifier", HttpResponseVerifierCapability)
+        self.register("HttpVerifier", HttpResponseVerifierCapability)  # DAG 使用的名称
+        self.register("CookieVerifier", CookieVerifierCapability)
+        self.register("cookie-verify", CookieVerifierCapability)
+        self.register("FlagVerifier", FlagVerifierCapability)
+        self.register("combined-verify", CombinedVerifierCapability)
+        self.register("CombinedVerifier", CombinedVerifierCapability)
         
         # Web 应用部署器（简化版）
         self.register("deploy-web-app", WebAppDeployer)

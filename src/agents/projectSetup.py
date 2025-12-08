@@ -78,4 +78,5 @@ class ProjectSetupAgent(AgentWithHistory):
     def run(self):
         result = self.invoke({"input": "开始项目环境准备"})
         self.cost = self.get_total_cost() if hasattr(self, 'get_total_cost') else 0
-        return result.get('output', '')
+        # 修复: AgentResponse 没有 .get() 方法，使用 .value 属性
+        return result.value if hasattr(result, 'value') and result.value else ''
