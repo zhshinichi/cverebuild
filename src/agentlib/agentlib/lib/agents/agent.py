@@ -954,7 +954,7 @@ class Agent(RunnableLocalObject[Input, Output]):
     __REPO__ = AgentRepository("agents")
     """ Controls what local repo the agents are saved/loaded from"""
 
-    __LLM_MODEL__ = "gpt-4-turbo"
+    __LLM_MODEL__ = "gpt-4o-mini"
     __LLM_ARGS__ = {}
     __HAS_MEMORY__ = False
     __OUTPUT_PARSER__: Any = None

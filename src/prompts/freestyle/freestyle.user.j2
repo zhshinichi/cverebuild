@@ -3,6 +3,10 @@
 ## 漏洞信息
 {{ CVE_ENTRY_JSON }}
 
+{% if DEPLOYMENT_STRATEGY_TEXT %}
+{{ DEPLOYMENT_STRATEGY_TEXT }}
+{% endif %}
+
 ## 已有知识
 {{ CVE_KNOWLEDGE if CVE_KNOWLEDGE else '无' }}
 

@@ -27,6 +27,7 @@ class HealthCheckAgent(AgentWithHistory):
     # 类属性 - 指向模板文件
     __SYSTEM_PROMPT_TEMPLATE__ = 'healthCheck/healthCheck.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'healthCheck/healthCheck.user.j2'
+    __LLM_MODEL__ = 'gpt-4o-mini'
     __MAX_TOOL_ITERATIONS__ = 8
     
     # Pydantic 字段
@@ -63,4 +64,4 @@ class HealthCheckAgent(AgentWithHistory):
     def run(self):
         result = self.invoke({"input": "开始健康检查"})
         self.cost = self.get_total_cost() if hasattr(self, 'get_total_cost') else 0
-        return result.get('output', '')
+        return result.value

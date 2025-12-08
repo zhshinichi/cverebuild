@@ -1,0 +1,24 @@
+# CVE Information
+
+**CVE ID**: {{ cve_id }}
+**Software**: {{ sw_name }}
+**Version**: {{ sw_version }}
+**Download URL**: {{ sw_version_wget }}
+
+## Description
+```
+{{ cve_description }}
+```
+
+{% if patch_commits %}
+## Patch Commits
+{% for commit in patch_commits %}
+- Repository: {{ commit.url }}
+{% endfor %}
+{% endif %}
+
+---
+
+# Your Analysis
+
+Analyze the above information and provide the deployment strategy in JSON format.

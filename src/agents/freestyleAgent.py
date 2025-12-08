@@ -2269,6 +2269,7 @@ class FreestyleAgent(AgentWithHistory[dict, str]):
     CVE_ENTRY: Optional[Dict[str, Any]] = None
     CVE_KNOWLEDGE: Optional[str] = None
     ATTACK_PLAN: Optional[str] = None  # BrainAgent 生成的攻击计划
+    DEPLOYMENT_STRATEGY: Optional[Dict[str, Any]] = None  # 新增：部署策略
     WORK_DIR: str = "/workspaces/submission/src/simulation_environments"
     
     def __init__(
@@ -2276,7 +2277,8 @@ class FreestyleAgent(AgentWithHistory[dict, str]):
         cve_id: str = None,
         cve_entry: dict = None,
         cve_knowledge: str = None,
-        attack_plan: str = None,  # 新增：接收攻击计划
+        attack_plan: str = None,  # 攻击计划
+        deployment_strategy: dict = None,  # 新增:部署策略
         work_dir: str = None,
         **kwargs
     ):
@@ -2286,17 +2288,52 @@ class FreestyleAgent(AgentWithHistory[dict, str]):
         self.CVE_ENTRY = cve_entry or {}
         self.CVE_KNOWLEDGE = cve_knowledge or ""
         self.ATTACK_PLAN = attack_plan
+        self.DEPLOYMENT_STRATEGY = deployment_strategy or {}
         if work_dir:
             self.WORK_DIR = work_dir
+        
+        # 🔍 启用中途反思机制（集成DeploymentStrategy）
+        if deployment_strategy:
+            try:
+                from toolbox.command_ops import enable_reflection, reset_reflection
+                reflection_context = f"正在复现漏洞 {cve_id}。\n知识库摘要：{cve_knowledge[:500] if cve_knowledge else '无'}..."
+                enable_reflection(True, reflection_context, deployment_strategy)
+                reset_reflection()
+                print(f"[FreestyleAgent] 🔍 MidExecReflector enabled with DeploymentStrategy")
+            except Exception as e:
+                print(f"[FreestyleAgent] ⚠️ Failed to enable MidExecReflector: {e}")
     
     def get_input_vars(self, *args, **kwargs) -> dict:
         """提供模板变量"""
         vars = super().get_input_vars(*args, **kwargs)
+        
+        # 格式化部署策略为易读文本
+        deployment_info = ""
+        if self.DEPLOYMENT_STRATEGY and self.DEPLOYMENT_STRATEGY.get('repository_url'):
+            ds = self.DEPLOYMENT_STRATEGY
+            deployment_info = f"""
+## 🚀 部署策略
+
+**仓库地址**: {ds.get('repository_url', 'N/A')}
+**编程语言**: {ds.get('language', '未知')}
+**构建工具**: {ds.get('build_tool', '未知')}
+
+### 构建命令:
+{chr(10).join(['  ' + cmd for cmd in ds.get('build_commands', ['# 暂无构建命令'])])}
+
+### 启动命令:
+{chr(10).join(['  ' + cmd for cmd in ds.get('start_commands', ['# 暂无启动命令'])])}
+
+### 部署说明:
+{ds.get('deployment_notes', '无特殊说明')}
+"""
+        
         vars.update(
             CVE_ID=self.CVE_ID,
             CVE_ENTRY=self.CVE_ENTRY,
             CVE_KNOWLEDGE=self.CVE_KNOWLEDGE,
             ATTACK_PLAN=self.ATTACK_PLAN,  # 传递给模板
+            DEPLOYMENT_STRATEGY_TEXT=deployment_info,  # 新增：格式化的部署策略
             WORK_DIR=self.WORK_DIR,
             CVE_ENTRY_JSON=json.dumps(self.CVE_ENTRY, indent=2, ensure_ascii=False)[:3000] if self.CVE_ENTRY else '{}',
         )

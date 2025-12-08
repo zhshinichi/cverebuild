@@ -14,6 +14,7 @@ class ClassifierDecision:
     confidence: float
     required_capabilities: Sequence[str] = field(default_factory=tuple)
     resource_hints: Dict[str, object] = field(default_factory=dict)
+    execution_mode: str = "legacy"  # legacy | dag | freestyle
 
     def to_dict(self) -> Dict[str, object]:
         payload = asdict(self)

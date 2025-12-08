@@ -13,7 +13,14 @@ class CapabilityContext:
 
 
 class Capability(Protocol):
-    def run(self, context: CapabilityContext) -> Dict[str, Any]:
+    """Preferred interface for capabilities."""
+
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        ...
+
+    # Backward compatibility: some legacy implementations may expose run(context).
+    # Planner executor will try execute() first, then fall back to run().
+    def run(self, context: CapabilityContext) -> Dict[str, Any]:  # pragma: no cover
         ...
 
 

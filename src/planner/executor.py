@@ -104,8 +104,13 @@ class DAGExecutor:
             # Instantiate capability (pass result_bus and step config)
             capability_instance = capability_class(self.result_bus, step.config or {})
 
-            # Execute capability
-            outputs = capability_instance.execute(inputs)
+            # Execute capability (prefer execute; fallback to run for older implementations)
+            if hasattr(capability_instance, "execute"):
+                outputs = capability_instance.execute(inputs)
+            elif hasattr(capability_instance, "run"):
+                outputs = capability_instance.run(inputs)
+            else:
+                raise StepExecutionError(f"Capability {step.implementation} has no execute/run method")
 
             # Store output artifacts
             for output_name in step.outputs:
@@ -129,34 +134,55 @@ class DAGExecutor:
             raise
 
     def _evaluate_success_condition(self, condition: str, outputs: Dict[str, Any]) -> bool:
-        """评估成功条件表达式。"""
-        # 支持 "output_name.field == value" 语法
-        try:
-            # 处理 true/false 到 True/False 的转换
-            condition = condition.replace(" true", " True").replace(" false", " False")
-            condition = condition.replace("=true", "=True").replace("=false", "=False")
-            
-            # 将点表示法转换为字典访问：verification_result.passed -> verification_result['passed']
-            import re
-            # 匹配 word.word 模式，转换为 word['word']
-            def dot_to_bracket(match):
-                parts = match.group(0).split('.')
-                result = parts[0]
-                for part in parts[1:]:
-                    result += f"['{part}']"
-                return result
-            
-            # 匹配像 verification_result.passed 这样的模式
-            condition = re.sub(r'\b(\w+(?:\.\w+)+)\b', dot_to_bracket, condition)
-            
-            # 安全地在受限命名空间中执行条件
-            namespace = {"outputs": outputs, "True": True, "False": False}
-            namespace.update(outputs)
-            result = eval(condition, {"__builtins__": {}}, namespace)
-            print(f"[DEBUG] Condition '{condition}' evaluated to: {result}")
+        """Safely evaluate a simple success condition without exposing builtins."""
+        import ast
+        import re
+
+        # Normalize booleans
+        condition = condition.replace(" true", " True").replace(" false", " False")
+        condition = condition.replace("=true", "=True").replace("=false", "=False")
+
+        # Convert dotted access to dict-style: verification_result.passed -> verification_result['passed']
+        def dot_to_bracket(match):
+            parts = match.group(0).split('.')
+            result = parts[0]
+            for part in parts[1:]:
+                result += f"['{part}']"
             return result
-        except Exception as e:
-            print(f"[DEBUG] Condition evaluation error: {e}")
+
+        condition_expr = re.sub(r'\b(\w+(?:\.\w+)+)\b', dot_to_bracket, condition)
+
+        allowed_nodes = (
+            ast.Expression,
+            ast.BoolOp,
+            ast.UnaryOp,
+            ast.Compare,
+            ast.Name,
+            ast.Load,
+            ast.Subscript,
+            ast.Constant,
+            ast.And,
+            ast.Or,
+            ast.Not,
+            ast.Eq,
+            ast.NotEq,
+            ast.Gt,
+            ast.GtE,
+            ast.Lt,
+            ast.LtE,
+        )
+
+        try:
+            tree = ast.parse(condition_expr, mode="eval")
+            for node in ast.walk(tree):
+                if not isinstance(node, allowed_nodes):
+                    raise ValueError(f"Unsafe expression element: {ast.dump(node)}")
+
+            namespace = {"__builtins__": {}}
+            namespace.update(outputs)
+            return bool(eval(compile(tree, "<condition>", "eval"), namespace, {}))
+        except Exception as exc:
+            print(f"[DEBUG] Condition evaluation error: {exc}")
             return False
 
     @classmethod

@@ -254,11 +254,23 @@ class MidExecutionReflector:
 </confidence>
 """
 
-    def __init__(self, context: str = ""):
+    def __init__(self, context: str = "", deployment_strategy: dict = None):
         self.context = context
         self.detector = ErrorPatternDetector()
         self._reflection_count = 0
         self._max_reflections = 3  # 最多反思 3 次
+        
+        # 集成DeploymentAdvisor
+        self.deployment_strategy = deployment_strategy
+        self.deployment_advisor = None
+        if deployment_strategy:
+            try:
+                # 延迟导入避免循环依赖
+                from agents.deploymentAdvisor import DeploymentAdvisor
+                self.deployment_advisor = DeploymentAdvisor(deployment_strategy)
+                print("[MidExecReflector] 🔗 DeploymentAdvisor integrated for enhanced diagnostics")
+            except Exception as e:
+                print(f"[MidExecReflector] ⚠️ DeploymentAdvisor integration failed: {e}")
         
     def check_and_reflect(self, command: str, output: str) -> Optional[ReflectionResult]:
         """
@@ -289,8 +301,20 @@ class MidExecutionReflector:
         return None
     
     def _perform_reflection(self) -> ReflectionResult:
-        """执行反思分析"""
+        """执行反思分析（增强：集成DeploymentAdvisor诊断）"""
         failure_summary = self.detector.get_failure_summary()
+        
+        # 🔗 如果有DeploymentAdvisor，先进行专业诊断
+        advisor_diagnosis = ""
+        if self.deployment_advisor:
+            advisor_diagnosis = self._get_deployment_diagnosis(failure_summary)
+            if advisor_diagnosis:
+                print("[MidExecReflector] 💡 DeploymentAdvisor提供专业诊断")
+        
+        # 增强的上下文（包含advisor诊断）
+        enhanced_context = self.context
+        if advisor_diagnosis:
+            enhanced_context += f"\n\n## 🛡️ 部署专家诊断\n{advisor_diagnosis}"
         
         # 创建 LLM 函数进行分析
         reflector = LLMFunction.create(
@@ -300,12 +324,63 @@ class MidExecutionReflector:
         )
         
         response = reflector(
-            context=self.context,
+            context=enhanced_context,
             failure_summary=failure_summary
         )
         
         # 解析响应
         return self._parse_reflection_response(response)
+    
+    def _get_deployment_diagnosis(self, failure_summary: str) -> str:
+        """从DeploymentAdvisor获取针对性诊断"""
+        if not self.deployment_advisor:
+            return ""
+        
+        diagnosis_parts = []
+        
+        # 检查常见部署问题
+        if 'composer' in failure_summary.lower() or 'php' in failure_summary.lower():
+            if self.deployment_advisor.ds.get('php_version', '').startswith('7'):
+                diagnosis_parts.append("⚠️ **PHP版本冲突检测**")
+                diagnosis_parts.append(f"- 该项目需要PHP {self.deployment_advisor.ds['php_version']}")
+                diagnosis_parts.append("- 系统默认PHP可能是8.x版本")
+                diagnosis_parts.append(f"- **修正方案**: 使用Docker容器")
+                
+                php_ver = self.deployment_advisor.ds['php_version']
+                repo = self.deployment_advisor.repo_name
+                working_dir = self.deployment_advisor.ds.get('working_directory')
+                
+                if working_dir:
+                    diagnosis_parts.append(f"  ```bash")
+                    diagnosis_parts.append(f"  docker run --rm -v $(pwd)/{repo}:/app -w /app/{working_dir} composer:{php_ver} install")
+                    diagnosis_parts.append(f"  ```")
+                else:
+                    diagnosis_parts.append(f"  ```bash")
+                    diagnosis_parts.append(f"  docker run --rm -v $(pwd)/{repo}:/app -w /app composer:{php_ver} install")
+                    diagnosis_parts.append(f"  ```")
+        
+        # 检查工作目录问题
+        if 'composer.json' in failure_summary or 'package.json' in failure_summary:
+            working_dir = self.deployment_advisor.ds.get('working_directory')
+            if working_dir:
+                diagnosis_parts.append("\n⚠️ **工作目录问题检测**")
+                diagnosis_parts.append(f"- 构建文件不在根目录，而在子目录: {working_dir}/")
+                diagnosis_parts.append(f"- **修正方案**: 必须在子目录中运行构建命令")
+                diagnosis_parts.append(f"  ```bash")
+                diagnosis_parts.append(f"  cd {self.deployment_advisor.repo_name}/{working_dir} && composer install")
+                diagnosis_parts.append(f"  ```")
+        
+        # 检查docker-compose推荐
+        if self.deployment_advisor.ds.get('deployment_type') == 'docker-compose':
+            diagnosis_parts.append("\n✅ **推荐部署方式**")
+            diagnosis_parts.append("- 该项目提供官方docker-compose配置")
+            docker_path = self.deployment_advisor.ds.get('docker_compose_path', 'docker-compose')
+            diagnosis_parts.append(f"- **最佳方案**: 使用docker-compose")
+            diagnosis_parts.append(f"  ```bash")
+            diagnosis_parts.append(f"  cd {self.deployment_advisor.repo_name}/{docker_path} && docker-compose up -d")
+            diagnosis_parts.append(f"  ```")
+        
+        return '\n'.join(diagnosis_parts) if diagnosis_parts else ""
     
     def _parse_reflection_response(self, response: str) -> ReflectionResult:
         """解析反思响应"""

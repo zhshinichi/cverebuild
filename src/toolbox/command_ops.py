@@ -57,6 +57,9 @@ class RepetitiveCommandDetector:
         r"Address already in use|Connection in use": "端口已被占用。使用 `lsof -i :<port>` 或 `netstat -tlnp | grep <port>` 检查，然后 `kill <pid>` 终止进程。",
         r"Could not open requirements file.*No such file": "requirements.txt 不存在。检查项目结构，可能是 requirements/ 目录或 pyproject.toml。对于现代项目使用 `pip install -e .`。",
         r"ImportError:.*cannot import name": "导入错误，可能是版本不兼容或循环导入。检查依赖版本，尝试 `pip install -e .` 安装正确版本。",
+        r"unzip.*Timed out": "unzip 命令超时，通常是因为等待用户输入（文件覆盖确认）。必须使用 `unzip -o -q file.zip` 参数：-o (覆盖) -q (静默模式)。",
+        r"replace.*\[y\]es.*\[n\]o.*\[A\]ll": "unzip 正在等待用户输入覆盖确认。使用 `unzip -o file.zip` 自动覆盖所有文件。",
+        r"Timed out.*unzip": "unzip 超时可能原因：1) 文件过大需要更长时间（尝试解压到 /tmp 而不是远程挂载目录）2) 等待交互输入（必须加 -o -q 参数）3) 目标目录权限问题。建议：cd /tmp && unzip -o -q /path/to/file.zip",
     }
     
     def __init__(self):
@@ -89,6 +92,10 @@ class RepetitiveCommandDetector:
         # 规范化 playwright 命令
         if 'playwright' in cmd:
             return re.sub(r'playwright\s+\S+', 'PLAYWRIGHT_CMD', cmd)
+        
+        # 规范化 unzip 命令
+        if re.match(r'unzip\s+', cmd):
+            return 'UNZIP_FILE'
         
         return cmd
     
@@ -262,14 +269,27 @@ def get_reflector():
     return _mid_exec_reflector
 
 
-def enable_reflection(enabled: bool = True, context: str = ""):
-    """启用或禁用反思机制"""
+def enable_reflection(enabled: bool = True, context: str = "", deployment_strategy: dict = None):
+    """启用或禁用反思机制（增强：支持deployment_strategy）"""
     global _reflection_enabled, _mid_exec_reflector
     _reflection_enabled = enabled
-    if enabled and context:
-        reflector = get_reflector()
-        if reflector:
-            reflector.update_context(context)
+    if enabled:
+        # 如果提供了deployment_strategy,创建新的reflector实例
+        if deployment_strategy:
+            try:
+                from agents.midExecReflector import MidExecutionReflector
+                _mid_exec_reflector = MidExecutionReflector(
+                    context=context, 
+                    deployment_strategy=deployment_strategy
+                )
+                print("[command_ops] ✅ MidExecReflector initialized with DeploymentStrategy")
+            except ImportError as e:
+                print(f"[command_ops] ⚠️ Failed to import MidExecutionReflector: {e}")
+        elif context:
+            # 如果只有context,更新现有reflector
+            reflector = get_reflector()
+            if reflector:
+                reflector.update_context(context)
 
 
 def reset_reflection():
@@ -695,6 +715,8 @@ def execute_command_foreground(command: str) -> str:
     stderr_log = create_unique_logfile("stderr")
     exit_code = 0
     work_dir = get_working_directory()
+    timeout_occurred = False
+    
     try:
         with open(stdout_log, "w", encoding='utf-8') as stdout, open(stderr_log, "w", encoding='utf-8') as stderr:
             result = subprocess.run(
@@ -711,7 +733,17 @@ def execute_command_foreground(command: str) -> str:
             )
             exit_code = result.returncode
     except subprocess.TimeoutExpired:
-        return "❌ Timed out! If this command starts a server/anything that expects input, try using execute_command_background"
+        exit_code = 124  # 标准的超时退出码
+        timeout_occurred = True
+        output = f"❌ Timed out after 300s! Command: {original_command}"
+        
+        # 🔄 重复命令检测（超时也算失败）
+        detector = get_command_detector()
+        repetition_warning = detector.check_command(original_command, output, exit_code)
+        if repetition_warning:
+            output = output + "\n\n" + repetition_warning
+        
+        return output
 
     # Get the last 100 lines of both log files
     tail_output = get_tail_log(stdout_log, stderr_log)

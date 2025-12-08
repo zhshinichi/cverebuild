@@ -24,6 +24,7 @@ class VulnerabilityClassifier:
         hints = self._infer_resource_hints(cve_entry)
         capabilities = self._infer_capabilities(profile)
         confidence = self._estimate_confidence(profile, hints)
+        execution_mode = self._infer_execution_mode(profile, hints)
 
         return ClassifierDecision(
             cve_id=cve_id,
@@ -31,6 +32,7 @@ class VulnerabilityClassifier:
             confidence=confidence,
             required_capabilities=capabilities,
             resource_hints=hints,
+            execution_mode=execution_mode,
         )
 
     # ------------------------------------------------------------------
@@ -73,6 +75,15 @@ class VulnerabilityClassifier:
             "iot-firmware": ("InfoGenerator", "FirmwareProvisioner", "ExploitExecutor", "TelemetryVerifier"),
         }
         return mapping.get(profile, mapping["native-local"])
+
+    def _infer_execution_mode(self, profile: str, hints: Dict[str, object]) -> str:
+        """Map profile to execution mode: legacy/dag/freestyle."""
+        if profile in ("web-basic", "cloud-config"):
+            return "dag"
+        if profile == "freestyle":
+            return "freestyle"
+        # 默认 native 走 legacy，可按需切换到 dag
+        return "legacy"
 
     def _estimate_confidence(self, profile: str, hints: Dict[str, object]) -> float:
         score = 0.6

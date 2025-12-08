@@ -7,6 +7,7 @@ import time
 import subprocess
 import csv
 from datetime import datetime
+from core.config import get_shared_root
 
 # 修复模块导入优先级: 确保使用已安装的 agentlib 而非本地目录
 # 问题: 某些路径下的 agentlib/ 目录会遮蔽已安装的 agentlib 包
@@ -90,13 +91,13 @@ MODEL = os.environ['MODEL']
 
 from toolbox import helper, CVEDataProcessor, Validator
 from toolbox.web_detector import requires_web_driver, get_attack_type
-from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic, FixAdvisor, WebEnvBuilder
+from agents import KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic, FixAdvisor, WebEnvBuilder, WebEnvCritic
 from core.result_bus import ResultBus
 
 # -------------------------------------------------------------------------
 # 🔧 动态配置所有 Agent 以提升复现率和解决 Token 问题
 # -------------------------------------------------------------------------
-AGENTS = [KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic, FixAdvisor, WebEnvBuilder]
+AGENTS = [KnowledgeBuilder, PreReqBuilder, RepoBuilder, RepoCritic, Exploiter, ExploitCritic, CTFVerifier, SanityGuy, CVEInfoGenerator, WebDriverAgent, WebExploitCritic, FixAdvisor, WebEnvBuilder, WebEnvCritic]
 for agent_cls in AGENTS:
     # 配置 Token 超限策略 (解决 Context Window Exceeded 问题)
     # 当上下文超限时，自动移除最旧的 2 轮对话并重试，而不是直接失败
@@ -934,7 +935,8 @@ if __name__ == "__main__":
         from capabilities.registry import CapabilityRegistry
         
         # 设置日志 (使用挂载目录以便同步到本地)
-        shared_dir = '/workspaces/submission/src/shared' if os.path.exists('/workspaces/submission/src') else '/shared'
+        from core.config import get_shared_root
+        shared_dir = get_shared_root()
         log_dir = os.path.join(shared_dir, args.cve)
         os.makedirs(log_dir, exist_ok=True)
         log_file = os.path.join(log_dir, f'{args.cve}_dag_log.txt')
@@ -945,14 +947,23 @@ if __name__ == "__main__":
         sys.stdout = tee_logger
         sys.stderr = tee_logger
         
-        print(f"{'='*60}")
-        print(f"DAG Mode - CVE Reproduction")
-        print(f"CVE ID: {args.cve}")
-        print(f"Profile: {args.profile}")
-        print(f"Browser Engine: {args.browser_engine}")
-        print(f"Start Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Model: {os.environ['MODEL']}")
-        print(f"{'='*60}\n")
+        # ANSI colors
+        CYAN = "\033[96m"
+        GREEN = "\033[92m"
+        YELLOW = "\033[93m"
+        RESET = "\033[0m"
+        BOLD = "\033[1m"
+        
+        width = 60
+        print(f"\n{CYAN}┏{'━' * (width - 2)}┓{RESET}")
+        print(f"{CYAN}┃{RESET} {BOLD}{YELLOW}{'DAG Mode - CVE Reproduction':^{width - 4}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┣{'━' * (width - 2)}┫{RESET}")
+        print(f"{CYAN}┃{RESET}  {BOLD}{'CVE ID':<14}:{RESET} {GREEN}{args.cve:<{width - 21}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┃{RESET}  {BOLD}{'Profile':<14}:{RESET} {GREEN}{args.profile:<{width - 21}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┃{RESET}  {BOLD}{'Browser Engine':<14}:{RESET} {GREEN}{args.browser_engine:<{width - 21}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┃{RESET}  {BOLD}{'Start Time':<14}:{RESET} {GREEN}{datetime.now().strftime('%Y-%m-%d %H:%M:%S'):<{width - 21}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┃{RESET}  {BOLD}{'Model':<14}:{RESET} {GREEN}{os.environ['MODEL']:<{width - 21}}{RESET} {CYAN}┃{RESET}")
+        print(f"{CYAN}┗{'━' * (width - 2)}┛{RESET}\n")
         
         # 清理旧的 simulation environment，只保留当前 CVE 相关文件
         # 这样可以节省存储空间，避免累积大量旧环境
@@ -978,15 +989,31 @@ if __name__ == "__main__":
             
             # 为 Web 漏洞注入浏览器引擎配置和目标 URL
             if decision.profile == 'web-basic':
-                target_url = args.target_url or os.environ.get('WEB_DRIVER_TARGET_URL', 'http://localhost:9600')
-                print(f"🎯 Target URL: {target_url}\n")
+                # 只有明确传入 --target-url 时才跳过自动部署
+                explicit_target_url = args.target_url  # 用户明确指定的 URL
+                default_target_url = os.environ.get('WEB_DRIVER_TARGET_URL', 'http://localhost:9600')
+                target_url = explicit_target_url or default_target_url
+                print(f"🎯 Target URL: {target_url}")
+                if explicit_target_url:
+                    print(f"   (user-provided, skip auto-deploy)\n")
+                else:
+                    print(f"   (default, will auto-deploy if needed)\n")
                 
                 for step in plan.steps:
                     if step.id == 'browser-provision':
                         step.config['engine'] = args.browser_engine
                         step.config['target_url'] = target_url
                     if step.id == 'deploy-env':
+                        # 只有用户明确指定 target_url 时才传入，否则让 deployer 自行启动服务
+                        if explicit_target_url:
+                            step.config['target_url'] = explicit_target_url
+                        step.config['default_port'] = 9600  # 提供默认端口供部署使用
+                    if step.id == 'health-check':
                         step.config['target_url'] = target_url
+                    if step.id == 'exploit-web' and args.browser_engine == 'playwright':
+                        step.implementation = 'PlaywrightWebExploiter'
+                    if step.id == 'verify-web' and args.browser_engine == 'playwright':
+                        step.implementation = 'PlaywrightVerifier'
             
             print(f"📝 Execution plan generated with {len(plan.steps)} steps:\n")
             for step in plan.steps:
@@ -1140,7 +1167,7 @@ if __name__ == "__main__":
     reproducer = CVEReproducer(args.cve, args.json, result_bus)
     
     # 设置日志文件 (使用挂载目录以便同步到本地)
-    shared_dir = '/workspaces/submission/src/shared' if os.path.exists('/workspaces/submission/src') else '/shared'
+    shared_dir = get_shared_root()
     log_dir = os.path.join(shared_dir, args.cve)
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, f'{args.cve}_log.txt')

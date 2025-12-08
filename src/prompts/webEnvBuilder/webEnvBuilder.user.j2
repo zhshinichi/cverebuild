@@ -24,11 +24,19 @@ Deploy the vulnerable web application following these STRICT steps:
 
 ### Step 1: Download and Extract
 ```bash
+# CRITICAL: Extract to /tmp (fast local disk), NOT to /workspaces (slow mounted volume)
 cd /tmp
 curl -L -o app.zip "{{ sw_version_wget }}"
-unzip -o app.zip
+# IMPORTANT: Always use -o (overwrite) and -q (quiet) to avoid interactive prompts
+# For large files (>50MB), unzip to /tmp to avoid timeout on slow mounted volumes
+unzip -o -q app.zip
 cd <extracted_dir>
 ```
+
+⚠️ **If unzip times out**: The file is likely >50MB and /tmp disk is slow. Try:
+- `unzip -o app.zip` (without -q, see progress)
+- Extract only metadata first: `unzip -l app.zip | head -20` to verify file integrity
+- Check disk space: `df -h /tmp`
 
 ### Step 2: Analyze Project Structure (CRITICAL!)
 ```bash

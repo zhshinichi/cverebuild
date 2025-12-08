@@ -131,7 +131,7 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
     SW_VERSION_WGET: Optional[str]
     SW_VERSION: Optional[str]
     PREREQUISITES: Optional[dict]
-    FEEDBACK: Optional[str]
+    FEEDBACK: Optional[str]  # 来自 WebEnvCritic 的反馈
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -139,6 +139,7 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
         self.SW_VERSION_WGET = kwargs.get('sw_version_wget', '')
         self.SW_VERSION = kwargs.get('sw_version', '')
         self.PREREQUISITES = kwargs.get('prerequisites', {})
+        self.FEEDBACK = kwargs.get('feedback', '')  # 支持 feedback 输入
         self.FEEDBACK = kwargs.get('feedback', '')
     
     def get_input_vars(self, *args, **kwargs) -> dict:

@@ -243,7 +243,7 @@ def test_dag_executor_dry_run():
     result_bus = ResultBus('CVE-DRY-RUN')
     
     # 创建执行器（但不实际执行，只检查初始化）
-    executor = DAGExecutor(plan, registry, result_bus)
+    executor = DAGExecutor(plan, result_bus, registry)
     
     print(f"✅ Executor initialized")
     print(f"   Plan: {plan.cve_id}")
