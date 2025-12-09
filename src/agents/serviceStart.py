@@ -67,4 +67,4 @@ class ServiceStartAgent(AgentWithHistory):
     def run(self):
         result = self.invoke({"input": "开始启动服务"})
         self.cost = self.get_total_cost() if hasattr(self, 'get_total_cost') else 0
-        return result.get('output', '')
+        return result.value if hasattr(result, 'value') else str(result)

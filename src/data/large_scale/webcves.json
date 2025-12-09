@@ -1,0 +1,1802 @@
+[
+  {
+    "cve": "CVE-2025-0001",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0001.json",
+    "category": "web",
+    "reason": "该漏洞是一个认证的任意文件读取漏洞，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0049",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0049.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web用户在上传文件时泄露绝对服务器路径，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0050",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0050.json",
+    "category": "other",
+    "reason": "该漏洞涉及 GPU 驱动程序的内存缓冲区越界访问，虽然提到 WebGL 和 WebGPU，但主要是与 GPU 驱动相关，不属于 Web 应用或浏览器漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0053",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0053.json",
+    "category": "web",
+    "reason": "该漏洞涉及通过特定URL参数获取系统信息，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0054",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0054.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（XSS），影响Web应用程序"
+  },
+  {
+    "cve": "CVE-2025-0057",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0057.json",
+    "category": "web",
+    "reason": "该漏洞是存储型跨站脚本漏洞，影响Web应用程序SAP NetWeaver AS JAVA (User Admin Application)。"
+  },
+  {
+    "cve": "CVE-2025-0058",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0058.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SAP Business Workflow 和 SAP Flexible Workflow 中的参数操控，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0059",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0059.json",
+    "category": "web",
+    "reason": "该漏洞涉及基于 SAP GUI for HTML 的应用程序，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0060",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0060.json",
+    "category": "frontend",
+    "reason": "漏洞允许用户注入恶意JS代码，属于网页漏洞"
+  },
+  {
+    "cve": "CVE-2025-0061",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0061.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SAP BusinessObjects Business Intelligence Platform 的会话劫持，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0062",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0062.json",
+    "category": "web",
+    "reason": "该漏洞允许攻击者在Web Intelligence报告中注入JavaScript代码，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0063",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0063.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0064",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0064.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SAP BusinessObjects Business Intelligence 平台的中央管理控制台，允许攻击者生成或检索秘密密码短语，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0066",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0066.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SAP NetWeaver AS for ABAP 的信息泄露，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0067",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0067.json",
+    "category": "web",
+    "reason": "漏洞涉及 SAP NetWeaver Application Server Java 的服务端点缺少授权检查，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0071",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0071.json",
+    "category": "web",
+    "reason": "该漏洞涉及SAP Web Dispatcher和Internet Communication Manager，属于Web应用程序漏洞，影响敏感信息泄露。"
+  },
+  {
+    "cve": "CVE-2025-0103",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0103.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，影响 Palo Alto Networks 的 Expedition，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0104",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0104.json",
+    "category": "web",
+    "reason": "该漏洞是一个反射型跨站脚本（XSS）漏洞，影响Palo Alto Networks的Expedition，允许攻击者在用户的浏览器中执行恶意JavaScript代码。"
+  },
+  {
+    "cve": "CVE-2025-0105",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0105.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Palo Alto Networks Expedition 的任意文件删除，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0106",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0106.json",
+    "category": "web",
+    "reason": "漏洞涉及Palo Alto Networks Expedition的文件枚举，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0107",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0107.json",
+    "category": "web",
+    "reason": "该漏洞是一个OS命令注入漏洞，影响Palo Alto Networks的Expedition，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0129",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0129.json",
+    "category": "browser",
+    "reason": "漏洞影响 Prisma Access Browser，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0144",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0144.json",
+    "category": "other",
+    "reason": "该漏洞涉及 Zoom Workplace Apps 的越界写入，可能通过网络访问导致完整性损失，属于应用程序漏洞，但不符合 Web、浏览器或前端的具体分类。"
+  },
+  {
+    "cve": "CVE-2025-0148",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0148.json",
+    "category": "web",
+    "reason": "Zoom Jenkins Marketplace plugin存在缺失密码字段遮罩的漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0149",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0149.json",
+    "category": "web",
+    "reason": "Zoom Workplace Apps存在数据真实性验证不足的漏洞，可能导致拒绝服务，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0151",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0151.json",
+    "category": "other",
+    "reason": "漏洞涉及 Zoom Workplace Apps，属于应用程序漏洞，但不符合 Web、浏览器或前端的定义。"
+  },
+  {
+    "cve": "CVE-2025-0154",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0154.json",
+    "category": "web",
+    "reason": "该漏洞涉及 IBM TXSeries 的 HTTP 头部不当处理，可能导致敏感信息泄露，属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0159",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0159.json",
+    "category": "web",
+    "reason": "该漏洞允许远程攻击者通过发送特制的HTTP请求绕过RPCAdapter端点身份验证，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0162",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0162.json",
+    "category": "web",
+    "reason": "该漏洞涉及 XML 外部实体注入 (XXE) 攻击，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0163",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0163.json",
+    "category": "web",
+    "reason": "该漏洞涉及 IBM Security Verify Access 的信息泄露，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0165",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0165.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0168",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0168.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0169",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0169.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress主题，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0170",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0170.json",
+    "category": "web",
+    "reason": "该漏洞是反射型跨站脚本（XSS），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0171",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0171.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0172",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0172.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0173",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0173.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0174",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0174.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0176",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0176.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序。"
+  },
+  {
+    "cve": "CVE-2025-0177",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0177.json",
+    "category": "web",
+    "reason": "该漏洞涉及WordPress插件的权限提升，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0178",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0178.json",
+    "category": "web",
+    "reason": "该漏洞涉及对 HTTP Host 头的输入验证不当，影响 Web UI，允许攻击者重定向用户或注入恶意 JavaScript。"
+  },
+  {
+    "cve": "CVE-2025-0180",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0180.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件 WP Foodbakery 的权限提升，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0181",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0181.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的身份验证绕过，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0182",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0182.json",
+    "category": "web",
+    "reason": "该漏洞涉及通过发送请求导致的服务拒绝，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0183",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0183.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0184",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0184.json",
+    "category": "web",
+    "reason": "该漏洞为服务器端请求伪造（SSRF），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0185",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0185.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Pandas Query Injection，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0187",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0187.json",
+    "category": "web",
+    "reason": "该漏洞涉及文件上传功能，属于Web应用程序的拒绝服务漏洞"
+  },
+  {
+    "cve": "CVE-2025-0188",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0188.json",
+    "category": "web",
+    "reason": "该漏洞为服务器端请求伪造（SSRF），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0190",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0190.json",
+    "category": "web",
+    "reason": "该漏洞涉及通过Web API进行的拒绝服务攻击，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0191",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0191.json",
+    "category": "web",
+    "reason": "该漏洞涉及文件上传功能，属于Web应用程序的拒绝服务漏洞"
+  },
+  {
+    "cve": "CVE-2025-0192",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0192.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0195",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0195.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序。"
+  },
+  {
+    "cve": "CVE-2025-0196",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0196.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0197",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0197.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0198",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0198.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0199",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0199.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序。"
+  },
+  {
+    "cve": "CVE-2025-0200",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0200.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0201",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0201.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0202",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0202.json",
+    "category": "web",
+    "reason": "该漏洞涉及 TCS BaNCS 的文件包含问题，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0203",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0203.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0204",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0204.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 Online Shoe Store"
+  },
+  {
+    "cve": "CVE-2025-0205",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0205.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0206",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0206.json",
+    "category": "web",
+    "reason": "该漏洞涉及在线鞋店的访问控制问题，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0207",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0207.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0208",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0208.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 Online Shoe Store"
+  },
+  {
+    "cve": "CVE-2025-0209",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0209.json",
+    "category": "web",
+    "reason": "存在反射型跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0210",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0210.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0211",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0211.json",
+    "category": "web",
+    "reason": "该漏洞涉及文件包含，属于Web应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0212",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0212.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0213",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0213.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Campcodes Project Management System 的文件上传功能，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0214",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0214.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 TMD Custom Header Menu"
+  },
+  {
+    "cve": "CVE-2025-0215",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0215.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的反射型跨站脚本漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0219",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0219.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0220",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0220.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0225",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0225.json",
+    "category": "web",
+    "reason": "该漏洞涉及路径遍历，影响Web应用程序的文件访问"
+  },
+  {
+    "cve": "CVE-2025-0226",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0226.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Tsinghua Unigroup Electronic Archives System 的下载功能，属于 Web 应用漏洞，导致信息泄露。"
+  },
+  {
+    "cve": "CVE-2025-0227",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0227.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Tsinghua Unigroup Electronic Archives System 的信息泄露，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0228",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0228.json",
+    "category": "frontend",
+    "reason": "该漏洞涉及 Local Storage Todo App 的 index.html 文件，存在跨站脚本攻击（XSS）和代码注入问题，属于网页漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0229",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0229.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0230",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0230.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0231",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0231.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0232",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0232.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0233",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0233.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0237",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0237.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0238",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0238.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0239",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0239.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0240",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0240.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，涉及 JavaScript 模块解析，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0241",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0241.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0242",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0242.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0243",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0243.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0244",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0244.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 浏览器，涉及地址栏欺骗，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0245",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0245.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 浏览器，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0246",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0246.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 浏览器，涉及地址栏欺骗问题"
+  },
+  {
+    "cve": "CVE-2025-0247",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0247.json",
+    "category": "browser",
+    "reason": "该漏洞影响 Firefox 和 Thunderbird，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0249",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0249.json",
+    "category": "web",
+    "reason": "该漏洞涉及不当的访问或JWT令牌失效，可能导致未授权访问敏感数据，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0250",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0250.json",
+    "category": "web",
+    "reason": "该漏洞涉及HCL IEM中的授权令牌处理，属于Web应用程序的安全漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0251",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0251.json",
+    "category": "web",
+    "reason": "该漏洞涉及应用程序的并发登录，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0252",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0252.json",
+    "category": "web",
+    "reason": "该漏洞涉及敏感信息以明文形式传输，属于Web应用程序的安全问题。"
+  },
+  {
+    "cve": "CVE-2025-0253",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0253.json",
+    "category": "web",
+    "reason": "该漏洞涉及 HCL IEM 的 cookie 属性未设置，属于 Web 应用程序的安全漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0254",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0254.json",
+    "category": "web",
+    "reason": "HCL Digital Experience components are vulnerable to man-in-the-middle (MitM) attacks, which is a web application vulnerability."
+  },
+  {
+    "cve": "CVE-2025-0255",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0255.json",
+    "category": "other",
+    "reason": "该漏洞涉及远程命令执行，属于Web应用程序的安全问题，但不符合Web、前端或浏览器的具体分类。"
+  },
+  {
+    "cve": "CVE-2025-0256",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0256.json",
+    "category": "web",
+    "reason": "该漏洞涉及 HCL DevOps Deploy / HCL Launch 的认证缺失，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0257",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0257.json",
+    "category": "other",
+    "reason": "该漏洞涉及缺失身份验证，可能导致未授权访问，但不属于Web、浏览器或前端漏洞的具体分类。"
+  },
+  {
+    "cve": "CVE-2025-0272",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0272.json",
+    "category": "frontend",
+    "reason": "该漏洞涉及 HTML 注入，影响 Web UI，属于网页漏洞"
+  },
+  {
+    "cve": "CVE-2025-0276",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0276.json",
+    "category": "web",
+    "reason": "漏洞涉及不安全的内容安全策略（CSP），可能导致跨站脚本攻击（XSS）"
+  },
+  {
+    "cve": "CVE-2025-0277",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0277.json",
+    "category": "web",
+    "reason": "漏洞涉及不安全的内容安全策略（CSP），可能导致跨站脚本攻击（XSS），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0279",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0279.json",
+    "category": "web",
+    "reason": "该漏洞涉及 HCL Traveler 生成的错误信息泄露，可能被攻击者利用进行针对性攻击，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0281",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0281.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本（XSS）漏洞，允许攻击者在用户浏览器中执行任意JavaScript代码"
+  },
+  {
+    "cve": "CVE-2025-0291",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0291.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器中的 V8 引擎，允许通过特制的 HTML 页面执行任意代码，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0292",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0292.json",
+    "category": "web",
+    "reason": "该漏洞为服务器端请求伪造（SSRF），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0293",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0293.json",
+    "category": "web",
+    "reason": "该漏洞涉及 CRLF 注入，影响 Ivanti Connect Secure 和 Policy Secure，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0294",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0294.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0295",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0295.json",
+    "category": "web",
+    "reason": "该漏洞涉及在线书店的跨站脚本攻击（XSS），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0296",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0296.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0297",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0297.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0298",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0298.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0299",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0299.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0300",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0300.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0301",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0301.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）和代码注入漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0308",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0308.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的 SQL 注入漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0311",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0311.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0314",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0314.json",
+    "category": "web",
+    "reason": "该漏洞涉及 GitLab 的跨站脚本（XSS）问题，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0316",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0316.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的身份验证绕过，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0318",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0318.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的敏感信息泄露，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0321",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0321.json",
+    "category": "web",
+    "reason": "该漏洞是一个基于DOM的存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0325",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0325.json",
+    "category": "web",
+    "reason": "漏洞影响 Axis 设备的 Web 界面，允许攻击者阻止访问配置页面，属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0328",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0328.json",
+    "category": "web",
+    "reason": "该漏洞涉及 KaiYuanTong ECT Platform 的 HTTP POST 请求处理器，存在命令注入漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0329",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0329.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件中的存储型跨站脚本攻击（Stored XSS），属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0333",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0333.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0334",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0334.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0335",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0335.json",
+    "category": "web",
+    "reason": "该漏洞涉及在线自行车租赁系统的未限制文件上传，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0336",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0336.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0337",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0337.json",
+    "category": "web",
+    "reason": "该漏洞涉及ServiceNow平台的授权绕过，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0339",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0339.json",
+    "category": "web",
+    "reason": "该漏洞涉及在线自行车租赁系统中的跨站脚本攻击（XSS），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0340",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0340.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0341",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0341.json",
+    "category": "web",
+    "reason": "该漏洞涉及CampCodes计算机实验室管理系统的文件上传功能，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0342",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0342.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（XSS），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0344",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0344.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0345",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0345.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0346",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0346.json",
+    "category": "web",
+    "reason": "该漏洞涉及内容管理系统的发布新闻页面，存在不受限制的文件上传漏洞，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0347",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0347.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，影响 Web 应用程序的登录组件"
+  },
+  {
+    "cve": "CVE-2025-0348",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0348.json",
+    "category": "web",
+    "reason": "该漏洞涉及 CampCodes DepEd Equipment Inventory System 的跨站脚本（XSS）漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0350",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0350.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（Stored Cross-Site Scripting）"
+  },
+  {
+    "cve": "CVE-2025-0352",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0352.json",
+    "category": "web",
+    "reason": "该漏洞涉及API的请求数据修改，可能导致信息泄露，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0353",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0353.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（Stored Cross-Site Scripting），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0354",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0354.json",
+    "category": "web",
+    "reason": "存在跨站脚本漏洞（CWE-79），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0355",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0355.json",
+    "category": "other",
+    "reason": "该漏洞涉及缺失认证的关键功能，允许攻击者通过网络获取Wi-Fi密码，属于网络安全漏洞，但不符合Web、浏览器或前端的具体分类。"
+  },
+  {
+    "cve": "CVE-2025-0357",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0357.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件 WPBookit 的任意文件上传，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0361",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0361.json",
+    "category": "web",
+    "reason": "漏洞涉及VAPIX设备配置框架，允许通过SSH管理API进行未认证的用户名枚举，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0362",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0362.json",
+    "category": "web",
+    "reason": "漏洞涉及 GitLab 的用户界面层或框架的限制不当，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0364",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0364.json",
+    "category": "web",
+    "reason": "漏洞涉及通过账户注册进行的未经身份验证的远程代码执行，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0365",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0365.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的目录遍历，允许攻击者读取服务器上的任意文件，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0366",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0366.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的远程代码执行，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0367",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0367.json",
+    "category": "web",
+    "reason": "该漏洞涉及到正则表达式拒绝服务攻击，属于Web应用程序的漏洞类型。"
+  },
+  {
+    "cve": "CVE-2025-0368",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0368.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的反射型跨站脚本攻击（XSS），属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0369",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0369.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress的JetEngine插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0370",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0370.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0371",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0371.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress JetElements 插件中的存储型跨站脚本漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0376",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0376.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0390",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0390.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Web 应用程序的路径遍历问题"
+  },
+  {
+    "cve": "CVE-2025-0391",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0391.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0392",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0392.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0393",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0393.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的跨站请求伪造（CSRF）漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0394",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0394.json",
+    "category": "web",
+    "reason": "该漏洞涉及WordPress插件的文件上传缺陷，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0397",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0397.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0398",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0398.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0399",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0399.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序的文件上传功能，属于Web漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0400",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0400.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0401",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0401.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序中的路径遍历问题"
+  },
+  {
+    "cve": "CVE-2025-0402",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0402.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序中的不受限制的文件上传，属于Web漏洞"
+  },
+  {
+    "cve": "CVE-2025-0403",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0403.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序中的信息泄露，属于Web漏洞类型。"
+  },
+  {
+    "cve": "CVE-2025-0404",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0404.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0405",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0405.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0406",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0406.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0407",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0407.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0408",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0408.json",
+    "category": "web",
+    "reason": "该漏洞涉及 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0409",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0409.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0410",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0410.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0411",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0411.json",
+    "category": "other",
+    "reason": "该漏洞涉及7-Zip的Mark-of-the-Web绕过，虽然需要用户交互，但不属于Web应用、前端或浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0412",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0412.json",
+    "category": "other",
+    "reason": "该漏洞涉及远程代码执行，但不属于Web、浏览器或前端漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0415",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0415.json",
+    "category": "web",
+    "reason": "该漏洞涉及通过设备的Web界面进行的命令注入，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0417",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0417.json",
+    "category": "web",
+    "reason": "该漏洞涉及Valmet DNA的可视化界面，缺乏对暴力攻击的保护，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0419",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0419.json",
+    "category": "web",
+    "reason": "该漏洞是一个跨站脚本（XSS）漏洞，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0420",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0420.json",
+    "category": "web",
+    "reason": "该漏洞为跨站脚本攻击（XSS），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0422",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0422.json",
+    "category": "web",
+    "reason": "该漏洞涉及到 'bestinformed Web' 应用程序的远程代码执行，属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0423",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0423.json",
+    "category": "web",
+    "reason": "存在未经过滤的用户输入导致的跨站脚本漏洞（XSS）"
+  },
+  {
+    "cve": "CVE-2025-0424",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0424.json",
+    "category": "web",
+    "reason": "存在多个认证存储型跨站脚本漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0428",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0428.json",
+    "category": "web",
+    "reason": "该漏洞涉及WordPress插件的PHP对象注入，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0429",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0429.json",
+    "category": "web",
+    "reason": "该漏洞涉及WordPress插件的PHP对象注入，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0431",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0431.json",
+    "category": "web",
+    "reason": "漏洞涉及URL重写，允许未经身份验证的远程攻击者绕过URL保护，影响电子邮件的完整性，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0433",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0433.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（Stored Cross-Site Scripting）"
+  },
+  {
+    "cve": "CVE-2025-0434",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0434.json",
+    "category": "browser",
+    "reason": "漏洞涉及 Google Chrome 的 V8 引擎，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0435",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0435.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器的 UI 欺骗，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0436",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0436.json",
+    "category": "browser",
+    "reason": "漏洞影响 Google Chrome，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0437",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0437.json",
+    "category": "browser",
+    "reason": "漏洞涉及 Google Chrome 的内存越界读取，允许通过特制的 HTML 页面进行远程攻击，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0438",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0438.json",
+    "category": "browser",
+    "reason": "漏洞影响 Google Chrome，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0439",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0439.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器中的 UI 欺骗，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0440",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0440.json",
+    "category": "browser",
+    "reason": "漏洞涉及 Google Chrome 的不当实现，允许通过特制的 HTML 页面进行 UI 欺骗，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0441",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0441.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器的 Fenced Frames 实现不当，允许远程攻击者通过特制的 HTML 页面获取敏感信息。"
+  },
+  {
+    "cve": "CVE-2025-0442",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0442.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 的 UI 欺骗，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0443",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0443.json",
+    "category": "browser",
+    "reason": "漏洞涉及 Google Chrome 的扩展程序，允许通过特制的 HTML 页面进行权限提升，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0445",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0445.json",
+    "category": "browser",
+    "reason": "漏洞涉及 Google Chrome 的 V8 引擎，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0446",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0446.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器的扩展程序，属于浏览器相关漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0447",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0447.json",
+    "category": "browser",
+    "reason": "该漏洞涉及 Google Chrome 浏览器的 HTML 页面处理，允许远程攻击者通过特制的 HTML 页面进行权限提升。"
+  },
+  {
+    "cve": "CVE-2025-0448",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0448.json",
+    "category": "browser",
+    "reason": "漏洞影响 Google Chrome，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0450",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0450.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（Stored Cross-Site Scripting），属于Web漏洞"
+  },
+  {
+    "cve": "CVE-2025-0451",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0451.json",
+    "category": "browser",
+    "reason": "漏洞影响 Google Chrome 的扩展 API，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0452",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0452.json",
+    "category": "web",
+    "reason": "该漏洞涉及通过网络接口进行的任意文件删除，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0453",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0453.json",
+    "category": "web",
+    "reason": "该漏洞涉及mlflow的/graphql端点，属于Web应用程序的拒绝服务攻击"
+  },
+  {
+    "cve": "CVE-2025-0454",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0454.json",
+    "category": "web",
+    "reason": "该漏洞是一个服务器端请求伪造（SSRF）漏洞，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0455",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0455.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0456",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0456.json",
+    "category": "web",
+    "reason": "该漏洞是一个缺失身份验证的漏洞，允许未经身份验证的远程攻击者访问特定的管理功能，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0457",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0457.json",
+    "category": "web",
+    "reason": "该漏洞为 OS 命令注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0458",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0458.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Virtual Computer Vysual RH Solution 的登录面板中的跨站脚本攻击，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0460",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0460.json",
+    "category": "web",
+    "reason": "该漏洞涉及到Web应用程序的未限制文件上传，属于Web漏洞"
+  },
+  {
+    "cve": "CVE-2025-0461",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0461.json",
+    "category": "web",
+    "reason": "该漏洞涉及路径遍历，影响Web应用程序Lingdang CRM的index.php文件，属于Web漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0462",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0462.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 Lingdang CRM"
+  },
+  {
+    "cve": "CVE-2025-0463",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0463.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序的未限制文件上传，属于Web漏洞"
+  },
+  {
+    "cve": "CVE-2025-0464",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0464.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0465",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0465.json",
+    "category": "web",
+    "reason": "该漏洞涉及 AquilaCMS 的 API，属于 Web 应用程序漏洞，且可以远程利用。"
+  },
+  {
+    "cve": "CVE-2025-0466",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0466.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的 REST API 路由，允许未经身份验证的攻击者泄露信息，属于 Web 漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0469",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0469.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0470",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0470.json",
+    "category": "web",
+    "reason": "该漏洞是一个反射型跨站脚本漏洞，影响 WordPress 插件，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0471",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0471.json",
+    "category": "web",
+    "reason": "存在不受限制的文件上传漏洞，影响Web应用程序"
+  },
+  {
+    "cve": "CVE-2025-0472",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0472.json",
+    "category": "web",
+    "reason": "该漏洞涉及PMB平台的信息泄露，允许攻击者上传文件并枚举内部文件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0473",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0473.json",
+    "category": "web",
+    "reason": "该漏洞涉及 PMB 平台的文件上传功能，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0474",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0474.json",
+    "category": "web",
+    "reason": "该漏洞是针对 Invoice Ninja 的服务器端请求伪造（SSRF）漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0475",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0475.json",
+    "category": "web",
+    "reason": "该漏洞涉及 GitLab 的跨站脚本（XSS）问题，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0476",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0476.json",
+    "category": "other",
+    "reason": "Mattermost Mobile Apps漏洞影响移动应用，但不属于Web、浏览器或前端漏洞"
+  },
+  {
+    "cve": "CVE-2025-0479",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0479.json",
+    "category": "web",
+    "reason": "该漏洞涉及CP Plus路由器的Web界面中对cookie标志的不安全处理，允许远程攻击者通过HTTP会话拦截数据传输。"
+  },
+  {
+    "cve": "CVE-2025-0480",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0480.json",
+    "category": "web",
+    "reason": "该漏洞是 wuzhicms 的服务器端请求伪造漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0481",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0481.json",
+    "category": "web",
+    "reason": "该漏洞涉及 D-Link DIR-878 的 HTTP POST 请求处理，属于 Web 应用漏洞，导致信息泄露。"
+  },
+  {
+    "cve": "CVE-2025-0482",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0482.json",
+    "category": "web",
+    "reason": "该漏洞涉及Web应用程序中的默认凭据使用，属于Web漏洞"
+  },
+  {
+    "cve": "CVE-2025-0483",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0483.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本（XSS）和代码注入，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0485",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0485.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（XSS），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0486",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0486.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序的登录功能"
+  },
+  {
+    "cve": "CVE-2025-0487",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0487.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0488",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0488.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0490",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0490.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0491",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0491.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0493",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0493.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 插件的本地文件包含，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0502",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0502.json",
+    "category": "web",
+    "reason": "该漏洞涉及CrafterCMS的资源泄露，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0503",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0503.json",
+    "category": "web",
+    "reason": "Mattermost存在未能过滤已删除DM的漏洞，允许攻击者推断用户ID和其他元数据，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0506",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0506.json",
+    "category": "web",
+    "reason": "存在存储型跨站脚本漏洞（Stored Cross-Site Scripting）"
+  },
+  {
+    "cve": "CVE-2025-0507",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0507.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0509",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0509.json",
+    "category": "other",
+    "reason": "该漏洞涉及 Sparkle 更新机制的签名检查绕过，属于软件完整性攻击，但不符合 Web、浏览器或前端漏洞的定义。"
+  },
+  {
+    "cve": "CVE-2025-0510",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0510.json",
+    "category": "browser",
+    "reason": "漏洞影响 Thunderbird 邮件客户端，涉及电子邮件发送者地址的伪造，属于浏览器相关漏洞"
+  },
+  {
+    "cve": "CVE-2025-0511",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0511.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress的Welcart电子商务插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0512",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0512.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0513",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0513.json",
+    "category": "web",
+    "reason": "该漏洞涉及Octopus Server的错误页面处理不当，可能导致跨站脚本攻击（XSS），属于Web漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0515",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0515.json",
+    "category": "web",
+    "reason": "该漏洞涉及 WordPress 主题的未授权数据修改，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0516",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0516.json",
+    "category": "web",
+    "reason": "该漏洞涉及 GitLab 的不当授权问题，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0520",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0520.json",
+    "category": "web",
+    "reason": "存在不受限制的文件上传漏洞，允许执行任意 PHP 代码，导致远程代码执行"
+  },
+  {
+    "cve": "CVE-2025-0521",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0521.json",
+    "category": "web",
+    "reason": "该漏洞是 WordPress 插件中的存储型跨站脚本漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0522",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0522.json",
+    "category": "web",
+    "reason": "该漏洞涉及到存储型跨站脚本（Stored XSS）和跨站请求伪造（CSRF），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0526",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0526.json",
+    "category": "web",
+    "reason": "漏洞涉及通过 API 上传文件到意外位置，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0527",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0527.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0528",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0528.json",
+    "category": "web",
+    "reason": "该漏洞涉及HTTP请求处理中的命令注入，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0530",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0530.json",
+    "category": "web",
+    "reason": "该漏洞涉及代码注入和跨站脚本攻击，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0531",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0531.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0532",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0532.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0534",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0534.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0535",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0535.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0536",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0536.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0537",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0537.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0538",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0538.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0539",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0539.json",
+    "category": "web",
+    "reason": "该漏洞涉及服务器端请求伪造（SSRF），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0540",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0540.json",
+    "category": "web",
+    "reason": "该漏洞是一个 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0541",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0541.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0545",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0545.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0546",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0546.json",
+    "category": "web",
+    "reason": "存在跨站脚本（XSS）漏洞，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0547",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0547.json",
+    "category": "web",
+    "reason": "该漏洞是一个跨站脚本（XSS）漏洞，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0549",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0549.json",
+    "category": "web",
+    "reason": "该漏洞涉及 GitLab 的身份验证绕过，属于 Web 应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0554",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0554.json",
+    "category": "web",
+    "reason": "该漏洞是一个存储型跨站脚本漏洞，影响WordPress插件，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0555",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0555.json",
+    "category": "web",
+    "reason": "该漏洞为跨站脚本（XSS）漏洞，属于Web应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0557",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0557.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0558",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0558.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 tduck-platform"
+  },
+  {
+    "cve": "CVE-2025-0559",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0559.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0560",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0560.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本（XSS），属于Web应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0561",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0561.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入漏洞，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0562",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0562.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序"
+  },
+  {
+    "cve": "CVE-2025-0563",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0563.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入，属于 Web 应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0564",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0564.json",
+    "category": "web",
+    "reason": "该漏洞是 SQL 注入，影响 Web 应用程序 Fantasy-Cricket 的 authenticate.php 文件"
+  },
+  {
+    "cve": "CVE-2025-0565",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0565.json",
+    "category": "web",
+    "reason": "该漏洞是ZZCMS中的SQL注入漏洞，属于Web应用程序漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0570",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0570.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Sante PACS Server Web Portal 的 DCM 文件解析，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0571",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0571.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Sante PACS Server Web Portal 的 DCM 文件解析，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0572",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0572.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Sante PACS Server Web Portal 的文件解析，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0574",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0574.json",
+    "category": "web",
+    "reason": "漏洞涉及Web服务器模块的URL解析，导致内存损坏和拒绝服务，符合Web漏洞的定义。"
+  },
+  {
+    "cve": "CVE-2025-0576",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0576.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0578",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0578.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0579",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0579.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Shiprocket Module 的 REST API 模块，存在 SQL 注入漏洞，属于 Web 应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0580",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0580.json",
+    "category": "web",
+    "reason": "该漏洞涉及 Shiprocket Module 的 REST API 模块，属于 Web 应用程序的授权问题。"
+  },
+  {
+    "cve": "CVE-2025-0581",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0581.json",
+    "category": "web",
+    "reason": "该漏洞涉及跨站脚本攻击（Cross Site Scripting），属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0582",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0582.json",
+    "category": "web",
+    "reason": "该漏洞涉及其sourcecode Farm Management System的add-pig.php文件，允许远程进行不受限制的文件上传，属于Web应用漏洞。"
+  },
+  {
+    "cve": "CVE-2025-0583",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0583.json",
+    "category": "web",
+    "reason": "存在反射型跨站脚本漏洞（XSS），允许攻击者在用户浏览器中执行任意JavaScript代码。"
+  },
+  {
+    "cve": "CVE-2025-0584",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0584.json",
+    "category": "web",
+    "reason": "该漏洞为服务器端请求伪造（SSRF），属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0585",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0585.json",
+    "category": "web",
+    "reason": "该漏洞为 SQL 注入漏洞，属于 Web 应用程序漏洞"
+  },
+  {
+    "cve": "CVE-2025-0586",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0586.json",
+    "category": "web",
+    "reason": "存在不安全的反序列化漏洞，允许远程攻击者执行任意代码，属于Web应用漏洞"
+  },
+  {
+    "cve": "CVE-2025-0588",
+    "file": "C:\\Users\\shinichi\\submission\\src\\data\\cvelist\\2025\\0xxx\\CVE-2025-0588.json",
+    "category": "web",
+    "reason": "该漏洞涉及Octopus Server的HTTP响应头设置，导致拒绝服务，属于Web应用漏洞。"
+  }
+]

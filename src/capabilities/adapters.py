@@ -195,6 +195,64 @@ class WebAppDeployer(Capability):
         
         print(f"[WebAppDeployer] Deploying web application...")
         print(f"[WebAppDeployer] Software version: {sw_version}")
+        
+        # 🎯 优先检查Vulhub/Vulfocus预构建环境
+        prebuilt_deployed = False
+        try:
+            from toolbox.vuln_env_sources import VulnEnvManager
+            
+            print(f"\n[WebAppDeployer] 🔍 Checking Vulhub/Vulfocus for pre-built environment...")
+            manager = VulnEnvManager()
+            
+            env_result = manager.find_env(cve_id)
+            
+            if env_result:
+                source, env_info = env_result
+                print(f"[WebAppDeployer] ✨ Found pre-built environment in {env_info['source']}!")
+                print(f"[WebAppDeployer] 📦 Deploying from {env_info['source']}...\n")
+                
+                deploy_result = manager.deploy_env(cve_id)
+                
+                if deploy_result.get('success'):
+                    prebuilt_deployed = True
+                    print(f"\n[WebAppDeployer] 🎉 Pre-built environment deployed successfully!")
+                    print(f"   Source: {deploy_result['source']}")
+                    print(f"   Method: {deploy_result['deployment_method']}")
+                    
+                    # 提取端口信息
+                    port_info = deploy_result.get('ports', '')
+                    if ':' in str(port_info):
+                        # 从 "0.0.0.0:8080->8080/tcp" 提取主机端口
+                        import re
+                        match = re.search(r':(\d+)->', str(port_info))
+                        if match:
+                            target_url = f"http://localhost:{match.group(1)}"
+                        else:
+                            target_url = "http://localhost:8080"  # fallback
+                    else:
+                        target_url = "http://localhost:8080"  # fallback
+                    
+                    print(f"[WebAppDeployer] 🌐 Target URL: {target_url}")
+                    
+                    # 返回成功结果
+                    return {
+                        'success': True,
+                        'source': 'prebuilt',
+                        'env_source': deploy_result['source'],
+                        'target_url': target_url,
+                        'deployment_info': deploy_result
+                    }
+                else:
+                    print(f"\n[WebAppDeployer] ⚠️ Pre-built deployment failed: {deploy_result.get('error')}")
+                    print(f"   Falling back to custom deployment...\n")
+            else:
+                print(f"[WebAppDeployer] ℹ️ No pre-built environment found, using custom deployment\n")
+        
+        except Exception as e:
+            print(f"[WebAppDeployer] ⚠️ Vuln source check failed: {e}")
+            print(f"   Falling back to custom deployment...\n")
+        
+        # 如果预构建部署失败或未找到，继续原有流程
         explicit_target_url = self.config.get('target_url')
         
         # ========== 智能端口检测 ==========

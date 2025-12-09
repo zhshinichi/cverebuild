@@ -435,22 +435,84 @@ class CVEReproducer:
                     "- b) 🏭 Repository Builder \n" \
                     "-------------------------------------------\n")
                 
-                # 🔍 启用中途反思机制
+                # 🎯 优先检查Vulhub/Vulfocus是否有现成环境
+                prebuilt_env_result = None
                 try:
-                    from toolbox.command_ops import enable_reflection, reset_reflection
-                    reflection_context = f"正在为 {self.cve_id} 构建仓库环境。\n知识库摘要：{self.cve_knowledge[:500]}..."
-                    enable_reflection(True, reflection_context)
-                    reset_reflection()  # 重置之前的状态
-                    print("🔍 Mid-Execution Reflection 已启用")
-                except ImportError:
-                    print("⚠️ Mid-Execution Reflection 模块未找到，跳过")
+                    from toolbox.vuln_env_sources import VulnEnvManager
+                    
+                    print(f"\n🔍 Checking Vulhub/Vulfocus for pre-built environment...")
+                    manager = VulnEnvManager()
+                    
+                    # 查找环境
+                    env_result = manager.find_env(self.cve_id)
+                    
+                    if env_result:
+                        source, env_info = env_result
+                        print(f"\n✨ Found pre-built environment in {env_info['source']}!")
+                        print(f"📦 Deploying from {env_info['source']}...\n")
+                        
+                        # 部署环境
+                        deploy_result = manager.deploy_env(self.cve_id)
+                        
+                        if deploy_result.get('success'):
+                            prebuilt_env_result = deploy_result
+                            print(f"\n🎉 Pre-built environment deployed successfully!")
+                            print(f"   Source: {deploy_result['source']}")
+                            print(f"   Method: {deploy_result['deployment_method']}")
+                            
+                            # 跳过RepoBuilder,直接使用预构建环境
+                            repo_done = True
+                            res = {
+                                'success': True,
+                                'source': 'prebuilt',
+                                'env_source': deploy_result['source'],
+                                'deployment_info': deploy_result,
+                                'skip_custom_build': True
+                            }
+                        else:
+                            print(f"\n⚠️ Pre-built deployment failed: {deploy_result.get('error')}")
+                            print(f"   Falling back to custom RepoBuilder...\n")
+                    else:
+                        print(f"ℹ️ No pre-built environment found, using custom RepoBuilder\n")
                 
-                repo_done = False
+                except Exception as e:
+                    print(f"⚠️ Vuln source check failed: {e}")
+                    print(f"   Falling back to custom RepoBuilder...\n")
+                
+                # 如果有预构建环境成功,跳过RepoBuilder
+                if not prebuilt_env_result:
+                    # 🔍 启用中途反思机制
+                    try:
+                        from toolbox.command_ops import enable_reflection, reset_reflection
+                        reflection_context = f"正在为 {self.cve_id} 构建仓库环境。\n知识库摘要：{self.cve_knowledge[:500]}..."
+                        enable_reflection(True, reflection_context)
+                        reset_reflection()  # 重置之前的状态
+                        print("🔍 Mid-Execution Reflection 已启用")
+                    except ImportError:
+                        print("⚠️ Mid-Execution Reflection 模块未找到，跳过")
+                
+                repo_done = prebuilt_env_result is not None
+                
+                # 如果使用预构建环境,直接保存结果
+                if prebuilt_env_result:
+                    self.repo_build = {
+                        'success': 'yes',
+                        'source': 'prebuilt',
+                        'env_source': prebuilt_env_result['source'],
+                        'deployment_method': prebuilt_env_result['deployment_method'],
+                        'deployment_info': prebuilt_env_result,
+                        'access': f"Environment deployed from {prebuilt_env_result['source']}",
+                        'time_left': TIMEOUT - (time.time() - self.start_time)
+                    }
+                    helper.save_response(self.cve_id, self.repo_build, "repo_builder", struct=True)
+                    print(f"✅ Pre-built Environment Ready!")
+                
                 repo_feedback, critic_feedback = None, None
                 repo_try, critic_try = 1, 1
                 max_repo_tries, max_critic_tries = 3, 2
 
                 while not repo_done and repo_try <= max_repo_tries and critic_try <= max_critic_tries:
+
                     self.check_time("project_build")
                     if repo_feedback or critic_feedback:
                         print("\n----------------------------------------\n" \
