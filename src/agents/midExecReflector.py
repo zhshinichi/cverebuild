@@ -260,17 +260,22 @@ class MidExecutionReflector:
         self._reflection_count = 0
         self._max_reflections = 3  # 最多反思 3 次
         
-        # 集成DeploymentAdvisor
+        # 🔗 集成DeploymentAdvisor和DeploymentRecovery
         self.deployment_strategy = deployment_strategy
         self.deployment_advisor = None
+        self.deployment_recovery = None
+        
         if deployment_strategy:
             try:
-                # 延迟导入避免循环依赖
                 from agents.deploymentAdvisor import DeploymentAdvisor
+                from agents.deploymentRecovery import DeploymentRecovery
+                
                 self.deployment_advisor = DeploymentAdvisor(deployment_strategy)
-                print("[MidExecReflector] 🔗 DeploymentAdvisor integrated for enhanced diagnostics")
+                self.deployment_recovery = DeploymentRecovery(deployment_strategy)
+                
+                print("[MidExecReflector] 🔗 DeploymentAdvisor & DeploymentRecovery integrated")
             except Exception as e:
-                print(f"[MidExecReflector] ⚠️ DeploymentAdvisor integration failed: {e}")
+                print(f"[MidExecReflector] ⚠️ Integration failed: {e}")
         
     def check_and_reflect(self, command: str, output: str) -> Optional[ReflectionResult]:
         """
@@ -301,10 +306,35 @@ class MidExecutionReflector:
         return None
     
     def _perform_reflection(self) -> ReflectionResult:
-        """执行反思分析（增强：集成DeploymentAdvisor诊断）"""
+        """执行反思分析（增强：集成DeploymentAdvisor诊断 + 自动恢复）"""
         failure_summary = self.detector.get_failure_summary()
         
-        # 🔗 如果有DeploymentAdvisor，先进行专业诊断
+        # 🔧 优先尝试自动恢复策略
+        if self.deployment_recovery:
+            last_error = failure_summary.get('summary', '')
+            last_commands = failure_summary.get('failed_commands', [])
+            last_command = last_commands[-1] if last_commands else ''
+            
+            recovery_strategies = self.deployment_recovery.diagnose_failure(last_error, last_command)
+            
+            if recovery_strategies:
+                strategy = recovery_strategies[0]  # 使用优先级最高的策略
+                print(f"[MidExecReflector] 🔧 Auto-Recovery: {strategy['type']}")
+                
+                recovery_commands = self.deployment_recovery.generate_recovery_commands(strategy)
+                
+                if recovery_commands:
+                    print(f"[MidExecReflector] 📋 Generated {len(recovery_commands)} recovery commands")
+                    
+                    # 返回自动恢复结果
+                    return ReflectionResult(
+                        should_change_approach=True,
+                        suggested_actions=recovery_commands[:3],  # 最多3条命令
+                        reasoning=f"检测到{strategy['type']}，自动生成恢复策略",
+                        confidence=0.9
+                    )
+        
+        # 🔗 如果自动恢复不适用，使用DeploymentAdvisor诊断
         advisor_diagnosis = ""
         if self.deployment_advisor:
             advisor_diagnosis = self._get_deployment_diagnosis(failure_summary)

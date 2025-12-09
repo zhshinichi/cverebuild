@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # SQL注入自动化工具
+  sqlmap:
+    image: parrotsec/sqlmap:latest
+    container_name: pentest_sqlmap
+    network_mode: host
+    command: --version
+    restart: "no"
+    volumes:
+      - ./output:/root/.sqlmap
+    
+  # WordPress漏洞扫描器
+  wpscan:
+    image: wpscanteam/wpscan:latest
+    container_name: pentest_wpscan
+    network_mode: host
+    command: --help
+    restart: "no"
+    volumes:
+      - ./output:/output
+    environment:
+      - WPSCAN_API_TOKEN=${WPSCAN_API_TOKEN:-}
+  
+  # Web技术栈指纹识别
+  whatweb:
+    image: ilyaglow/whatweb:latest
+    container_name: pentest_whatweb
+    network_mode: host
+    command: --help
+    restart: "no"
+  
+  # 通用Web漏洞扫描器
+  nikto:
+    image: securecodebox/scanner-nikto:latest
+    container_name: pentest_nikto
+    network_mode: host
+    restart: "no"
+    volumes:
+      - ./output:/output
+
+  # OWASP ZAP (可选,较重)
+  zap:
+    image: owasp/zap2docker-stable:latest
+    container_name: pentest_zap
+    network_mode: host
+    command: zap.sh -cmd
+    restart: "no"
+    volumes:
+      - ./output:/zap/wrk
+
+# 共享输出目录
+volumes:
+  output:
+    driver: local

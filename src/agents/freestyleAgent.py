@@ -2292,14 +2292,14 @@ class FreestyleAgent(AgentWithHistory[dict, str]):
         if work_dir:
             self.WORK_DIR = work_dir
         
-        # 🔍 启用中途反思机制（集成DeploymentStrategy）
+        # 🔍 启用中途反思机制（集成DeploymentStrategy + 智能恢复）
         if deployment_strategy:
             try:
                 from toolbox.command_ops import enable_reflection, reset_reflection
                 reflection_context = f"正在复现漏洞 {cve_id}。\n知识库摘要：{cve_knowledge[:500] if cve_knowledge else '无'}..."
                 enable_reflection(True, reflection_context, deployment_strategy)
                 reset_reflection()
-                print(f"[FreestyleAgent] 🔍 MidExecReflector enabled with DeploymentStrategy")
+                print(f"[FreestyleAgent] 🔍 MidExecReflector enabled with DeploymentStrategy & Auto-Recovery")
             except Exception as e:
                 print(f"[FreestyleAgent] ⚠️ Failed to enable MidExecReflector: {e}")
     
