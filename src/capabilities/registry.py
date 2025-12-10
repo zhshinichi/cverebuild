@@ -149,9 +149,11 @@ class CapabilityRegistry:
         
         # Playwright 专用能力
         try:
-            from capabilities.playwright_adapters import PlaywrightWebExploiter, PlaywrightVerifier
-            self.register("exploit-web-vuln-playwright", PlaywrightWebExploiter)
-            self.register("verify-web-playwright", PlaywrightVerifier)
+            from capabilities.playwright_adapters import PlaywrightWebExploiterAdapter, PlaywrightVerifierAdapter
+            self.register("exploit-web-vuln-playwright", PlaywrightWebExploiterAdapter)
+            self.register("PlaywrightWebExploiter", PlaywrightWebExploiterAdapter)  # 别名，main.py 使用
+            self.register("verify-web-playwright", PlaywrightVerifierAdapter)
+            self.register("PlaywrightVerifier", PlaywrightVerifierAdapter)  # 别名
         except ImportError:
             pass  # Playwright 可选
     

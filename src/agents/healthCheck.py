@@ -40,7 +40,7 @@ class HealthCheckAgent(AgentWithHistory):
         if max_iterations is not None:
             cls.__MAX_TOOL_ITERATIONS__ = max_iterations
     
-    def __init__(self, service_result: str = None, port: int = None, **kwargs):
+    def __init__(self, service_result: str = None, port: int = None, target_url: str = None, **kwargs):
         # 工具集：只包含诊断和检查相关的工具
         tools = [
             execute_command_foreground,
@@ -50,6 +50,7 @@ class HealthCheckAgent(AgentWithHistory):
         super().__init__(tools=tools, **kwargs)
         self.service_result = service_result
         self.port = port
+        self.target_url = target_url or f"http://localhost:{port}" if port else "http://localhost:8080"
         self.cost = 0
     
     def get_input_vars(self, *args, **kwargs) -> dict:
@@ -57,7 +58,8 @@ class HealthCheckAgent(AgentWithHistory):
         vars = super().get_input_vars(*args, **kwargs)
         vars.update(
             service_result=self.service_result,
-            port=self.port
+            port=self.port,
+            target_url=self.target_url
         )
         return vars
     

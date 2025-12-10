@@ -1,6 +1,6 @@
 ## Task
 
-Verify the web service is running and accessible.
+Verify the web service is running and accessible at: {{ target_url }}
 
 ## Service Information
 
@@ -8,6 +8,8 @@ Verify the web service is running and accessible.
 
 ## Requirements
 
-1. Check HTTP response on port {{ port | default(9600) }}
-2. Success codes: 200, 302, 301 are acceptable
+1. MUST check: {{ target_url }}/ (do NOT use localhost or any other address)
+2. Success codes: 200, 302, 301, 307 are acceptable
 3. If unhealthy, diagnose and report what went wrong
+4. Return the exact URL {{ target_url }} in the access_url field
+

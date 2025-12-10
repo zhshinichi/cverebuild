@@ -1,12 +1,12 @@
 """
-漏洞环境源集成 - Vulhub & Vulfocus
+漏洞环境源集成 - Vulhub & Vulfocus & Docker Registry
 
 功能:
-1. 检查Vulhub/Vulfocus是否有对应CVE的环境
+1. 检查Vulhub/Vulfocus/DockerRegistry是否有对应CVE的环境
 2. 自动拉取并部署已有环境
 3. 显著降低RepoBuilder失败率
 
-优先级: Vulhub > Vulfocus > 自建环境
+优先级: DockerRegistry > Vulhub > Vulfocus > 自建环境
 """
 
 import os
@@ -37,6 +37,66 @@ class VulnEnvSource:
     def deploy_env(self, cve_id: str, work_dir: str = "/tmp/vuln_env") -> Dict:
         """部署环境,返回部署结果"""
         raise NotImplementedError
+    
+    @property
+    def priority(self) -> int:
+        """环境源优先级 (数字越小优先级越高)"""
+        return 999
+
+
+class DockerRegistrySource(VulnEnvSource):
+    """
+    Docker Registry源 - 经典CVE镜像和教学靶场
+    
+    特点:
+    - 直接Docker镜像,无需git clone
+    - 涵盖Shellshock/Heartbleed/Log4Shell等经典CVE
+    - 包含DVWA/WebGoat等教学靶场
+    """
+    
+    def __init__(self):
+        super().__init__()
+        self.name = "DockerRegistry"
+        # 延迟导入避免循环依赖
+        self._registry = None
+    
+    @property
+    def registry(self):
+        """延迟加载DockerVulnRegistry"""
+        if self._registry is None:
+            # 动态导入
+            import importlib.util
+            import os
+            registry_path = os.path.join(os.path.dirname(__file__), 'docker_vuln_registry.py')
+            spec = importlib.util.spec_from_file_location('docker_vuln_registry', registry_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            self._registry = module.DockerVulnRegistry()
+        return self._registry
+    
+    @property
+    def priority(self) -> int:
+        return 1  # 最高优先级
+    
+    def has_env(self, cve_id: str) -> bool:
+        """检查是否有该CVE的环境"""
+        return self.registry.find_by_cve(cve_id) is not None
+    
+    def get_env_info(self, cve_id: str) -> Optional[Dict]:
+        """获取环境信息"""
+        return self.registry.find_by_cve(cve_id)
+    
+    def deploy_env(self, cve_id: str, work_dir: str = "/tmp/vuln_env") -> Dict:
+        """部署环境"""
+        env_info = self.get_env_info(cve_id)
+        if not env_info:
+            return {
+                'success': False,
+                'error': f'{cve_id} not found in DockerRegistry'
+            }
+        
+        # 调用DockerVulnRegistry的deploy方法
+        return self.registry.deploy(env_info)
 
 
 class VulhubSource(VulnEnvSource):
@@ -57,6 +117,11 @@ class VulhubSource(VulnEnvSource):
         self.name = "Vulhub"
         self.local_repo = self.cache_dir / "vulhub"
         self.index_cache = self.cache_dir / "vulhub_index.json"
+        self._index = None
+    
+    @property
+    def priority(self) -> int:
+        return 2  # 第二优先级
         self._index = None
     
     def _ensure_repo_cloned(self) -> bool:
@@ -199,12 +264,34 @@ class VulhubSource(VulnEnvSource):
             
             # 2. 拉取镜像
             print(f"[Vulhub] 📦 Pulling Docker images...")
-            subprocess.run(
+            pull_result = subprocess.run(
                 ["docker-compose", "pull"],
                 capture_output=True,
                 text=True,
                 timeout=600
             )
+            
+            # 如果docker-compose pull失败(凭证问题),尝试用docker pull
+            if pull_result.returncode != 0 and "credentials" in pull_result.stderr.lower():
+                print(f"[Vulhub] ⚠️ docker-compose pull failed (credentials error), trying docker pull...")
+                # 从docker-compose.yml提取镜像列表
+                try:
+                    import yaml
+                    with open(compose_file, 'r') as f:
+                        compose_config = yaml.safe_load(f)
+                    
+                    for service_name, service_config in compose_config.get('services', {}).items():
+                        if 'image' in service_config:
+                            image = service_config['image']
+                            print(f"[Vulhub] 📥 Pulling {image}...")
+                            subprocess.run(
+                                ["docker", "pull", image],
+                                capture_output=True,
+                                text=True,
+                                timeout=600
+                            )
+                except Exception as e:
+                    print(f"[Vulhub] ⚠️ Failed to parse docker-compose.yml: {e}")
             
             # 3. 启动环境
             print(f"[Vulhub] 🔧 Starting containers...")
@@ -216,14 +303,89 @@ class VulhubSource(VulnEnvSource):
                 timeout=300
             )
             
-            # 4. 获取容器信息
+            # 3.5. 将容器连接到 bridge 网络(与 Agent 容器在同一网络)
+            # 这样 HealthCheck 可以通过容器名访问
+            try:
+                # 获取容器名
+                ps_result = subprocess.run(
+                    ["docker-compose", "ps", "-q"],
+                    capture_output=True,
+                    text=True
+                )
+                container_ids = ps_result.stdout.strip().split('\n')
+                
+                for container_id in container_ids:
+                    if container_id:
+                        result = subprocess.run(
+                            ["docker", "network", "connect", "bridge", container_id],
+                            capture_output=True,
+                            text=True
+                        )
+                        # 忽略"already connected"错误
+                        if result.returncode != 0 and "already exists" not in result.stderr:
+                            print(f"[Vulhub] ⚠️ Failed to connect {container_id}: {result.stderr}")
+                print(f"[Vulhub] 🔗 Connected containers to bridge network")
+            except Exception as e:
+                print(f"[Vulhub] ⚠️ Failed to connect to bridge network: {e}")
+            
+            # 4. 获取容器信息和端口映射
             containers = subprocess.run(
                 ["docker-compose", "ps", "--format", "json"],
                 capture_output=True,
                 text=True
             )
             
+            # 5. 解析端口信息和容器名
+            exposed_port = None
+            container_name = None
+            try:
+                import yaml
+                with open(compose_file, 'r') as f:
+                    compose_config = yaml.safe_load(f)
+                
+                # 从第一个服务提取端口映射
+                for service_name, service_config in compose_config.get('services', {}).items():
+                    if 'ports' in service_config:
+                        ports = service_config['ports']
+                        if ports:
+                            # 格式: "3000:3000" 或 {"target": 3000, "published": 3000}
+                            first_port = ports[0]
+                            if isinstance(first_port, str):
+                                # "3000:3000" -> 提取宿主机端口
+                                exposed_port = int(first_port.split(':')[0])
+                            elif isinstance(first_port, dict):
+                                exposed_port = int(first_port.get('published', first_port.get('target')))
+                    
+                    # 获取容器名 (docker-compose 默认命名: <project>-<service>-1)
+                    if not container_name:
+                        project_name = os.path.basename(env_path).replace('_', '-').lower()
+                        container_name = f"{project_name}-{service_name}-1"
+                    
+                    if exposed_port:
+                        break
+            except Exception as e:
+                print(f"[Vulhub] ⚠️ Failed to parse port from docker-compose.yml: {e}")
+            
+            # 获取容器在bridge网络中的IP地址
+            container_ip = None
+            if container_name:
+                try:
+                    # 只获取bridge网络的IP(Agent容器所在的网络)
+                    ip_result = subprocess.run(
+                        ["docker", "inspect", "-f", "{{.NetworkSettings.Networks.bridge.IPAddress}}", container_name],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    if ip_result.returncode == 0 and ip_result.stdout.strip():
+                        container_ip = ip_result.stdout.strip()
+                        print(f"[Vulhub] 🔗 Container IP in bridge network: {container_ip}")
+                except Exception as e:
+                    print(f"[Vulhub] ⚠️ Failed to get container IP: {e}")
+            
             print(f"[Vulhub] ✅ Environment deployed successfully!")
+            if exposed_port:
+                print(f"[Vulhub] 🌐 Service available at: http://host.docker.internal:{exposed_port}")
             
             return {
                 'success': True,
@@ -232,6 +394,10 @@ class VulhubSource(VulnEnvSource):
                 'env_path': env_path,
                 'containers': containers.stdout,
                 'deployment_method': 'docker-compose',
+                'port': exposed_port,
+                'target_url': f'http://host.docker.internal:{exposed_port}' if exposed_port else None,
+                'container_name': container_name,  # 容器名
+                'container_ip': container_ip,  # 容器IP (用于bridge网络访问)
                 'readme_path': str(Path(env_path) / "README.md") if env_info['has_readme'] else None
             }
             
@@ -267,6 +433,10 @@ class VulfocusSource(VulnEnvSource):
         self.name = "Vulfocus"
         self.index_cache = self.cache_dir / "vulfocus_index.json"
         self._index = None
+    
+    @property
+    def priority(self) -> int:
+        return 3  # 第三优先级
     
     def _build_index(self) -> Dict[str, Dict]:
         """构建Vulfocus镜像索引"""
@@ -414,10 +584,14 @@ class VulnEnvManager:
     """漏洞环境管理器 - 统一接口"""
     
     def __init__(self):
+        # 添加DockerRegistry作为第一优先级源
         self.sources = [
-            VulhubSource(),
-            VulfocusSource()
+            DockerRegistrySource(),  # 优先级1: 经典CVE镜像
+            VulhubSource(),          # 优先级2: Vulhub社区
+            VulfocusSource()         # 优先级3: Vulfocus中文社区
         ]
+        # 按优先级排序
+        self.sources.sort(key=lambda s: s.priority)
     
     def find_env(self, cve_id: str) -> Optional[Tuple[VulnEnvSource, Dict]]:
         """

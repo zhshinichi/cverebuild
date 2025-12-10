@@ -22,9 +22,10 @@ import re
 from typing import Dict, Any, Optional, List
 import sys
 
-# 导入产品仓库映射表
+# 导入产品仓库映射表和环境搜索引擎
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from toolbox.product_repository_mapping import get_repository_by_product
+from toolbox.env_search_engine import EnvironmentSearchEngine
 
 
 def get_cve_file_path(cve_id: str) -> str:
@@ -330,6 +331,50 @@ def infer_deployment_strategy(cve_data: Dict, cve_description: str) -> Dict[str,
         # 没有找到 GitHub 仓库
         result['confidence'] = 0.3
         result['deployment_notes'] = "未找到公开的源码仓库。可能需要从软件官网下载或使用 Docker Hub 镜像（如果存在）。"
+    
+    # 【新增】如果置信度较低（<0.5），使用智能搜索引擎查找替代方案
+    if result['confidence'] < 0.5:
+        print(f"[DeploymentAnalyzer] 🔍 Low confidence ({result['confidence']}), searching for alternatives...")
+        search_engine = EnvironmentSearchEngine()
+        
+        # 搜索 GitHub PoC、Docker Hub 镜像、模拟环境可行性
+        search_results = search_engine.search_all(
+            cve_id=cve_data.get('cveMetadata', {}).get('cveId', ''),
+            product=result.get('product_name', ''),
+            version=None  # 可以从 affected[0].versions 提取
+        )
+        
+        # 获取推荐行动
+        recommendation = search_engine.recommend_action(search_results, result['confidence'])
+        
+        # 添加降级选项到结果中
+        result['fallback_options'] = {
+            'action': recommendation['action'],
+            'priority': recommendation['priority'],
+            'description': recommendation['description'],
+            'poc_repos': search_results['poc_repos'],
+            'docker_images': search_results['docker_images'],
+            'can_mock': search_results['can_mock'],
+            'mock_strategy': search_results['mock_strategy']
+        }
+        
+        # 更新部署说明
+        if recommendation['action'] == 'use_poc':
+            result['deployment_notes'] = f"✅ 找到 PoC 仓库（带 Docker 支持）: {search_results['poc_repos'][0]['url']}"
+            result['confidence'] = 0.7  # 提升置信度
+        elif recommendation['action'] == 'use_similar_image':
+            result['deployment_notes'] = f"✅ 找到相似 Docker 镜像: {search_results['docker_images'][0]['name']}"
+            result['confidence'] = 0.6
+        elif recommendation['action'] == 'use_official_image':
+            result['deployment_notes'] = f"✅ 找到官方 Docker 镜像: {search_results['docker_images'][0]['name']}"
+            result['confidence'] = 0.65
+        elif recommendation['action'] == 'create_mock':
+            result['deployment_notes'] = f"💡 可创建模拟环境 ({search_results['mock_strategy']}): {recommendation['description']}"
+            result['confidence'] = 0.5
+        else:
+            result['deployment_notes'] += f" | 💡 建议: {recommendation['description']}"
+        
+        print(f"[DeploymentAnalyzer] 🎯 Fallback action: {recommendation['action']} (priority: {recommendation['priority']})")
     
     return result
 

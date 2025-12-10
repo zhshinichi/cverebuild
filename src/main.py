@@ -996,6 +996,14 @@ if __name__ == "__main__":
         from planner.executor import DAGExecutor
         from capabilities.registry import CapabilityRegistry
         
+        # 添加 prompt 搜索路径 (容器内路径)
+        try:
+            import agentlib
+            prompts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'prompts')
+            agentlib.add_prompt_search_path(prompts_dir)
+        except Exception as e:
+            print(f"⚠️ Failed to add prompt search path: {e}")
+        
         # 设置日志 (使用挂载目录以便同步到本地)
         from core.config import get_shared_root
         shared_dir = get_shared_root()

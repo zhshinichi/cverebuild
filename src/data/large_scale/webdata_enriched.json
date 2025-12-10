@@ -1,0 +1,1612 @@
+{
+    "CVE-2025-0058": {
+        "published_date": "2025-01-14T00:08:59.323Z",
+        "patch_commits": [],
+        "sw_version": "SAP_BASIS 753",
+        "sw_version_wget": "",
+        "description": "In SAP Business Workflow and SAP Flexible Workflow, an authenticated attacker can manipulate a parameter in an otherwise legitimate resource request to view sensitive information that should otherwise be restricted. The attacker does not have the ability to modify the information or to make the information unavailable.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-639",
+                "value": "CWE-639: CWE-639: Authorization Bypass Through User-Controlled Key"
+            }
+        ]
+    },
+    "CVE-2025-0060": {
+        "published_date": "2025-01-14T00:09:14.051Z",
+        "patch_commits": [],
+        "sw_version": "ENTERPRISE 420",
+        "sw_version_wget": "",
+        "description": "SAP BusinessObjects Business Intelligence Platform allows an authenticated user with restricted access to inject malicious JS code which can read sensitive information from the server and send it to the attacker. The attacker could further use this information to impersonate as a high privileged user causing high impact on confidentiality and integrity of the application.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: CWE-94: Improper Control of Generation of Code"
+            }
+        ]
+    },
+    "CVE-2025-0061": {
+        "published_date": "2025-01-14T00:09:21.343Z",
+        "patch_commits": [],
+        "sw_version": "ENTERPRISE 420",
+        "sw_version_wget": "",
+        "description": "SAP BusinessObjects Business Intelligence Platform allows an unauthenticated attacker to perform session hijacking over the network without any user interaction, due to an information disclosure vulnerability. Attacker can access and modify all the data of the application.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-497",
+                "value": "CWE-497: CWE-497: Exposure of Sensitive System Information to an Unauthorized Control Sphere"
+            }
+        ]
+    },
+    "CVE-2025-0062": {
+        "published_date": "2025-03-11T00:31:18.755Z",
+        "patch_commits": [],
+        "sw_version": "ENTERPRISE 430",
+        "sw_version_wget": "",
+        "description": "SAP BusinessObjects Business Intelligence Platform allows an attacker to inject JavaScript code in Web Intelligence reports. This code is then executed in the victim's browser each time the vulnerable page is visited by the victim. On successful exploitation, an attacker could cause limited impact on confidentiality and integrity within the scope of victim�s browser. There is no impact on availability. This vulnerability occurs only when script/html execution is enabled by the administrator in Central Management Console.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0103": {
+        "published_date": "2025-01-11T02:59:51.177Z",
+        "patch_commits": [],
+        "sw_version": "",
+        "sw_version_wget": "",
+        "description": "An SQL injection vulnerability in Palo Alto Networks Expedition enables an authenticated attacker to reveal Expedition database contents, such as password hashes, usernames, device configurations, and device API keys. This vulnerability also enables attackers to create and read arbitrary files on the Expedition system.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0104": {
+        "published_date": "2025-01-11T03:00:40.318Z",
+        "patch_commits": [],
+        "sw_version": "",
+        "sw_version_wget": "",
+        "description": "A reflected cross-site scripting (XSS) vulnerability in Palo Alto Networks Expedition enables attackers to execute malicious JavaScript code in the context of an authenticated Expedition user’s browser if that authenticated user clicks a malicious link that allows phishing attacks and could lead to Expedition browser-session theft.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0105": {
+        "published_date": "2025-01-11T03:01:24.168Z",
+        "patch_commits": [],
+        "sw_version": "",
+        "sw_version_wget": "",
+        "description": "An arbitrary file deletion vulnerability in Palo Alto Networks Expedition enables an unauthenticated attacker to delete arbitrary files accessible to the www-data user on the host filesystem.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-73",
+                "value": "CWE-73: CWE-73 External Control of File Name or Path"
+            }
+        ]
+    },
+    "CVE-2025-0154": {
+        "published_date": "2025-04-02T15:15:46.997Z",
+        "patch_commits": [],
+        "sw_version": "9.1",
+        "sw_version_wget": "",
+        "description": "IBM TXSeries for Multiplatforms 9.1 and 11.1 could disclose sensitive information to a remote attacker due to improper neutralization of HTTP headers.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-644",
+                "value": "CWE-644: CWE-644 Improper Neutralization of HTTP Headers for Scripting Syntax"
+            }
+        ]
+    },
+    "CVE-2025-0159": {
+        "published_date": "2025-02-28T19:01:26.669Z",
+        "patch_commits": [],
+        "sw_version": "8.5.0.0",
+        "sw_version_wget": "",
+        "description": "IBM FlashSystem (IBM Storage Virtualize (8.5.0.0 through 8.5.0.13, 8.5.1.0, 8.5.2.0 through 8.5.2.3, 8.5.3.0 through 8.5.3.1, 8.5.4.0, 8.6.0.0 through 8.6.0.5, 8.6.1.0, 8.6.2.0 through 8.6.2.1, 8.6.3.0, 8.7.0.0 through 8.7.0.2, 8.7.1.0, 8.7.2.0 through 8.7.2.1) could allow a remote attacker to bypass RPCAdapter endpoint authentication by sending a specifically crafted HTTP request.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-288",
+                "value": "CWE-288: CWE-288 Authentication Bypass Using an Alternate Path or Channel"
+            }
+        ]
+    },
+    "CVE-2025-0165": {
+        "published_date": "2025-08-30T12:47:56.304Z",
+        "patch_commits": [],
+        "sw_version": "4.8.4",
+        "sw_version_wget": "",
+        "description": "IBM watsonx Orchestrate Cartridge for IBM Cloud Pak for Data 4.8.4, 4.8.5, and 5.0.0 through 5.2.0 is vulnerable to SQL injection. A remote attacker could send specially crafted SQL statements, which could allow the attacker to view, add, modify, or delete information in the back-end database.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0178": {
+        "published_date": "2025-02-14T13:22:22.237Z",
+        "patch_commits": [],
+        "sw_version": "12.0",
+        "sw_version_wget": "",
+        "description": "Improper Input Validation vulnerability in WatchGuard Fireware OS allows an attacker to manipulate the value of the HTTP Host header in requests sent to the Web UI. An attacker could exploit this vulnerability to redirect users to malicious websites, poison the web cache, or inject malicious JavaScript into responses sent by the Web UI.\nThis issue affects Fireware OS: from 12.0 up to and including 12.11.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-20",
+                "value": "CWE-20: CWE-20 Improper Input Validation"
+            }
+        ]
+    },
+    "CVE-2025-0182": {
+        "published_date": "2025-03-20T10:10:00.892Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "A vulnerability in danswer-ai/danswer version 0.9.0 allows for denial of service through memory exhaustion. The issue arises from the use of a vulnerable version of the starlette package (<=0.49) via fastapi, which was patched in fastapi version 0.115.3. The vulnerability can be exploited by sending multiple requests to the /auth/saml/callback endpoint, leading to uncontrolled memory consumption and eventual denial of service.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-770",
+                "value": "CWE-770: CWE-770 Allocation of Resources Without Limits or Throttling"
+            }
+        ]
+    },
+    "CVE-2025-0188": {
+        "published_date": "2025-03-20T10:09:09.391Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "A Server-Side Request Forgery (SSRF) vulnerability was discovered in gaizhenbiao/chuanhuchatgpt version 20240914. The vulnerability allows an attacker to construct a response link by saving the response in a folder named after the SHA-1 hash of the target URL. This enables the attacker to access the response directly, potentially leading to unauthorized access to internal systems, data theft, service disruption, or further attacks such as port scanning and accessing metadata endpoints.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-918",
+                "value": "CWE-918: CWE-918 Server-Side Request Forgery (SSRF)"
+            }
+        ]
+    },
+    "CVE-2025-0197": {
+        "published_date": "2025-01-03T19:31:05.632Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as critical was found in code-projects Point of Sales and Inventory Management System 1.0. This vulnerability affects unknown code of the file /user/search.php. The manipulation of the argument name leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0199": {
+        "published_date": "2025-01-03T22:31:05.073Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as critical, was found in code-projects Point of Sales and Inventory Management System 1.0. Affected is an unknown function of the file /user/minus_cart.php. The manipulation of the argument id leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0200": {
+        "published_date": "2025-01-04T03:00:16.975Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability has been found in code-projects Point of Sales and Inventory Management System 1.0 and classified as critical. Affected by this vulnerability is an unknown functionality of the file /user/search_num.php. The manipulation of the argument search leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0203": {
+        "published_date": "2025-01-04T07:00:13.122Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in code-projects Student Management System 1.0. It has been declared as critical. This vulnerability affects the function showSubject1 of the file /config/DbFunction.php. The manipulation of the argument sid leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used. Other parameters might be affected as well.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0204": {
+        "published_date": "2025-01-04T07:31:05.457Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in code-projects Online Shoe Store 1.0. It has been rated as critical. This issue affects some unknown processing of the file /details.php. The manipulation of the argument id leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0205": {
+        "published_date": "2025-01-04T09:00:09.858Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as critical has been found in code-projects Online Shoe Store 1.0. Affected is an unknown function of the file /details2.php. The manipulation of the argument id leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0207": {
+        "published_date": "2025-01-04T12:31:04.814Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as critical, has been found in code-projects Online Shoe Store 1.0. Affected by this issue is some unknown functionality of the file /function/login.php. The manipulation of the argument password leads to sql injection. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0211": {
+        "published_date": "2025-01-04T15:00:18.266Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Campcodes School Faculty Scheduling System 1.0 and classified as critical. Affected by this issue is some unknown functionality of the file /admin/index.php. The manipulation of the argument page leads to file inclusion. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-73",
+                "value": "CWE-73: File Inclusion"
+            }
+        ]
+    },
+    "CVE-2025-0214": {
+        "published_date": "2025-01-04T17:00:16.807Z",
+        "patch_commits": [],
+        "sw_version": "4.0.0.1",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in TMD Custom Header Menu 4.0.0.1 on OpenCart. It has been rated as problematic. This issue affects some unknown processing of the file /admin/index.php. The manipulation of the argument headermenu_id leads to sql injection. The attack may be initiated remotely. The complexity of an attack is rather high. The exploitation is known to be difficult. The exploit has been disclosed to the public and may be used. It is recommended to upgrade the affected component.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0219": {
+        "published_date": "2025-01-05T05:31:04.064Z",
+        "patch_commits": [],
+        "sw_version": "488.01",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as problematic, has been found in Trimble SPS851 488.01. Affected by this issue is some unknown functionality of the component Receiver Status Identity Tab. The manipulation of the argument System Name leads to cross site scripting. The attack may be launched remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0229": {
+        "published_date": "2025-01-05T19:31:04.829Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as critical, has been found in code-projects Travel Management System 1.0. This issue affects some unknown processing of the file /enquiry.php. The manipulation of the argument pid/t1/t2/t3/t4/t5/t6/t7 leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0231": {
+        "published_date": "2025-01-05T21:31:05.496Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability has been found in Codezips Gym Management System 1.0 and classified as critical. Affected by this vulnerability is an unknown functionality of the file /dashboard/admin/submit_payments.php. The manipulation of the argument m_id leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0238": {
+        "published_date": "2025-01-07T16:07:06.043Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. This vulnerability affects Firefox < 134, Firefox ESR < 128.6, Firefox ESR < 115.19, Thunderbird < 134, and Thunderbird < 128.6.",
+        "sec_adv": [
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-01/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-01 Security Vulnerabilities fixed in Firefox 134 Announced January  7, 2025 Impact high Products Firefox Fixed in Firefox 134 [Update March 4, 2025] We discovered a Skia library update in Firefox 134 fixed CVE-2024-43097 # CVE-2024-43097: Overflow when growing an SkRegion's RunArray Reporter Google Android Impact critical Description In resizeToAtLeast of SkRegion.cpp, there was a possible out of bounds write due to an integer overflow References Bug 1945624 # CVE-2025-0244: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter Umar Farooq Impact high Description When redirecting to an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. References Bug 1929584 # CVE-2025-0245: Lock screen setting bypass in Firefox Focus for Android Reporter Jurrie Overgoor Impact moderate Description Under certain circumstances, a user opt-in setting that Focus should require authentication before use could have been be bypassed. References Bug 1895342 # CVE-2025-0246: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter James Lee Impact moderate Description When using an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. *Note: This issue is a different issue from CVE-2025-0244. References Bug 1912709 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and w",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-02/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-02 Security Vulnerabilities fixed in Firefox ESR 128.6 Announced January  7, 2025 Impact moderate Products Firefox ESR Fixed in Firefox ESR 128.6 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could under some circumstances cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate Visit Mozilla Corporation’s not-for-profit parent, Mozilla Foundation . Portions of this content are ©1998–2025 by individual mozilla.org contributors. Content available under a Creative Commons license . Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-03/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-03 Security Vulnerabilities fixed in Firefox ESR 115.19 Announced January  7, 2025 Impact moderate Products Firefox ESR Fixed in Firefox ESR 115.19 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate Visit Mozilla Corporation’s not-for-profit parent, Mozilla Foundation . Portions of this content are ©1998–2025 by individual mozilla.org contributors. Content available under a Creative Commons license . Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-04/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-04 Security Vulnerabilities fixed in Thunderbird 134 Announced January  7, 2025 Impact high Products Thunderbird Fixed in Thunderbird 134 In general, these flaws cannot be exploited through email in the Thunderbird product because scripting is disabled when reading mail, but are potentially risks in browser or browser-like contexts. # CVE-2024-50336: matrix-js-sdk has insufficient MXC URI validation which could allow client-side path traversal Reporter Patrick Cloke Impact moderate Description The Matrix specification demands homeservers to perform validation of the server-name and media-id components of MXC URIs with the intent to prevent path traversal. However, it is not mentioned that a similar check must also be performed on the client to prevent client-side path traversal. matrix-js-sdk fails to perform this validation. References Bug 1929264 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 # CVE-2025-0247: Memory safety bugs fixed in Firefox 134 and Thunderbird 134 Reporter Akmat Suleimanov, Jed Davis, André Bargull, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133 and Thunderbird 133. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safe",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-05/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-05 Security Vulnerabilities fixed in Thunderbird ESR 128.6 Announced January  7, 2025 Impact moderate Products Thunderbird Fixed in Thunderbird 128.6 In general, these flaws cannot be exploited through email in the Thunderbird product because scripting is disabled when reading mail, but are potentially risks in browser or browser-like contexts. # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could under some circumstances cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate Visit Mozilla Corporation’s not-for-profit parent, Mozilla Foundation . Portions of this content are ©1998–2025 by individual mozilla.org contributors. Content available under a Creative Commons license . Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            }
+        ],
+        "cwe": []
+    },
+    "CVE-2025-0240": {
+        "published_date": "2025-01-07T16:07:06.551Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. This vulnerability affects Firefox < 134, Firefox ESR < 128.6, Thunderbird < 134, and Thunderbird < 128.6.",
+        "sec_adv": [
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-01/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-01 Security Vulnerabilities fixed in Firefox 134 Announced January  7, 2025 Impact high Products Firefox Fixed in Firefox 134 [Update March 4, 2025] We discovered a Skia library update in Firefox 134 fixed CVE-2024-43097 # CVE-2024-43097: Overflow when growing an SkRegion's RunArray Reporter Google Android Impact critical Description In resizeToAtLeast of SkRegion.cpp, there was a possible out of bounds write due to an integer overflow References Bug 1945624 # CVE-2025-0244: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter Umar Farooq Impact high Description When redirecting to an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. References Bug 1929584 # CVE-2025-0245: Lock screen setting bypass in Firefox Focus for Android Reporter Jurrie Overgoor Impact moderate Description Under certain circumstances, a user opt-in setting that Focus should require authentication before use could have been be bypassed. References Bug 1895342 # CVE-2025-0246: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter James Lee Impact moderate Description When using an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. *Note: This issue is a different issue from CVE-2025-0244. References Bug 1912709 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and w",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-02/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-02 Security Vulnerabilities fixed in Firefox ESR 128.6 Announced January  7, 2025 Impact moderate Products Firefox ESR Fixed in Firefox ESR 128.6 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could under some circumstances cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate Visit Mozilla Corporation’s not-for-profit parent, Mozilla Foundation . Portions of this content are ©1998–2025 by individual mozilla.org contributors. Content available under a Creative Commons license . Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-04/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-04 Security Vulnerabilities fixed in Thunderbird 134 Announced January  7, 2025 Impact high Products Thunderbird Fixed in Thunderbird 134 In general, these flaws cannot be exploited through email in the Thunderbird product because scripting is disabled when reading mail, but are potentially risks in browser or browser-like contexts. # CVE-2024-50336: matrix-js-sdk has insufficient MXC URI validation which could allow client-side path traversal Reporter Patrick Cloke Impact moderate Description The Matrix specification demands homeservers to perform validation of the server-name and media-id components of MXC URIs with the intent to prevent path traversal. However, it is not mentioned that a similar check must also be performed on the client to prevent client-side path traversal. matrix-js-sdk fails to perform this validation. References Bug 1929264 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 # CVE-2025-0247: Memory safety bugs fixed in Firefox 134 and Thunderbird 134 Reporter Akmat Suleimanov, Jed Davis, André Bargull, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133 and Thunderbird 133. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safe",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-05/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-05 Security Vulnerabilities fixed in Thunderbird ESR 128.6 Announced January  7, 2025 Impact moderate Products Thunderbird Fixed in Thunderbird 128.6 In general, these flaws cannot be exploited through email in the Thunderbird product because scripting is disabled when reading mail, but are potentially risks in browser or browser-like contexts. # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could under some circumstances cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate Visit Mozilla Corporation’s not-for-profit parent, Mozilla Foundation . Portions of this content are ©1998–2025 by individual mozilla.org contributors. Content available under a Creative Commons license . Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            }
+        ],
+        "cwe": []
+    },
+    "CVE-2025-0245": {
+        "published_date": "2025-01-07T16:07:05.265Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "Under certain circumstances, a user opt-in setting that Focus should require authentication before use could have been be bypassed. This vulnerability affects Firefox < 134.",
+        "sec_adv": [
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-01/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-01 Security Vulnerabilities fixed in Firefox 134 Announced January  7, 2025 Impact high Products Firefox Fixed in Firefox 134 [Update March 4, 2025] We discovered a Skia library update in Firefox 134 fixed CVE-2024-43097 # CVE-2024-43097: Overflow when growing an SkRegion's RunArray Reporter Google Android Impact critical Description In resizeToAtLeast of SkRegion.cpp, there was a possible out of bounds write due to an integer overflow References Bug 1945624 # CVE-2025-0244: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter Umar Farooq Impact high Description When redirecting to an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. References Bug 1929584 # CVE-2025-0245: Lock screen setting bypass in Firefox Focus for Android Reporter Jurrie Overgoor Impact moderate Description Under certain circumstances, a user opt-in setting that Focus should require authentication before use could have been be bypassed. References Bug 1895342 # CVE-2025-0246: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter James Lee Impact moderate Description When using an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. *Note: This issue is a different issue from CVE-2025-0244. References Bug 1912709 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and w",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            }
+        ],
+        "cwe": []
+    },
+    "CVE-2025-0247": {
+        "published_date": "2025-01-07T16:07:07.636Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "Memory safety bugs present in Firefox 133 and Thunderbird 133. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. This vulnerability affects Firefox < 134 and Thunderbird < 134.",
+        "sec_adv": [
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-01/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-01 Security Vulnerabilities fixed in Firefox 134 Announced January  7, 2025 Impact high Products Firefox Fixed in Firefox 134 [Update March 4, 2025] We discovered a Skia library update in Firefox 134 fixed CVE-2024-43097 # CVE-2024-43097: Overflow when growing an SkRegion's RunArray Reporter Google Android Impact critical Description In resizeToAtLeast of SkRegion.cpp, there was a possible out of bounds write due to an integer overflow References Bug 1945624 # CVE-2025-0244: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter Umar Farooq Impact high Description When redirecting to an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. References Bug 1929584 # CVE-2025-0245: Lock screen setting bypass in Firefox Focus for Android Reporter Jurrie Overgoor Impact moderate Description Under certain circumstances, a user opt-in setting that Focus should require authentication before use could have been be bypassed. References Bug 1895342 # CVE-2025-0246: Address bar spoofing using an invalid protocol scheme on Firefox for Android Reporter James Lee Impact moderate Description When using an invalid protocol scheme, an attacker could spoof the address bar. Note: This issue only affected Android operating systems. Other operating systems are unaffected. *Note: This issue is a different issue from CVE-2025-0244. References Bug 1912709 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and w",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-04/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-04 Security Vulnerabilities fixed in Thunderbird 134 Announced January  7, 2025 Impact high Products Thunderbird Fixed in Thunderbird 134 In general, these flaws cannot be exploited through email in the Thunderbird product because scripting is disabled when reading mail, but are potentially risks in browser or browser-like contexts. # CVE-2024-50336: matrix-js-sdk has insufficient MXC URI validation which could allow client-side path traversal Reporter Patrick Cloke Impact moderate Description The Matrix specification demands homeservers to perform validation of the server-name and media-id components of MXC URIs with the intent to prevent path traversal. However, it is not mentioned that a similar check must also be performed on the client to prevent client-side path traversal. matrix-js-sdk fails to perform this validation. References Bug 1929264 # CVE-2025-0237: WebChannel APIs susceptible to confused deputy attack Reporter Andrew McCreight Impact moderate Description The WebChannel API, which is used to transport various information across processes, did not check the sending principal but rather accepted the principal being sent. This could have led to privilege escalation attacks. References Bug 1915257 # CVE-2025-0238: Use-after-free when breaking lines in text Reporter Irvan Kurniawan Impact moderate Description Assuming a controlled failed memory allocation, an attacker could have caused a use-after-free, leading to a potentially exploitable crash. References Bug 1915535 # CVE-2025-0239: Alt-Svc ALPN validation failure when redirected Reporter Paul Gerste Impact moderate Description When using Alt-Svc, ALPN did not properly validate certificates when the original server is redirecting to an insecure site. References Bug 1929156 # CVE-2025-0240: Compartment mismatch when parsing JavaScript JSON module Reporter Nils Bars Impact moderate Description Parsing a JavaScript module as JSON could, under some circumstances, cause cross-compartment access, which may result in a use-after-free. References Bug 1929623 # CVE-2025-0241: Memory corruption when using JavaScript Text Segmentation Reporter Nils Bars Impact moderate Description When segmenting specially crafted text, segmentation would corrupt memory leading to a potentially exploitable crash. References Bug 1933023 # CVE-2025-0242: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 Reporter Andrew McCreight, Tooru Fujisawa, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 115.18, Firefox ESR 128.5, Thunderbird 115.18, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6 # CVE-2025-0243: Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 Reporter Andrew Osmond and the Mozilla Fuzzing Team Impact moderate Description Memory safety bugs present in Firefox 133, Thunderbird 133, Firefox ESR 128.5, and Thunderbird 128.5. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 134, Thunderbird 134, Firefox ESR 128.6, and Thunderbird 128.6 # CVE-2025-0247: Memory safety bugs fixed in Firefox 134 and Thunderbird 134 Reporter Akmat Suleimanov, Jed Davis, André Bargull, and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 133 and Thunderbird 133. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safe",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            }
+        ],
+        "cwe": []
+    },
+    "CVE-2025-0250": {
+        "published_date": "2025-07-24T23:28:00.736Z",
+        "patch_commits": [],
+        "sw_version": "1.2",
+        "sw_version_wget": "",
+        "description": "HCL IEM is affected by an authorization token sent in cookie vulnerability.  A token used for authentication and authorization is being handled in a manner that may increase its exposure to security risks.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-319",
+                "value": "CWE-319: CWE-319 Cleartext Transmission of Sensitive Information"
+            }
+        ]
+    },
+    "CVE-2025-0255": {
+        "published_date": "2025-03-24T16:32:21.022Z",
+        "patch_commits": [],
+        "sw_version": "7.0 - 7.0.5.25; 7.1 - 7.1.2.21; 7.2 - 7.2.3.14; 7.3 - 7.3.2.9; 8.0 - 8.0.1.4; 8.1.0.0",
+        "sw_version_wget": "",
+        "description": "HCL DevOps Deploy / HCL Launch could allow a remote privileged authenticated attacker to execute arbitrary commands on the system by sending specially crafted input containing special elements.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-78",
+                "value": "CWE-78: CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0272": {
+        "published_date": "2025-04-03T14:56:13.459Z",
+        "patch_commits": [],
+        "sw_version": "7.0 - 7.0.5.26; 7.1 - 7.1.2.21; 7.2 - 7.2.3.14; 7.3 - 7.3.2.9; 8.0 - 8.0.1.4; 8.1 - 8.1.0.0",
+        "sw_version_wget": "",
+        "description": "HCL DevOps Deploy / HCL Launch is vulnerable to HTML injection. This vulnerability may allow a user to embed arbitrary HTML tags in the Web UI potentially leading to sensitive information disclosure.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-80",
+                "value": "CWE-80: CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"
+            }
+        ]
+    },
+    "CVE-2025-0276": {
+        "published_date": "2025-10-16T08:25:49.925Z",
+        "patch_commits": [],
+        "sw_version": "<=3.3",
+        "sw_version_wget": "",
+        "description": "HCL BigFix Modern Client Management (MCM) 3.3 and earlier are vulnerable to certain insecure directives within the Content Security Policy (CSP).  An attacker could trick users into performing actions by not properly restricting the sources of scripts and other content.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-693",
+                "value": "CWE-693: CWE-693 Protection Mechanism Failure"
+            },
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation (XSS or 'Cross-site Scripting')"
+            },
+            {
+                "id": "CWE-80",
+                "value": "CWE-80: CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"
+            }
+        ]
+    },
+    "CVE-2025-0281": {
+        "published_date": "2025-03-20T10:10:44.872Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/lunary-ai/lunary/commit/fa0fd7742ae029ed934690d282519263f5d838de",
+                "content": ""
+            }
+        ],
+        "sw_version": "unspecified",
+        "sw_version_wget": "https://github.com/lunary-ai/lunary/archive/refs/tags/unspecified.zip",
+        "description": "A stored cross-site scripting (XSS) vulnerability exists in lunary-ai/lunary versions 1.6.7 and earlier. An attacker can inject malicious JavaScript into the SAML IdP XML metadata, which is used to generate the SAML login redirect URL. This URL is then set as the value of `window.location.href` without proper validation or sanitization. This vulnerability allows the attacker to execute arbitrary JavaScript in the context of the user's browser, potentially leading to session hijacking, data theft, or other malicious actions. The issue is fixed in version 1.7.10.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0291": {
+        "published_date": "2025-01-08T18:42:28.608Z",
+        "patch_commits": [],
+        "sw_version": "131.0.6778.264",
+        "sw_version_wget": "",
+        "description": "Type Confusion in V8 in Google Chrome prior to 131.0.6778.264 allowed a remote attacker to execute arbitrary code inside a sandbox via a crafted HTML page. (Chromium security severity: High)",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-843",
+                "value": "CWE-843: Type Confusion"
+            }
+        ]
+    },
+    "CVE-2025-0292": {
+        "published_date": "2025-07-08T15:33:24.245Z",
+        "patch_commits": [],
+        "sw_version": "",
+        "sw_version_wget": "",
+        "description": "SSRF in Ivanti Connect Secure before version 22.7R2.8 and Ivanti Policy Secure before version 22.7R1.5 allows a remote authenticated attacker with admin rights to access internal network services.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-918",
+                "value": "CWE-918: CWE-918 Server-Side Request Forgery (SSRF)"
+            }
+        ]
+    },
+    "CVE-2025-0293": {
+        "published_date": "2025-07-08T15:33:05.165Z",
+        "patch_commits": [],
+        "sw_version": "",
+        "sw_version_wget": "",
+        "description": "CLRF injection in Ivanti Connect Secure before version 22.7R2.8 and Ivanti Policy Secure before version 22.7R1.5 allows a remote authenticated attacker with admin rights to write to a protected configuration file on disk.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-93",
+                "value": "CWE-93: CWE-93: Improper Neutralization of CRLF Sequences ('CRLF Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0299": {
+        "published_date": "2025-01-07T16:31:06.280Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as critical has been found in code-projects Online Book Shop 1.0. Affected is an unknown function of the file /search_result.php. The manipulation of the argument s leads to sql injection. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0308": {
+        "published_date": "2025-01-18T05:33:50.432Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Ultimate Member – User Profile, Registration, Login, Member Directory, Content Restriction & Membership Plugin plugin for WordPress is vulnerable to time-based SQL Injection via the search parameter in all versions up to, and including, 2.9.1 due to insufficient escaping on the user supplied parameter and lack of sufficient preparation on the existing SQL query.  This makes it possible for unauthenticated attackers to append additional SQL queries into already existing queries that can be used to extract sensitive information from the database.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0311": {
+        "published_date": "2025-01-10T06:43:16.199Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/Codeinwp/themeisle-companion/commit/47a17c86934cebbfc3f1a812f1afcaa20515c1f7",
+                "content": "fix: escape html tag\n\nFilename: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:\n```\n@@ -1039,23 +1039,25 @@ protected function render() {\n \t\t\t$output .= '<div class=\"obfx-title-wrapper\">';\n \t\t\tif ( ! empty( $settings['title'] ) ) {\n \t\t\t\t// Start of title tag.\n-\t\t\t\t$output .= '<' . esc_html( $settings['title_tag'] ) . ' ' . $this->get_render_attribute_string( 'title' ) . '>';\n+\t\t\t\t$title_tag = in_array( $settings['title_tag'], array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ), true ) ? $settings['title_tag'] : 'h1';\n+\t\t\t\t$output   .= '<' . esc_html( $title_tag ) . ' ' . $this->get_render_attribute_string( 'title' ) . '>';\n \n \t\t\t\t// Title string.\n \t\t\t\t$output .= esc_html( $settings['title'] );\n \n \t\t\t\t// End of title tag.\n-\t\t\t\t$output .= '</' . esc_html( $settings['title_tag'] ) . '>';\n+\t\t\t\t$output .= '</' . esc_html( $title_tag ) . '>';\n \t\t\t}\n \t\t\tif ( ! empty( $settings['subtitle'] ) ) {\n \t\t\t\t// Start of subtitle tag.\n-\t\t\t\t$output .= '<' . esc_html( $settings['subtitle_tag'] ) . ' ' . $this->get_render_attribute_string( 'subtitle' ) . '>';\n+\t\t\t\t$subtitle_tag = in_array( $settings['subtitle_tag'], array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ), true ) ? $settings['subtitle_tag'] : 'h1';\n+\t\t\t\t$output      .= '<' . esc_html( $subtitle_tag ) . ' ' . $this->get_render_attribute_string( 'subtitle' ) . '>';\n \n \t\t\t\t// Subtitle string.\n \t\t\t\t$output .= esc_html( $settings['subtitle'] );\n \n \t\t\t\t// End of subtitle tag.\n-\t\t\t\t$output .= '</' . esc_html( $settings['subtitle_tag'] ) . '>';\n+\t\t\t\t$output .= '</' . esc_html( $subtitle_tag ) . '>';\n \n \t\t\t}\n \n```"
+            },
+            {
+                "url": "https://github.com/Codeinwp/themeisle-companion/commit/c311050b372cf38e82d8ec9deadf4f21a8931487",
+                "content": "fix: cross site scripting issue with EL pricing table widget\n\nFilename: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:\n```\n@@ -1021,7 +1021,7 @@ protected function render() {\n \t\t//      $this->add_render_attribute( 'button_icon', 'class', $settings['button_icon'] );\n \t\t$this->add_render_attribute( 'button_icon_align', 'class', 'obfx-button-icon-align-' . $settings['button_icon_align'] );\n \t\tif ( ! empty( $settings['button_link']['url'] ) ) {\n-\t\t\t$this->add_render_attribute( 'button', 'href', $settings['button_link']['url'] );\n+\t\t\t$this->add_render_attribute( 'button', 'href', esc_url( $settings['button_link']['url'] ) );\n \n \t\t\tif ( ! empty( $settings['button_link']['is_external'] ) ) {\n \t\t\t\t$this->add_render_attribute( 'button', 'target', '_blank' );\n```"
+            }
+        ],
+        "sw_version": "*",
+        "sw_version_wget": "https://github.com/Codeinwp/themeisle-companion/archive/refs/tags/*.zip",
+        "description": "The Orbit Fox by ThemeIsle plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the plugin's Pricing Table widget in all versions up to, and including, 2.10.43 due to insufficient input sanitization and output escaping on user supplied attributes. This makes it possible for authenticated attackers, with contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0318": {
+        "published_date": "2025-01-18T05:33:49.324Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Ultimate Member – User Profile, Registration, Login, Member Directory, Content Restriction & Membership Plugin plugin for WordPress is vulnerable to Information Exposure in all versions up to, and including, 2.9.1 through different error messages in the responses. This makes it possible for unauthenticated attackers to exfiltrate data from wp_usermeta table.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-200",
+                "value": "CWE-200: CWE-200 Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+        ]
+    },
+    "CVE-2025-0335": {
+        "published_date": "2025-01-09T06:00:10.578Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in code-projects Online Bike Rental System 1.0 and classified as critical. Affected by this issue is some unknown functionality of the component Change Image Handler. The manipulation leads to unrestricted upload. The attack may be launched remotely. The exploit has been disclosed to the public and may be used. Other endpoints might be affected as well.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: Unrestricted Upload"
+            },
+            {
+                "id": "CWE-284",
+                "value": "CWE-284: Improper Access Controls"
+            }
+        ]
+    },
+    "CVE-2025-0340": {
+        "published_date": "2025-01-09T07:00:14.298Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as critical was found in code-projects Cinema Seat Reservation System 1.0. Affected by this vulnerability is an unknown functionality of the file /admin/deleteBooking.php. The manipulation of the argument id leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0341": {
+        "published_date": "2025-01-09T07:31:05.715Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as critical, has been found in CampCodes Computer Laboratory Management System 1.0. Affected by this issue is some unknown functionality of the file /class/edit/edit. The manipulation of the argument e_photo leads to unrestricted upload. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: Unrestricted Upload"
+            },
+            {
+                "id": "CWE-284",
+                "value": "CWE-284: Improper Access Controls"
+            }
+        ]
+    },
+    "CVE-2025-0345": {
+        "published_date": "2025-01-09T08:31:04.947Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in leiyuxi cy-fast 1.0 and classified as critical. Affected by this issue is the function listData of the file /sys/menu/listData. The manipulation of the argument order leads to sql injection. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0346": {
+        "published_date": "2025-01-09T09:00:14.484Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in code-projects Content Management System 1.0. It has been classified as critical. This affects an unknown part of the file /admin/publishnews.php of the component Publish News Page. The manipulation of the argument image leads to unrestricted upload. It is possible to initiate the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: Unrestricted Upload"
+            },
+            {
+                "id": "CWE-284",
+                "value": "CWE-284: Improper Access Controls"
+            }
+        ]
+    },
+    "CVE-2025-0347": {
+        "published_date": "2025-01-09T09:31:05.072Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in code-projects Admission Management System 1.0. It has been declared as critical. This vulnerability affects unknown code of the file index.php of the component Login. The manipulation of the argument u_id leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0352": {
+        "published_date": "2025-02-20T19:15:26.524Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "Rapid Response Monitoring My Security Account App utilizes an API that could be exploited by an attacker to modify request data, potentially causing the API to return information about other users.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-639",
+                "value": "CWE-639: CWE-639 Authorization Bypass Through User-Controlled Key"
+            }
+        ]
+    },
+    "CVE-2025-0354": {
+        "published_date": "2025-01-15T07:21:41.810Z",
+        "patch_commits": [],
+        "sw_version": "Ver.1.7.2 and earlier",
+        "sw_version_wget": "",
+        "description": "Cross-site scripting vulnerability in NEC Corporation Aterm WG2600HS Ver.1.7.2 and earlier, WG2600HP4 Ver.1.4.2 and earlier, WG2600HM4 Ver.1.4.2 and earlier, WG2600HS2 Ver.1.3.2 and earlier, WX3000HP Ver.2.4.2 and earlier and WX4200D5 Ver.1.2.4 and earlier allows a attacker to inject an arbitrary script via the network.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0361": {
+        "published_date": "2025-04-08T05:38:02.631Z",
+        "patch_commits": [],
+        "sw_version": "11.11.0",
+        "sw_version_wget": "",
+        "description": "During an annual penetration test conducted on behalf of Axis Communications, Truesec discovered a flaw in the VAPIX Device Configuration framework that allowed for unauthenticated username enumeration through the VAPIX Device Configuration SSH Management API.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-203",
+                "value": "CWE-203: CWE-203: Observable Discrepancy"
+            }
+        ]
+    },
+    "CVE-2025-0365": {
+        "published_date": "2025-02-01T05:30:37.677Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Jupiter X Core plugin for WordPress is vulnerable to Directory Traversal in all versions up to, and including, 4.8.7 via the inline SVG feature. This makes it possible for authenticated attackers, with Contributor-level access and above, to read the contents of arbitrary files on the server, which can contain sensitive information.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-22",
+                "value": "CWE-22: CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+            }
+        ]
+    },
+    "CVE-2025-0371": {
+        "published_date": "2025-01-21T08:21:51.697Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The JetElements plugin for WordPress is vulnerable to Stored Cross-Site Scripting via several widgets in all versions up to, and including, 2.7.2.1 due to insufficient input sanitization and output escaping on user supplied attributes. This makes it possible for authenticated attackers, with contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0376": {
+        "published_date": "2025-02-12T15:02:22.215Z",
+        "patch_commits": [],
+        "sw_version": "13.3",
+        "sw_version_wget": "",
+        "description": "An XSS vulnerability exists in GitLab CE/EE affecting all versions from 13.3 prior to 17.6.5, 17.7 prior to 17.7.4 and 17.8 prior to 17.8.2 that allows an attacker to execute unauthorized actions via a change page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0394": {
+        "published_date": "2025-01-14T08:23:14.407Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The WordPress CRM, Email & Marketing Automation for WordPress | Award Winner — Groundhogg plugin for WordPress is vulnerable to arbitrary file uploads due to missing file type validation in the gh_big_file_upload() function in all versions up to, and including, 3.7.3.5. This makes it possible for authenticated attackers, with Author-level access and above, to upload arbitrary files on the affected site's server which may make remote code execution possible.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: CWE-434 Unrestricted Upload of File with Dangerous Type"
+            }
+        ]
+    },
+    "CVE-2025-0399": {
+        "published_date": "2025-01-12T23:00:12.231Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in StarSea99 starsea-mall 1.0. It has been declared as critical. This vulnerability affects the function UploadController of the file src/main/java/com/siro/mall/controller/common/uploadController.java. The manipulation of the argument file leads to unrestricted upload. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: Unrestricted Upload"
+            },
+            {
+                "id": "CWE-284",
+                "value": "CWE-284: Improper Access Controls"
+            }
+        ]
+    },
+    "CVE-2025-0405": {
+        "published_date": "2025-01-13T00:31:06.498Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in liujianview gymxmjpa 1.0 and classified as critical. This issue affects the function GoodsDaoImpl of the file src/main/java/com/liujian/gymxmjpa/controller/GoodsController.java. The manipulation of the argument goodsName leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0407": {
+        "published_date": "2025-01-13T01:31:05.940Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in liujianview gymxmjpa 1.0. It has been declared as critical. Affected by this vulnerability is the function EquipmentDaoImpl of the file src/main/java/com/liujian/gymxmjpa/controller/EquipmentController.java. The manipulation of the argument hyname leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0408": {
+        "published_date": "2025-01-13T02:00:12.582Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in liujianview gymxmjpa 1.0. It has been rated as critical. Affected by this issue is the function LoosDaoImpl of the file src/main/java/com/liujian/gymxmjpa/controller/LoosController.java. The manipulation of the argument loosName leads to sql injection. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0411": {
+        "published_date": "2025-01-25T04:28:24.270Z",
+        "patch_commits": [],
+        "sw_version": "24.08 (x64)",
+        "sw_version_wget": "",
+        "description": "7-Zip Mark-of-the-Web Bypass Vulnerability. This vulnerability allows remote attackers to bypass the Mark-of-the-Web protection mechanism on affected installations of 7-Zip. User interaction is required to exploit this vulnerability in that the target must visit a malicious page or open a malicious file.\n\nThe specific flaw exists within the handling of archived files. When extracting files from a crafted archive that bears the Mark-of-the-Web, 7-Zip does not propagate the Mark-of-the-Web to the extracted files. An attacker can leverage this vulnerability to execute arbitrary code in the context of the current user. Was ZDI-CAN-25456.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-693",
+                "value": "CWE-693: CWE-693: Protection Mechanism Failure"
+            }
+        ]
+    },
+    "CVE-2025-0420": {
+        "published_date": "2025-09-17T09:14:03.419Z",
+        "patch_commits": [],
+        "sw_version": "0.0.0.65efa44e",
+        "sw_version_wget": "",
+        "description": "Improper Neutralization of Input During Web Page Generation (XSS or 'Cross-site Scripting') vulnerability in Paraşüt Software Paraşüt allows Cross-Site Scripting (XSS).This issue affects Paraşüt: from 0.0.0.65efa44e through 20250204.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation (XSS or 'Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0424": {
+        "published_date": "2025-02-18T07:57:25.806Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "In the \"bestinformed Web\" application, some user input was not properly sanitized. This leads to multiple authenticated stored cross-site scripting vulnerabilities. An authenticated attacker is able to compromise the sessions of other users on the server by injecting JavaScript code into their session using an \"Authenticated Stored Cross-Site Scripting\". Those other users might have more privileges than the attacker, enabling a form of horizontal movement.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-20",
+                "value": "CWE-20: CWE-20 Improper Input Validation"
+            }
+        ]
+    },
+    "CVE-2025-0434": {
+        "published_date": "2025-01-15T10:58:51.905Z",
+        "patch_commits": [],
+        "sw_version": "132.0.6834.83",
+        "sw_version_wget": "",
+        "description": "Out of bounds memory access in V8 in Google Chrome prior to 132.0.6834.83 allowed a remote attacker to potentially exploit heap corruption via a crafted HTML page. (Chromium security severity: High)",
+        "sec_adv": [],
+        "cwe": []
+    },
+    "CVE-2025-0437": {
+        "published_date": "2025-01-15T10:58:52.779Z",
+        "patch_commits": [],
+        "sw_version": "132.0.6834.83",
+        "sw_version_wget": "",
+        "description": "Out of bounds read in Metrics in Google Chrome prior to 132.0.6834.83 allowed a remote attacker to potentially exploit heap corruption via a crafted HTML page. (Chromium security severity: High)",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-125",
+                "value": "CWE-125: Out of bounds read"
+            }
+        ]
+    },
+    "CVE-2025-0445": {
+        "published_date": "2025-02-04T18:53:06.689Z",
+        "patch_commits": [],
+        "sw_version": "133.0.6943.53",
+        "sw_version_wget": "",
+        "description": "Use after free in V8 in Google Chrome prior to 133.0.6943.53 allowed a remote attacker to potentially exploit heap corruption via a crafted HTML page. (Chromium security severity: High)",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-416",
+                "value": "CWE-416: Use after free"
+            }
+        ]
+    },
+    "CVE-2025-0446": {
+        "published_date": "2025-01-15T10:58:54.310Z",
+        "patch_commits": [],
+        "sw_version": "132.0.6834.83",
+        "sw_version_wget": "",
+        "description": "Inappropriate implementation in Extensions in Google Chrome prior to 132.0.6834.83 allowed a remote attacker who convinced a user to engage in specific UI gestures to perform UI spoofing via a crafted Chrome Extension. (Chromium security severity: Low)",
+        "sec_adv": [],
+        "cwe": []
+    },
+    "CVE-2025-0451": {
+        "published_date": "2025-02-04T18:53:06.962Z",
+        "patch_commits": [],
+        "sw_version": "133.0.6943.53",
+        "sw_version_wget": "",
+        "description": "Inappropriate implementation in Extensions API in Google Chrome prior to 133.0.6943.53 allowed a remote attacker who convinced a user to engage in specific UI gestures to perform UI spoofing via a crafted Chrome Extension. (Chromium security severity: Medium)",
+        "sec_adv": [],
+        "cwe": []
+    },
+    "CVE-2025-0458": {
+        "published_date": "2025-01-14T15:31:04.096Z",
+        "patch_commits": [],
+        "sw_version": "2024.12.1",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as problematic was found in Virtual Computer Vysual RH Solution 2024.12.1. Affected by this vulnerability is an unknown functionality of the file /index.php of the component Login Panel. The manipulation of the argument page leads to cross site scripting. The attack can be launched remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0460": {
+        "published_date": "2025-01-14T16:00:17.534Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as critical, was found in Blog Botz for Journal Theme 1.0 on OpenCart. This affects an unknown part of the file /index.php?route=extension/module/blog_add. The manipulation of the argument image leads to unrestricted upload. It is possible to initiate the attack remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-434",
+                "value": "CWE-434: Unrestricted Upload"
+            },
+            {
+                "id": "CWE-284",
+                "value": "CWE-284: Improper Access Controls"
+            }
+        ]
+    },
+    "CVE-2025-0464": {
+        "published_date": "2025-01-14T17:00:16.781Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in SourceCodester Task Reminder System 1.0. It has been declared as problematic. Affected by this vulnerability is an unknown functionality of the component Maintenance Section. The manipulation of the argument System Name leads to cross site scripting. The attack can be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0465": {
+        "published_date": "2025-01-14T17:31:04.647Z",
+        "patch_commits": [],
+        "sw_version": "1.412.13",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in AquilaCMS 1.412.13. It has been rated as critical. Affected by this issue is some unknown functionality of the file /api/v2/categories. The manipulation of the argument PostBody.populate leads to deserialization. The attack may be launched remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-502",
+                "value": "CWE-502: Deserialization"
+            },
+            {
+                "id": "CWE-20",
+                "value": "CWE-20: Improper Input Validation"
+            }
+        ]
+    },
+    "CVE-2025-0466": {
+        "published_date": "2025-02-04T06:00:11.861Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "The Sensei LMS WordPress plugin before 4.24.4 does not properly protect some its REST API routes, allowing unauthenticated attackers to leak sensei_email and sensei_message Information.",
+        "sec_adv": [],
+        "cwe": []
+    },
+    "CVE-2025-0469": {
+        "published_date": "2025-02-27T04:21:44.250Z",
+        "patch_commits": [],
+        "sw_version": "1.39.2",
+        "sw_version_wget": "",
+        "description": "The Forminator Forms – Contact Form, Payment Form & Custom Form Builder plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the slider template data in all versions up to, and including, 1.39.2 due to insufficient input sanitization and output escaping. This makes it possible for authenticated attackers, with Contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0470": {
+        "published_date": "2025-01-31T03:21:28.615Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Forminator Forms – Contact Form, Payment Form & Custom Form Builder plugin for WordPress is vulnerable to Reflected Cross-Site Scripting via the title parameter in all versions up to, and including, 1.38.2 due to insufficient input sanitization and output escaping. This makes it possible for unauthenticated attackers to inject arbitrary web scripts in pages that execute if they can successfully trick a user into performing an action such as clicking on a link.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0472": {
+        "published_date": "2025-01-16T13:03:28.285Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "Information exposure in the PMB platform affecting versions 4.2.13 and earlier. This vulnerability allows an attacker to upload a file to the environment and enumerate the internal files of a machine by looking at the request response.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-200",
+                "value": "CWE-200: CWE-200 Exposure of Sensitive Information to an Unauthorized Actor"
+            }
+        ]
+    },
+    "CVE-2025-0474": {
+        "published_date": "2025-01-14T18:50:30.331Z",
+        "patch_commits": [
+            {
+                "url": "https://github.com/invoiceninja/invoiceninja/commit/2a9bf353b432d7060e85487b617151ecbc36247d",
+                "content": "Improve html sanitization\n\nFilename: app/Services/Pdf/PdfBuilder.php:\n```\n@@ -85,6 +85,7 @@ public function build(): self\n     public function getCompiledHTML($final = false)\n     {\n         $this->cleanHtml();\n+\n         $html = $this->document->saveHTML();\n \n         return str_replace('%24', '$', $html);\n@@ -99,7 +100,7 @@ private function cleanHtml(): self\n         $dangerous_elements = [\n             'iframe', 'form', 'object', 'embed', \n             'applet', 'audio', 'video',\n-            'frame', 'frameset', 'base','svg'\n+            'frame', 'frameset', 'base', 'svg'\n         ];\n \n         $dangerous_attributes = [\n```\n\nFilename: app/Services/Pdf/PdfDesigner.php:\n```\n@@ -44,6 +44,12 @@ public function build(): self\n             $this->template = file_get_contents(config('ninja.designs.base_path') . strtolower($this->service->config->design->name) . '.html');\n         }\n \n+        // Remove NULL bytes\n+        $this->template = str_replace(\"\\0\", '', $this->template);\n+\n+        // Remove UTF-7 BOM\n+        $this->template = preg_replace('/^\\\\+ADw-/', '', $this->template);\n+\n         return $this;\n     }\n \n```\n\nFilename: app/Services/PdfMaker/Design.php:\n```\n@@ -95,16 +95,33 @@ public function __construct(string $design = null, array $options = [])\n     public function html(): ?string\n     {\n         if ($this->design == 'custom.html') {\n-            return $this->composeFromPartials(\n+            $design = $this->composeFromPartials(\n                 $this->options['custom_partials']\n             );\n+            \n+            // Remove NULL bytes\n+            $design = str_replace(\"\\0\", '', $design);\n+            // Remove UTF-7 BOM\n+            $design = preg_replace('/^\\\\+ADw-/', '', $design);\n+\n+            return $design;\n+\n         }\n \n         $path = $this->options['custom_path'] ?? config('ninja.designs.base_path');\n \n-        return file_get_contents(\n+        $design = file_get_contents(\n             $path . $this->design\n         );\n+\n+        \n+        // Remove NULL bytes\n+        $design = str_replace(\"\\0\", '', $design);\n+        // Remove UTF-7 BOM\n+        $design = preg_replace('/^\\\\+ADw-/', '', $design);\n+\n+        return $design;\n+\n     }\n \n     public function elements(array $context, string $type = 'product'): array\n```\n\nFilename: app/Services/Template/TemplateService.php:\n```\n@@ -406,11 +406,137 @@ public function parseVariables(): self\n      */\n     public function save(): self\n     {\n+        $this->cleanHtml();\n+        \n         $this->compiled_html = str_replace('%24', '$', $this->document->saveHTML());\n \n         return $this;\n     }\n \n+    private function cleanHtml(): self\n+    {\n+        if (!$this->document || !$this->document->documentElement) {\n+            return $this;\n+        }\n+\n+        $dangerous_elements = [\n+            'iframe', 'form', 'object', 'embed', \n+            'applet', 'audio', 'video',\n+            'frame', 'frameset', 'base', 'svg'\n+        ];\n+\n+        $dangerous_attributes = [\n+            'onabort', 'onblur', 'onchange', 'onclick', 'ondblclick', \n+            'onerror', 'onfocus', 'onkeydown', 'onkeypress', 'onkeyup', \n+            'onload', 'onmousedown', 'onmousemove', 'onmouseout', \n+            'onmouseover', 'onmouseup', 'onreset', 'onresize', \n+            'onselect', 'onsubmit', 'onunload'\n+        ];\n+\n+        // Function to recursively check nodes\n+        $removeNodes = function ($node) use (&$removeNodes, $dangerous_elements, $dangerous_attributes) {\n+            if (!$node) {\n+                return;\n+            }\n+\n+            // Store children in array first to avoid modification during iteration\n+            $children = [];\n+            if ($node->hasChildNodes()) {\n+                foreach ($node->childNodes as $child) {\n+                    $children[] = $child;\n+                }\n+            }\n+\n+            // Process each child\n+            foreach ($children as $child) {\n+                $removeNodes($child);\n+            }\n+\n+            // Only process element nodes\n+            if ($node instanceof \\DOMElement) {\n+                // Remove dangerous elements\n+                if (in_array(strtolower($node->tagName), $dangerous_elements)) {\n+                    if ($node->parentNode) {\n+                        $node->parentNode->removeChild($node);\n+                    }\n+  \n```"
+            }
+        ],
+        "sw_version": "5.8.56",
+        "sw_version_wget": "https://github.com/invoiceninja/invoiceninja/archive/refs/tags/5.8.56.zip",
+        "description": "Invoice Ninja is vulnerable to authenticated Server-Side Request Forgery (SSRF) allowing for arbitrary file read and network resource requests as the application user.\nThis issue affects Invoice Ninja: from 5.8.56 through 5.11.23.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-918",
+                "value": "CWE-918: CWE-918 Server-Side Request Forgery (SSRF)"
+            }
+        ]
+    },
+    "CVE-2025-0476": {
+        "published_date": "2025-01-15T23:44:45.934Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "Mattermost Mobile Apps versions <=2.22.0 fail to properly handle specially crafted attachment names, which allows an attacker to crash the mobile app for any user who opened a channel containing the specially crafted attachment",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-1287",
+                "value": "CWE-1287: CWE-1287: Improper Validation of Specified Type of Input"
+            }
+        ]
+    },
+    "CVE-2025-0483": {
+        "published_date": "2025-01-15T19:31:06.230Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability has been found in Fanli2012 native-php-cms 1.0 and classified as problematic. This vulnerability affects unknown code of the file /fladmin/jump.php. The manipulation of the argument message/error leads to cross site scripting. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0485": {
+        "published_date": "2025-01-15T20:00:18.997Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Fanli2012 native-php-cms 1.0. It has been classified as problematic. Affected is an unknown function of the file /fladmin/sysconfig_doedit.php. The manipulation of the argument info leads to cross site scripting. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0487": {
+        "published_date": "2025-01-15T20:31:06.781Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Fanli2012 native-php-cms 1.0. It has been rated as critical. Affected by this issue is some unknown functionality of the file /fladmin/cat_edit.php. The manipulation of the argument id leads to sql injection. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0493": {
+        "published_date": "2025-01-31T04:21:47.156Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The MultiVendorX – The Ultimate WooCommerce Multivendor Marketplace Solution plugin for WordPress is vulnerable to Limited  Local File Inclusion in all versions up to, and including, 4.2.14 via the tabname parameter. This makes it possible for unauthenticated attackers to include PHP files on the server, allowing the execution of any PHP code in those files. This can be used to bypass access controls, obtain sensitive data, or achieve code execution in cases where PHP files can be uploaded and included",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-22",
+                "value": "CWE-22: CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+            }
+        ]
+    },
+    "CVE-2025-0507": {
+        "published_date": "2025-01-31T04:21:46.537Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Ticketmeo – Sell Tickets – Event Ticketing plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the plugin's shortcodes in all versions up to, and including, 2.3.6 due to insufficient input sanitization and output escaping on user supplied attributes. This makes it possible for authenticated attackers, with contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0510": {
+        "published_date": "2025-02-04T13:58:55.320Z",
+        "patch_commits": [],
+        "sw_version": "unspecified",
+        "sw_version_wget": "",
+        "description": "Thunderbird displayed an incorrect sender address if the From field of an email used the invalid group name syntax that is described in CVE-2024-49040. This vulnerability affects Thunderbird < 128.7 and Thunderbird < 135.",
+        "sec_adv": [
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-10/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-10 Security Vulnerabilities fixed in Thunderbird ESR 128.7 Announced February  4, 2025 Impact high Products Thunderbird Fixed in Thunderbird 128.7 Flaws inherited from the Firefox code base are generally not exploitable through email in Thunderbird, as scripting is disabled when reading mail. However, they may pose a risk in other features that display remote web content. # CVE-2025-1009: Use-after-free in XSLT Reporter Ivan Fratric of Google Project Zero Impact high Description An attacker could have caused a use-after-free via crafted XSLT data, leading to a potentially exploitable crash. References Bug 1936613 # CVE-2025-1010: Use-after-free in Custom Highlight Reporter Atte Kettunen Impact high Description An attacker could have caused a use-after-free via the Custom Highlight API, leading to a potentially exploitable crash. References Bug 1936982 # CVE-2025-1011: A bug in WebAssembly code generation could result in a crash Reporter Nan Wang Impact moderate Description A bug in WebAssembly code generation could have lead to a crash. It may have been possible for an attacker to leverage this to achieve code execution. References Bug 1936454 # CVE-2025-1012: Use-after-free during concurrent delazification Reporter Nils Bars Impact moderate Description A race during concurrent delazification could have led to a use-after-free. References Bug 1939710 # CVE-2024-11704: Potential double-free vulnerability in PKCS#7 decryption handling Reporter Ronald Crane Impact low Description A double-free issue could have occurred in sec_pkcs7_decoder_start_decrypt() when handling an error path. Under specific conditions, the same symmetric key could have been freed twice, potentially leading to memory corruption. References Bug 1899402 # CVE-2025-1013: Potential opening of private browsing tabs in normal browsing windows Reporter Maruf Bin Murtuza Impact low Description A race condition could have led to private browsing tabs being opened in normal browsing windows. This could have resulted in a potential privacy leak. References Bug 1932555 # CVE-2025-1014: Certificate length was not properly checked Reporter Theemathas Impact low Description Certificate length was not properly checked when added to a certificate store. In practice only trusted data was processed. References Bug 1940804 # CVE-2025-1015: Unsanitized address book fields Reporter r3m0t3nu11 Impact low Description The Thunderbird Address Book URI fields contained unsanitized links. This could be used by an attacker to create and export an address book containing a malicious payload in a field. For example, in the “Other” field of the Instant Messaging section. If another user imported the address book, clicking on the link could result in opening a web page inside Thunderbird, and that page could execute (unprivileged) JavaScript. References Bug 1939458 # CVE-2025-0510: Address of e-mail sender can be spoofed by malicious email Reporter Fabian Densborn Impact high Description Thunderbird displayed an incorrect sender address if the From field of an email used the invalid group name syntax that is described in CVE-2024-49040. References Bug 1940570 # CVE-2025-1016: Memory safety bugs fixed in Firefox 135, Thunderbird 135, Firefox ESR 115.20, Firefox ESR 128.7, Thunderbird 115.20, and Thunderbird 128.7 Reporter Randell Jesup, Andrew McCreight, Andrew Osmond, Akmat Suleimanov and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory safety bugs fixed in Firefox 135, Thunderbird 135, Firefox ESR 115.20, Firefox ESR 128.7, Thunderbird 115.20, and Thunderbird 128.7 # CVE-2025-1017: Memory safety bugs fixed in Firefox 135, Thunderbird 135, Firefox ESR 128.7, and Thunderbird 128.7 Rep",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            },
+            {
+                "url": "https://www.mozilla.org/security/advisories/mfsa2025-11/",
+                "content": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Firefox browsers Products Close Products menu Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Menu Mozilla Security Mozilla Security Advisories Known Vulnerabilities Mozilla Security Blog Security Bug Bounty Third-party Injection Policy Client Bug Bounty Frequently Asked Questions Hall of Fame Web Bug Bounty Eligible Websites Frequently Asked Questions Hall of Fame Mozilla Foundation Security Advisory 2025-11 Security Vulnerabilities fixed in Thunderbird 135 Announced February  4, 2025 Impact high Products Thunderbird Fixed in Thunderbird 135 Flaws inherited from the Firefox code base are generally not exploitable through email in Thunderbird, as scripting is disabled when reading mail. However, they may pose a risk in other features that display remote web content. # CVE-2025-1009: Use-after-free in XSLT Reporter Ivan Fratric of Google Project Zero Impact high Description An attacker could have caused a use-after-free via crafted XSLT data, leading to a potentially exploitable crash. References Bug 1936613 # CVE-2025-1010: Use-after-free in Custom Highlight Reporter Atte Kettunen Impact high Description An attacker could have caused a use-after-free via the Custom Highlight API, leading to a potentially exploitable crash. References Bug 1936982 # CVE-2025-1018: Fullscreen notification is not displayed when fullscreen is re-requested Reporter Irvan Kurniawan Impact moderate Description The fullscreen notification is prematurely hidden when fullscreen is re-requested quickly by the user. This could have been leveraged to perform a potential spoofing attack. References Bug 1910818 # CVE-2025-1011: A bug in WebAssembly code generation could result in a crash Reporter Nan Wang Impact moderate Description A bug in WebAssembly code generation could have lead to a crash. It may have been possible for an attacker to leverage this to achieve code execution. References Bug 1936454 # CVE-2025-1012: Use-after-free during concurrent delazification Reporter Nils Bars Impact moderate Description A race during concurrent delazification could have led to a use-after-free. References Bug 1939710 # CVE-2025-1019: Fullscreen notification not properly displayed Reporter Irvan Kurniawan Impact moderate Description The z-order of the browser windows could be manipulated to hide the fullscreen notification. This could potentially be leveraged to perform a spoofing attack. References Bug 1940162 # CVE-2025-1013: Potential opening of private browsing tabs in normal browsing windows Reporter Maruf Bin Murtuza Impact low Description A race condition could have led to private browsing tabs being opened in normal browsing windows. This could have resulted in a potential privacy leak. References Bug 1932555 # CVE-2025-1014: Certificate length was not properly checked Reporter Theemathas Impact low Description Certificate length was not properly checked when added to a certificate store. In practice only trusted data was processed. References Bug 1940804 # CVE-2025-0510: Address of e-mail sender can be spoofed by malicious email Reporter Fabian Densborn Impact high Description Thunderbird displayed an incorrect sender address if the From field of an email used the invalid group name syntax that is described in CVE-2024-49040. References Bug 1940570 # CVE-2025-1015: Unsanitized address book fields Reporter r3m0t3nu11 Impact low Description The Thunderbird Address Book URI fields contained unsanitized links. This could be used by an attacker to create and export an address book containing a malicious payload in a field. For example, in the “Other” field of the Instant Messaging section. If another user imported the address book, clicking on the link could result in opening a web page inside Thunderbird, and that page could execute (unprivileged) JavaScript. References Bug 1939458 # CVE-2025-1016: Memory safety bugs fixed in Firefox 135, Thunderbird 135, Firefox ESR 115.20, Firefox ESR 128.7, Thunderbird 115.20, and Thunderbird 128.7 Reporter Andrew McCreight, Randell Jesup, Andrew Osmond, Akmat Suleimanov and the Mozilla Fuzzing Team Impact high Description Memory safety bugs present in Firefox 134, Thunderbird 134, Firefox ESR 115.19, Firefox ESR 128.6, Thunderbird 115.19, and Thunderbird 128.6. Some of these bugs showed evidence of memory corruption and we presume that with enough effort some of these could have been exploited to run arbitrary code. References Memory",
+                "effective": true,
+                "effective_reason": "Contains PoC or exploit details"
+            }
+        ],
+        "cwe": []
+    },
+    "CVE-2025-0511": {
+        "published_date": "2025-02-12T11:11:16.201Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Welcart e-Commerce plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the ‘name’ parameter in all versions up to, and including, 2.11.9 due to insufficient input sanitization and output escaping. This makes it possible for unauthenticated attackers to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0512": {
+        "published_date": "2025-03-04T08:23:41.481Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Structured Content (JSON-LD) #wpsc plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the plugin's sc_fs_local_business shortcode in all versions up to, and including, 6.4.5 due to insufficient input sanitization and output escaping on user supplied attributes. This makes it possible for authenticated attackers, with contributor-level access and above, to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0516": {
+        "published_date": "2025-02-12T15:30:47.995Z",
+        "patch_commits": [],
+        "sw_version": "17.7",
+        "sw_version_wget": "",
+        "description": "Improper Authorization in GitLab CE/EE affecting all versions from 17.7 prior to 17.7.4, 17.8 prior to 17.8.2 allow users with limited permissions to perform unauthorized actions on critical project data.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-863",
+                "value": "CWE-863: CWE-863: Incorrect Authorization"
+            }
+        ]
+    },
+    "CVE-2025-0521": {
+        "published_date": "2025-02-18T11:10:18.504Z",
+        "patch_commits": [],
+        "sw_version": "*",
+        "sw_version_wget": "",
+        "description": "The Post SMTP plugin for WordPress is vulnerable to Stored Cross-Site Scripting via the from and subject parameter in all versions up to, and including, 3.0.2 due to insufficient input sanitization and output escaping. This makes it possible for unauthenticated attackers to inject arbitrary web scripts in pages that will execute whenever a user accesses an injected page.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0522": {
+        "published_date": "2025-02-06T06:00:04.828Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "The LikeBot  WordPress plugin through 0.85 does not have CSRF check in some places, and is missing sanitisation as well as escaping, which could allow attackers to make logged in admin add Stored XSS payloads via a CSRF attack.",
+        "sec_adv": [],
+        "cwe": []
+    },
+    "CVE-2025-0527": {
+        "published_date": "2025-01-17T13:31:05.652Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability classified as critical was found in code-projects Admission Management System 1.0. Affected by this vulnerability is an unknown functionality of the file /signupconfirm.php. The manipulation of the argument in_eml leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used. Other parameters might be affected as well.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0534": {
+        "published_date": "2025-01-17T18:31:04.702Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in 1000 Projects Campaign Management System Platform for Women 1.0. It has been rated as critical. Affected by this issue is some unknown functionality of the file /Code/loginnew.php. The manipulation of the argument Username leads to sql injection. The attack may be launched remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0538": {
+        "published_date": "2025-01-17T20:31:04.725Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability, which was classified as problematic, was found in code-projects Tourism Management System 1.0. Affected is an unknown function of the file /admin/manage-pages.php. The manipulation of the argument pgedetails leads to cross site scripting. It is possible to launch the attack remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: Cross Site Scripting"
+            },
+            {
+                "id": "CWE-94",
+                "value": "CWE-94: Code Injection"
+            }
+        ]
+    },
+    "CVE-2025-0541": {
+        "published_date": "2025-01-17T21:31:05.006Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Codezips Gym Management System 1.0 and classified as critical. This issue affects some unknown processing of the file /dashboard/admin/edit_member.php. The manipulation of the argument name leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used. Other parameters might be affected as well.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0555": {
+        "published_date": "2025-03-03T16:02:28.441Z",
+        "patch_commits": [],
+        "sw_version": "16.6",
+        "sw_version_wget": "",
+        "description": "A Cross Site Scripting (XSS) vulnerability in GitLab-EE affecting all versions from 16.6 prior to 17.7.6, 17.8 prior to 17.8.4, and 17.9 prior to 17.9.1 allows an attacker to bypass security controls and execute arbitrary scripts in a users browser under specific conditions.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-79",
+                "value": "CWE-79: CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+            }
+        ]
+    },
+    "CVE-2025-0561": {
+        "published_date": "2025-01-18T23:31:05.557Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability has been found in itsourcecode Farm Management System 1.0 and classified as critical. This vulnerability affects unknown code of the file /add-pig.php. The manipulation of the argument pigno leads to sql injection. The attack can be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0562": {
+        "published_date": "2025-01-19T01:00:08.392Z",
+        "patch_commits": [],
+        "sw_version": "1.0",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Codezips Gym Management System 1.0 and classified as critical. This issue affects some unknown processing of the file /dashboard/admin/health_status_entry.php. The manipulation of the argument usrid leads to sql injection. The attack may be initiated remotely. The exploit has been disclosed to the public and may be used.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0570": {
+        "published_date": "2025-01-30T20:17:01.728Z",
+        "patch_commits": [],
+        "sw_version": "4.0.9",
+        "sw_version_wget": "",
+        "description": "Sante PACS Server Web Portal DCM File Parsing Memory Corruption Denial-of-Service Vulnerability. This vulnerability allows remote attackers to create a denial-of-service condition on affected installations of Sante PACS Server. Authentication is required to exploit this vulnerability.\n\nThe specific flaw exists within the parsing of DCM files. The issue results from the lack of proper validation of user-supplied data, which can result in a memory corruption condition. An attacker can leverage this vulnerability to create a denial-of-service condition on the system. Was ZDI-CAN-25304.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-119",
+                "value": "CWE-119: CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer"
+            }
+        ]
+    },
+    "CVE-2025-0571": {
+        "published_date": "2025-01-30T20:17:06.424Z",
+        "patch_commits": [],
+        "sw_version": "4.0.9",
+        "sw_version_wget": "",
+        "description": "Sante PACS Server Web Portal DCM File Parsing Memory Corruption Denial-of-Service Vulnerability. This vulnerability allows remote attackers to create a denial-of-service condition on affected installations of Sante PACS Server. Authentication is required to exploit this vulnerability.\n\nThe specific flaw exists within the parsing of DCM files. The issue results from the lack of proper validation of user-supplied data, which can result in a memory corruption condition. An attacker can leverage this vulnerability to create a denial-of-service condition on the system. Was ZDI-CAN-25305.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-119",
+                "value": "CWE-119: CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer"
+            }
+        ]
+    },
+    "CVE-2025-0579": {
+        "published_date": "2025-01-20T02:31:04.543Z",
+        "patch_commits": [],
+        "sw_version": "3",
+        "sw_version_wget": "",
+        "description": "A vulnerability was found in Shiprocket Module 3/4 on OpenCart. It has been declared as critical. Affected by this vulnerability is an unknown functionality of the file /index.php?route=extension/shiprocket/module/restapi of the component REST API Module. The manipulation of the argument x-username leads to sql injection. The attack can be launched remotely. The exploit has been disclosed to the public and may be used. The vendor was contacted early about this disclosure but did not respond in any way.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: SQL Injection"
+            },
+            {
+                "id": "CWE-74",
+                "value": "CWE-74: Injection"
+            }
+        ]
+    },
+    "CVE-2025-0584": {
+        "published_date": "2025-01-20T02:06:19.718Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "The a+HRD from aEnrich Technology has a Server-side Request Forgery, allowing unauthenticated remote attackers to exploit this vulnerability to probe internal network.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-918",
+                "value": "CWE-918: CWE-918 Server-Side Request Forgery (SSRF)"
+            }
+        ]
+    },
+    "CVE-2025-0585": {
+        "published_date": "2025-01-20T02:17:29.155Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "The a+HRD from aEnrich Technology has a SQL Injection vulnerability, allowing unauthenticated remote attackers to inject arbitrary SQL commands to read, modify, and delete database contents.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-89",
+                "value": "CWE-89: CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+            }
+        ]
+    },
+    "CVE-2025-0586": {
+        "published_date": "2025-01-20T02:28:02.503Z",
+        "patch_commits": [],
+        "sw_version": "0",
+        "sw_version_wget": "",
+        "description": "The a+HRD from aEnrich Technology has an Insecure Deserialization vulnerability, allowing remote attackers with database modification privileges and regular system privileges to perform arbitrary code execution.",
+        "sec_adv": [],
+        "cwe": [
+            {
+                "id": "CWE-502",
+                "value": "CWE-502: CWE-502 Deserialization of Untrusted Data"
+            }
+        ]
+    }
+}

@@ -156,7 +156,7 @@ class PlanBuilder:
             id="deploy-env",
             capability="EnvironmentDeployer",
             implementation=overrides.get("EnvironmentDeployer", "WebAppDeployer"),  # 使用 WebAppDeployer 简化部署
-            inputs=["cve_knowledge", "cve_entry", "prerequisites"],
+            inputs=["cve_id", "cve_knowledge", "cve_entry", "prerequisites"],
             outputs=["build_result"],
             requires=["analyze-prereqs"],
             environment="builder",
@@ -169,7 +169,7 @@ class PlanBuilder:
             outputs=["health_result"],
             requires=["deploy-env"],
             environment="builder",
-            success_condition="health_result.healthy == True",
+            success_condition="health_result.http_code in [200, 301, 302, 307] or health_result.healthy == True",
         )
         yield PlanStep(
             id="browser-provision",
@@ -184,7 +184,7 @@ class PlanBuilder:
             id="exploit-web",
             capability="WebExploiter",
             implementation=overrides.get("WebExploiter", "WebDriverAgent"),
-            inputs=["browser_config", "cve_knowledge"],
+            inputs=["browser_config", "cve_knowledge", "cve_id"],
             outputs=["web_exploit_result"],
             requires=["browser-provision"],
             environment="browser",
