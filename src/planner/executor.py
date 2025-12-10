@@ -170,6 +170,10 @@ class DAGExecutor:
             ast.GtE,
             ast.Lt,
             ast.LtE,
+            ast.In,        # allow membership checks like "x in [1, 2]"
+            ast.NotIn,
+            ast.List,      # allow literal containers in conditions
+            ast.Tuple,
         )
 
         try:

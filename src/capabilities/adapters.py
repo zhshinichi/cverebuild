@@ -59,15 +59,15 @@ class BrowserEnvironmentProvider(Capability):
                 target_url = deployed_url
                 print(f"[Browser] ✅ Using deployed URL from build_result: {target_url}")
             else:
-                # 2. 使用 build_result 中的 port 构建 URL
+                # 2. 使用 build_result 中的 port 构建 URL (Docker容器内使用 host.docker.internal)
                 port = build_result.get('port', 0)
                 if port:
-                    target_url = f'http://localhost:{port}'
+                    target_url = f'http://host.docker.internal:{port}'
                     print(f"[Browser] ✅ Using port from build_result: {target_url}")
         
         # 3. 回退到 config
         if not target_url:
-            target_url = self.config.get('target_url', 'http://localhost:9600')
+            target_url = self.config.get('target_url', 'http://host.docker.internal:9600')
             print(f"[Browser] ⚠️ No URL/port in build_result, using config/default: {target_url}")
         
         # ========== 关键: 等待服务就绪（Health Check）==========
@@ -219,28 +219,47 @@ class WebAppDeployer(Capability):
                     print(f"   Source: {deploy_result['source']}")
                     print(f"   Method: {deploy_result['deployment_method']}")
                     
-                    # 提取端口信息
-                    port_info = deploy_result.get('ports', '')
-                    if ':' in str(port_info):
-                        # 从 "0.0.0.0:8080->8080/tcp" 提取主机端口
-                        import re
-                        match = re.search(r':(\d+)->', str(port_info))
-                        if match:
-                            target_url = f"http://localhost:{match.group(1)}"
+                    # 优先使用返回的 target_url
+                    if 'target_url' in deploy_result and deploy_result['target_url']:
+                        target_url = deploy_result['target_url']
+                    # 或使用 port 构造 URL (Docker容器内使用 host.docker.internal)
+                    elif 'port' in deploy_result and deploy_result['port']:
+                        target_url = f"http://host.docker.internal:{deploy_result['port']}"
+                    # 提取端口信息 (兼容旧格式)
+                    elif 'ports' in deploy_result:
+                        port_info = deploy_result.get('ports', '')
+                        if ':' in str(port_info):
+                            # 从 "0.0.0.0:8080->8080/tcp" 提取主机端口
+                            import re
+                            match = re.search(r':(\d+)->', str(port_info))
+                            if match:
+                                target_url = f"http://host.docker.internal:{match.group(1)}"
+                            else:
+                                target_url = "http://host.docker.internal:8080"  # fallback
                         else:
-                            target_url = "http://localhost:8080"  # fallback
+                            target_url = "http://host.docker.internal:8080"  # fallback
                     else:
-                        target_url = "http://localhost:8080"  # fallback
+                        target_url = "http://host.docker.internal:8080"  # fallback
                     
                     print(f"[WebAppDeployer] 🌐 Target URL: {target_url}")
                     
-                    # 返回成功结果
+                    # 从 target_url 提取端口
+                    port = None
+                    import re
+                    match = re.search(r':(\d+)', target_url)
+                    if match:
+                        port = int(match.group(1))
+                    
+                    # 返回成功结果 (注意: 必须包在 build_result 里,符合 DAG 约定)
                     return {
-                        'success': True,
-                        'source': 'prebuilt',
-                        'env_source': deploy_result['source'],
-                        'target_url': target_url,
-                        'deployment_info': deploy_result
+                        'build_result': {
+                            'success': 'yes',
+                            'access': target_url,
+                            'port': port,
+                            'method': 'prebuilt',
+                            'source': deploy_result['source'],
+                            'deployment_info': deploy_result
+                        }
                     }
                 else:
                     print(f"\n[WebAppDeployer] ⚠️ Pre-built deployment failed: {deploy_result.get('error')}")
@@ -1236,27 +1255,79 @@ class HealthCheckAdapter(Capability):
     
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         from agents.healthCheck import HealthCheckAgent
-        import json
+        import json, re
         
-        service_result = inputs.get('service_result', {})
-        port = self.config.get('port', 9600)
+        build_result = inputs.get('build_result')
         
-        print(f"[HealthCheck] Checking service on port {port}")
+        # 处理 build_result 为 None 的情况
+        if build_result is None:
+            print(f"[HealthCheck] ⚠️ No build_result available, using default port")
+            build_result = {}
         
-        agent = HealthCheckAgent(
-            service_result=json.dumps(service_result, indent=2) if isinstance(service_result, dict) else str(service_result),
-            port=port
-        )
-        result = agent.run()
+        # 从 build_result 提取端口 (优先使用 port 字段)
+        port = build_result.get('port') if build_result else None
         
-        # 解析 JSON 结果
-        import json
+        # 如果没有 port 字段,尝试从 access/target_url 提取
+        if not port and build_result:
+            url = build_result.get('access') or build_result.get('target_url')
+            if url:
+                match = re.search(r':(\d+)', url)
+                if match:
+                    port = int(match.group(1))
+        
+        if not port:
+            port = self.config.get('port', 9600)  # fallback
+        
+        # Docker环境下,使用 host.docker.internal 访问宿主机端口
+        # 这样可以访问到映射到宿主机的容器端口
+        target_host = "host.docker.internal"
+        
+        print(f"[HealthCheck] Checking service on {target_host}:{port}")
+        
+        # 构造访问URL
+        check_url = f"http://{target_host}:{port}"
+        
+        # === 直接用代码执行HTTP检查,不依赖LLM ===
+        import subprocess
+        http_code = 0
+        diagnosis = ""
+        
         try:
-            health_result = json.loads(result) if isinstance(result, str) else result
-        except:
-            health_result = {'raw_output': result, 'healthy': False}
+            # 先等待服务启动
+            subprocess.run(["sleep", "3"], capture_output=True)
+            
+            # 执行curl检查
+            curl_result = subprocess.run(
+                ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", check_url, "--max-time", "10"],
+                capture_output=True,
+                text=True,
+                timeout=15
+            )
+            http_code = int(curl_result.stdout.strip()) if curl_result.stdout.strip().isdigit() else 0
+            
+            # 2xx和3xx都算成功
+            is_healthy = 200 <= http_code < 400
+            
+            if not is_healthy:
+                diagnosis = f"Service returned HTTP {http_code}"
+                # 如果失败,尝试获取更多信息
+                if http_code == 0:
+                    diagnosis = "Connection failed - service may not be running"
+        except subprocess.TimeoutExpired:
+            is_healthy = False
+            diagnosis = "Connection timeout"
+        except Exception as e:
+            is_healthy = False
+            diagnosis = f"Health check failed: {str(e)}"
         
-        print(f"[HealthCheck] Healthy: {health_result.get('healthy', False)}")
+        health_result = {
+            'healthy': is_healthy,
+            'http_code': http_code,
+            'access_url': check_url,
+            'diagnosis': diagnosis
+        }
+        
+        print(f"[HealthCheck] HTTP {http_code} -> Healthy: {is_healthy}")
         return {'health_result': health_result}
 
 

@@ -27,10 +27,11 @@ CLASSIFICATION_PROMPT = """你是一个专业的安全漏洞分类专家。请�
    - 关键特征：通过 pip/npm/maven 安装，运行 Python 脚本复现
 
 2. **web-basic**: Web 应用漏洞
-   - 需要启动完整的 Web 服务器（Flask/Django/Express/MLflow 等）
+   - 需要启动完整的 Web 服务器（Flask/Django/Express/Next.js/MLflow 等）
    - 通过 HTTP 请求与服务器交互来触发漏洞
-   - 例如：SQL注入、认证绕过、SSRF、文件上传等
-   - 关键特征：需要启动并运行一个 Web 服务
+   - 例如：SQL注入、认证绕过、授权绕过、SSRF、文件上传、中间件漏洞等
+   - 关键特征：需要启动并运行一个 Web 服务器,通过HTTP/HTTPS访问
+   - **重要**：Next.js/React等Web框架的middleware漏洞属于此类(不是native)
 
 3. **freestyle**: 自由探索类漏洞 ⭐ 推荐用于复杂场景
    - JavaScript/前端库漏洞（XSS、prototype pollution、window.opener 泄露）
@@ -48,18 +49,24 @@ CLASSIFICATION_PROMPT = """你是一个专业的安全漏洞分类专家。请�
 
 ## 分析要点
 
-1. 看**漏洞复现方式**：
+1. **优先看关键词**：
+   - "Next.js", "Express", "Flask", "Django", "web application", "web framework", "HTTP" → web-basic
+   - "middleware bypass", "authorization bypass", "authentication bypass" → web-basic
+   - "JavaScript library", "browser", "XSS", "DOM" → freestyle
+   - "Python package", "pip install", "library" (非web框架) → native-local
+
+2. 看**漏洞复现方式**：
    - 如果是"安装 Python 包，运行代码触发" → native-local
    - 如果是"启动 Web 服务，发送 HTTP 请求" → web-basic
    - 如果是"创建 HTML 页面，浏览器打开测试" → freestyle
    - 如果是"npm/JS 库漏洞，需要浏览器环境" → freestyle
 
-2. 看**受影响的组件**：
+3. 看**受影响的组件**：
    - Python 库 → native-local
-   - Web 框架应用 (Flask/Django) → web-basic  
+   - Web 框架应用 (Flask/Django/Next.js) → web-basic  
    - JavaScript/前端库 (smartbanner.js, dompurify) → freestyle
 
-3. 当不确定时，**优先选择 freestyle**，因为它最灵活
+4. 当不确定时，**优先选择 freestyle**，因为它最灵活
 
 ## 输出格式
 

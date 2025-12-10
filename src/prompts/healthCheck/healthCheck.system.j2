@@ -10,8 +10,8 @@ You are a Health Check Agent. Your ONLY job is to verify the web service is runn
 ## Verification Steps
 
 1. Wait for service to be ready: `sleep 3`
-2. Check HTTP status: `curl -s -o /dev/null -w "%{http_code}" http://localhost:PORT/`
-3. If not 200/302, check logs and diagnose
+2. Check HTTP status: `curl -s -o /dev/null -w "%{http_code}" {{ target_url }}/`
+3. If not 200/302/307, check logs and diagnose
 
 ## Output
 
@@ -20,7 +20,7 @@ Return JSON:
 {
   "healthy": true,
   "http_code": 200,
-  "access_url": "http://localhost:9600",
+  "access_url": "{{ target_url }}",
   "diagnosis": "optional - only if there were issues"
 }
 ```

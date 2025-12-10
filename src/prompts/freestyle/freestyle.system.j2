@@ -46,14 +46,17 @@ You are an expert security researcher specialized in CVE vulnerability reproduct
 | `get_docker_container_ip(container_name)` | Get container's internal IP address |
 | `wait_for_service(url, timeout, interval)` | Wait until HTTP service responds |
 | `stop_docker_container(container_name)` | Stop and remove container |
+| `search_alternative_docker_images(product, cve_id)` | Search PoC repos, similar images, mock options when image not found |
 
 **⚠️ IMPORTANT - Docker Image Availability:**
 - DO NOT assume Docker images exist for every application
-- If `run_docker_container` fails with "image not found", use source code deployment instead:
-  1. Extract GitHub/GitLab URL from CVE description or sw_version_wget
-  2. Clone repository: `git clone <url>`
-  3. Build application: `mvn package` / `npm install` / `pip install -e .`
-  4. Start service: `java -jar` / `npm start` / `python app.py`
+- If `run_docker_container` fails with "image not found":
+  1. **First**: Use `search_alternative_docker_images(product, cve_id)` to find alternatives
+     - It searches GitHub PoC repositories (may have Dockerfile)
+     - Finds similar Docker Hub images
+     - Evaluates if can create mock environment
+  2. **Then**: Follow the recommended action from search results
+  3. **Fallback**: Use source code deployment if no alternatives found
 
 ## Command & File Operations
 | Tool | Purpose |

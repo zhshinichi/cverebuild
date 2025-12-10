@@ -493,8 +493,8 @@ def wait_for_service(url: str, timeout: int = 60, interval: int = 2) -> dict:
                 result['status_code'] = code
                 result['elapsed'] = elapsed
                 
-                # 大多数 HTTP 响应都表示服务在运行
-                if code in [200, 301, 302, 401, 403, 404, 405, 500]:
+                # 大多数 HTTP 响应都表示服务在运行（包括重定向）
+                if code in [200, 301, 302, 303, 307, 308, 401, 403, 404, 405, 500]:
                     result['ready'] = True
                     result['message'] = f"Service ready! HTTP {code} after {elapsed:.1f}s"
                     print(f"✅ {result['message']}")

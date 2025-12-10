@@ -1164,7 +1164,16 @@ def run_docker_container(image: str, name: str = "", ports: str = "", env_vars: 
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
         
         if result.returncode != 0:
-            return f"ERROR: 启动容器失败: {result.stderr}"
+            error_msg = result.stderr
+            # 检查是否是镜像不存在错误
+            if "pull access denied" in error_msg.lower() or "not found" in error_msg.lower() or "does not exist" in error_msg.lower():
+                # 提取产品名
+                product_hint = image.split('/')[0] if '/' in image else image.split(':')[0]
+                return (f"ERROR: Docker 镜像 '{image}' 不存在。\n"
+                        f"详细错误: {error_msg}\n\n"
+                        f"💡 建议: 使用 search_alternative_docker_images(product='{product_hint}') 查找替代方案\n"
+                        f"   该工具会搜索 GitHub PoC 仓库、Docker Hub 相似镜像、以及评估是否可创建模拟环境。")
+            return f"ERROR: 启动容器失败: {error_msg}"
         
         container_id = result.stdout.strip()[:12]
         
@@ -1188,6 +1197,77 @@ def run_docker_container(image: str, name: str = "", ports: str = "", env_vars: 
         return f"ERROR: 启动容器超时"
     except Exception as e:
         return f"ERROR: Docker 运行异常: {str(e)}"
+
+
+@tools.tool
+def search_alternative_docker_images(product: str, cve_id: str = "") -> str:
+    """
+    当 Docker 镜像不存在时,智能搜索替代方案
+    
+    :param product: 产品名称 (如 "maxtime", "qfree")
+    :param cve_id: CVE ID (可选,用于搜索 PoC)
+    :return: 搜索结果和建议
+    """
+    try:
+        import sys
+        sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+        from toolbox.env_search_engine import EnvironmentSearchEngine
+        
+        search_engine = EnvironmentSearchEngine()
+        print(f"[Search] 🔍 Searching alternatives for product: {product}, CVE: {cve_id}")
+        
+        # 执行全面搜索
+        results = search_engine.search_all(cve_id=cve_id, product=product, version=None)
+        
+        # 获取推荐行动
+        recommendation = search_engine.recommend_action(results, confidence=0.3)
+        
+        # 构建返回消息
+        output = [f"=== 🔍 智能搜索结果: {product} ===\n"]
+        
+        # PoC 仓库
+        if results['poc_repos']:
+            output.append("✅ 找到 GitHub PoC 仓库:")
+            for i, repo in enumerate(results['poc_repos'][:3], 1):
+                has_docker = "🐳" if repo.get('has_dockerfile') else ""
+                output.append(f"  {i}. {repo['url']} {has_docker}")
+                output.append(f"     Stars: {repo.get('stars', 0)}, Updated: {repo.get('updated_at', 'N/A')}")
+        
+        # Docker 镜像
+        if results['docker_images']:
+            output.append("\n✅ 找到 Docker Hub 镜像:")
+            for i, img in enumerate(results['docker_images'][:5], 1):
+                output.append(f"  {i}. {img['name']} - {img.get('description', 'N/A')[:60]}")
+                output.append(f"     Stars: {img.get('stars', 0)}, Official: {img.get('is_official', False)}")
+        
+        # 模拟环境可行性
+        if results['can_mock']:
+            output.append(f"\n💡 可创建模拟环境: {results['mock_strategy']}")
+        
+        # 推荐行动
+        output.append(f"\n🎯 建议行动 (优先级 {recommendation['priority']}):")
+        output.append(f"   {recommendation['description']}")
+        output.append(f"   操作: {recommendation['action']}")
+        
+        if recommendation['action'] == 'use_poc' and results['poc_repos']:
+            repo = results['poc_repos'][0]
+            output.append(f"\n📋 下一步: git clone {repo['url']}")
+            if repo.get('has_dockerfile'):
+                output.append("   然后使用 docker-compose up 或 docker build 构建镜像")
+        
+        elif recommendation['action'] in ['use_similar_image', 'use_official_image'] and results['docker_images']:
+            img = results['docker_images'][0]
+            output.append(f"\n📋 下一步: docker pull {img['name']}")
+            output.append(f"   然后使用 run_docker_container(image='{img['name']}', ...)")
+        
+        elif recommendation['action'] == 'create_mock':
+            output.append(f"\n📋 下一步: 可以创建简单的 {results['mock_strategy']} 模拟环境")
+            output.append("   使用 Flask/Django 快速搭建测试环境")
+        
+        return "\n".join(output)
+        
+    except Exception as e:
+        return f"ERROR: 搜索失败: {str(e)}"
 
 
 @tools.tool  
@@ -2232,6 +2312,7 @@ FREESTYLE_TOOLS = {
     'wait_for_service': wait_for_service,
     'diagnose_docker_network': diagnose_docker_network,
     'stop_docker_container': stop_docker_container,
+    'search_alternative_docker_images': search_alternative_docker_images,  # 新增：智能搜索替代镜像
     # 专业安全工具
     'run_sqlmap': run_sqlmap,
     'run_commix': run_commix,

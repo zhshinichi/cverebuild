@@ -18,8 +18,8 @@ from typing import Optional, Tuple
 # Container settings
 CONTAINER_NAME = "competent_dewdney"
 CONTAINER_WORKSPACE = "/workspaces/submission"
-DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/large_scale/simple_web_cves_20.json"
-#DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/example/data.json"
+#DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/large_scale/simple_web_cves_20.json"
+DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/large_scale/data.json"
 MAIN_PY = f"{CONTAINER_WORKSPACE}/src/main.py"
 
 # API settings (fallback to placeholder key if not provided)
