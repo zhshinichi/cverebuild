@@ -128,11 +128,11 @@ class WebDriverAgent(AgentWithHistory[dict, str]):
     Agent for performing browser-based vulnerability exploitation
     Handles CSRF, XSS, and other web-based attacks that require browser interaction
     """
-    __LLM_MODEL__ = 'gpt-4o'  # gpt-4o 支持工具调用
+    __LLM_MODEL__ = 'gpt-4o-mini'  # 降级为 mini 节省成本，WebDriverAgent 工具调用相对简单
     __SYSTEM_PROMPT_TEMPLATE__ = 'webDriverAgent/webDriverAgent.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'webDriverAgent/webDriverAgent.user.j2'
     __OUTPUT_PARSER__ = WebDriverOutputParser
-    __MAX_TOOL_ITERATIONS__ = 40
+    __MAX_TOOL_ITERATIONS__ = 20  # 降低迭代次数避免浪费 API 调用（从40降到20）
     __ENABLE_FILE_SEARCH__ = False  # 禁用文件搜索
     __ENABLE_CODE_INTERPRETER__ = False  # 禁用代码解释器
     

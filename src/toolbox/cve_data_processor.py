@@ -37,12 +37,47 @@ class CVEDataProcessor:
         cur_dir = os.getcwd()
         # 1) If cache exists, load cve from cache
         if self.cve_json:
-            if os.path.exists(self.cve_json):
-                cve = json.loads(open(self.cve_json, "r", encoding='utf-8').read()).get(self.cve_id)
-                if not cve:
-                    raise ValueError(f"❌ {self.cve_id} not found in cache file")
-            else:
-                raise FileNotFoundError(f"❌ {self.cve_id} cache file not found at {self.cve_json}")
+            # 智能选择数据源（容器内降级逻辑 + CVE不存在时继续尝试fallback）
+            primary_data = self.cve_json
+            # 修复：使用正确的绝对路径而不是相对路径
+            fallback_data = "/workspaces/submission/src/data/large_scale/simple_web_cves_20.json"
+            
+            cve = None
+            data_file = None
+            
+            # 尝试主数据源
+            if os.path.exists(primary_data):
+                print(f"[CVEDataProcessor] Checking primary data: {primary_data}")
+                try:
+                    cve = json.loads(open(primary_data, "r", encoding='utf-8').read()).get(self.cve_id)
+                    if cve:
+                        data_file = primary_data
+                        print(f"[CVEDataProcessor] ✅ Found {self.cve_id} in primary data")
+                    else:
+                        print(f"[CVEDataProcessor] ⚠️ {self.cve_id} not in primary data, trying fallback...")
+                except Exception as e:
+                    print(f"[CVEDataProcessor] ⚠️ Error reading primary data: {e}")
+            
+            # 如果主数据源没找到CVE，尝试fallback
+            if not cve and os.path.exists(fallback_data):
+                print(f"[CVEDataProcessor] Checking fallback data: {fallback_data}")
+                try:
+                    cve = json.loads(open(fallback_data, "r", encoding='utf-8').read()).get(self.cve_id)
+                    if cve:
+                        data_file = fallback_data
+                        print(f"[CVEDataProcessor] ✅ Found {self.cve_id} in fallback data")
+                except Exception as e:
+                    print(f"[CVEDataProcessor] ⚠️ Error reading fallback data: {e}")
+            
+            # 如果两个数据源都没找到CVE
+            if not cve:
+                error_msg = f"❌ {self.cve_id} not found in any data source\n"
+                error_msg += f"   Checked: {primary_data}\n"
+                if os.path.exists(fallback_data):
+                    error_msg += f"   Checked: {fallback_data}"
+                else:
+                    error_msg += f"   Fallback not available: {fallback_data}"
+                raise ValueError(error_msg)
         
         # 2) Load and process cve from the 'cvelist' repository
         else:

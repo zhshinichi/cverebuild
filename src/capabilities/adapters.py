@@ -1101,6 +1101,7 @@ try:
         
         def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
             cve_knowledge = inputs.get('cve_knowledge', '')
+            cve_id = inputs.get('cve_id', 'UNKNOWN')
             
             # ========== 关键修复: 从 browser_config 获取 target_url ==========
             # browser_config 由 BrowserEnvironmentProvider 设置，包含实际部署的 URL
@@ -1116,7 +1117,91 @@ try:
                 cve_knowledge=cve_knowledge,
                 target_url=target_url
             )
+            
+            # 执行 Agent
             result = agent.invoke().value
+            
+            # ========== 集成 ExecutionReflector：失败后分析 ==========
+            is_failure = False
+            if isinstance(result, dict):
+                is_failure = result.get('success') in ['no', False, 0, '0'] or not result.get('success')
+            elif isinstance(result, str):
+                is_failure = 'failed' in result.lower() or 'error' in result.lower()
+            
+            if is_failure and self.config.get('enable_reflection', True):
+                print(f"\n[WebDriverAdapter] 🔍 检测到失败，调用 ExecutionReflector 分析...")
+                
+                try:
+                    from agents.executionReflector import ExecutionReflector, AgentExecutionContext
+                    
+                    # 获取 Agent 的工具调用历史
+                    tool_calls = []
+                    if hasattr(agent, 'toolcall_metadata'):
+                        # agentlib 的工具调用元数据
+                        for tool_name, metadata in agent.toolcall_metadata.items():
+                            tool_calls.append({
+                                'tool': tool_name,
+                                'args': {},  # 简化版本
+                                'result': str(metadata)
+                            })
+                    
+                    # 获取执行日志（如果可用）
+                    execution_log = ""
+                    log_path = f"/workspaces/submission/src/shared/{cve_id}/{cve_id}_webdriver_log.txt"
+                    if os.path.exists(log_path):
+                        with open(log_path, 'r', encoding='utf-8') as f:
+                            execution_log = f.read()
+                    else:
+                        # 使用 result 作为日志
+                        execution_log = str(result)
+                    
+                    # 创建执行上下文
+                    context = AgentExecutionContext(
+                        agent_name='WebDriverAgent',
+                        cve_id=cve_id,
+                        cve_knowledge=cve_knowledge,
+                        execution_log=execution_log,
+                        tool_calls=tool_calls,
+                        final_status='failure',
+                        iterations_used=getattr(agent, '__MAX_TOOL_ITERATIONS__', 20),
+                        max_iterations=getattr(agent, '__MAX_TOOL_ITERATIONS__', 20)
+                    )
+                    
+                    # 分析失败原因
+                    reflector = ExecutionReflector(model='gpt-4o')
+                    analysis = reflector.analyze(context)
+                    
+                    # 将分析结果附加到返回值
+                    if isinstance(result, dict):
+                        result['execution_analysis'] = {
+                            'failure_type': analysis.failure_type,
+                            'root_cause': analysis.root_cause,
+                            'repeated_pattern': analysis.repeated_pattern,
+                            'suggested_tool': analysis.suggested_tool,
+                            'suggested_agent': analysis.suggested_agent,
+                            'suggested_strategy': analysis.suggested_strategy,
+                            'confidence': analysis.confidence,
+                            'requires_web_search': analysis.requires_web_search
+                        }
+                    
+                    # 如果建议切换 Agent，记录建议
+                    if analysis.suggested_agent:
+                        print(f"\n💡 [ExecutionReflector] 建议切换到 {analysis.suggested_agent}")
+                        print(f"   原因: {analysis.root_cause}")
+                        print(f"   策略: {analysis.suggested_strategy[:200]}...")
+                        
+                        # 保存分析结果到文件
+                        analysis_path = f"/workspaces/submission/src/shared/{cve_id}/{cve_id}_execution_analysis.json"
+                        os.makedirs(os.path.dirname(analysis_path), exist_ok=True)
+                        import json
+                        with open(analysis_path, 'w', encoding='utf-8') as f:
+                            json.dump(result.get('execution_analysis', {}), f, indent=2, ensure_ascii=False)
+                        print(f"   分析结果已保存: {analysis_path}")
+                
+                except Exception as e:
+                    print(f"[WebDriverAdapter] ⚠️ ExecutionReflector 调用失败: {e}")
+                    import traceback
+                    traceback.print_exc()
             
             return {'web_exploit_result': result}
     
@@ -1278,11 +1363,19 @@ class HealthCheckAdapter(Capability):
         if not port:
             port = self.config.get('port', 9600)  # fallback
         
-        # Docker环境下,使用 host.docker.internal 访问宿主机端口
-        # 这样可以访问到映射到宿主机的容器端口
-        target_host = "host.docker.internal"
+        # 根据部署方式决定使用哪个主机名
+        # - vulhub/vulfocus/docker-compose: 服务在独立容器中,需要用 host.docker.internal
+        # - venv/source/local: 服务在当前容器内,应该用 localhost
+        deployment_method = build_result.get('method', '').lower()
+        docker_based_methods = ['vulhub', 'vulfocus', 'docker-compose', 'docker']
         
-        print(f"[HealthCheck] Checking service on {target_host}:{port}")
+        if any(m in deployment_method for m in docker_based_methods):
+            target_host = "host.docker.internal"
+        else:
+            # venv, source, local 等本地部署方式
+            target_host = "localhost"
+        
+        print(f"[HealthCheck] Checking service on {target_host}:{port} (method: {deployment_method})")
         
         # 构造访问URL
         check_url = f"http://{target_host}:{port}"
@@ -1305,14 +1398,35 @@ class HealthCheckAdapter(Capability):
             )
             http_code = int(curl_result.stdout.strip()) if curl_result.stdout.strip().isdigit() else 0
             
-            # 2xx和3xx都算成功
-            is_healthy = 200 <= http_code < 400
+            # 2xx、3xx 和 404 都算成功
+            # 404 表示服务在运行，只是根路径不存在（常见于API服务）
+            is_healthy = (200 <= http_code < 400) or http_code == 404
             
             if not is_healthy:
                 diagnosis = f"Service returned HTTP {http_code}"
                 # 如果失败,尝试获取更多信息
                 if http_code == 0:
                     diagnosis = "Connection failed - service may not be running"
+                    # 如果 host.docker.internal 失败，尝试 localhost 作为 fallback
+                    if target_host == "host.docker.internal":
+                        fallback_url = f"http://localhost:{port}"
+                        print(f"[HealthCheck] Trying fallback: {fallback_url}")
+                        try:
+                            fallback_result = subprocess.run(
+                                ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", fallback_url, "--max-time", "5"],
+                                capture_output=True,
+                                text=True,
+                                timeout=10
+                            )
+                            fallback_code = int(fallback_result.stdout.strip()) if fallback_result.stdout.strip().isdigit() else 0
+                            if 200 <= fallback_code < 400:
+                                http_code = fallback_code
+                                is_healthy = True
+                                check_url = fallback_url
+                                diagnosis = "Accessible via localhost (fallback)"
+                                print(f"[HealthCheck] Fallback succeeded: HTTP {fallback_code}")
+                        except:
+                            pass
         except subprocess.TimeoutExpired:
             is_healthy = False
             diagnosis = "Connection timeout"

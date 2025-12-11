@@ -123,12 +123,17 @@ class RepoBuilder(AgentWithHistory[dict, str]):
     def get_available_tools(self):
         # Only return shell-based tools, NO Python code interpreter
         # This prevents environment isolation issues
+        # 扩展工具集以支持更多构建场景
         allowed_tools = [
             'get_file',
             'write_to_file', 
             'execute_ls_command',
             'execute_linux_command',
-            'set_environment_variable'
+            'set_environment_variable',
+            'install_npm_package',  # NPM 包安装
+            'run_command_with_timeout',  # 超时控制
+            'start_http_server',  # 启动 HTTP 服务器
+            'create_html_test_page',  # 创建测试页面
         ]
         return [TOOLS[name] for name in allowed_tools if name in TOOLS]
     

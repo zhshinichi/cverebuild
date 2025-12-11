@@ -27,6 +27,11 @@ class DeploymentRecovery:
             'action': 'use_nvm',
             'priority': 1
         },
+        'python_version_mismatch': {
+            'pattern': r'requires python ([\d\.]+)|python_requires.*?([\d\.]+)|Python ([\d\.]+) is required',
+            'action': 'use_pyenv',
+            'priority': 1
+        },
         'composer_dependency_conflict': {
             'pattern': r'composer.*?conflict|dependency.*?conflict',
             'action': 'composer_update_with_platform_reqs',
@@ -50,6 +55,21 @@ class DeploymentRecovery:
         'working_directory_error': {
             'pattern': r'composer\.json.*?not found|package\.json.*?not found',
             'action': 'search_build_file',
+            'priority': 1
+        },
+        'network_timeout': {
+            'pattern': r'timeout|timed out|connection.*timeout|Read timed out|ConnectTimeout',
+            'action': 'use_mirror',
+            'priority': 2
+        },
+        'disk_space_full': {
+            'pattern': r'no space left|disk.*full|OSError.*28',
+            'action': 'cleanup_disk',
+            'priority': 1
+        },
+        'port_already_in_use': {
+            'pattern': r'address already in use|port.*already.*use|EADDRINUSE',
+            'action': 'kill_port_process',
             'priority': 1
         }
     }
@@ -115,6 +135,18 @@ class DeploymentRecovery:
         
         elif action == 'search_build_file':
             return self._generate_build_file_search_commands()
+        
+        elif action == 'use_pyenv':
+            return self._generate_pyenv_commands(params)
+        
+        elif action == 'use_mirror':
+            return self._generate_mirror_commands()
+        
+        elif action == 'cleanup_disk':
+            return self._generate_cleanup_commands()
+        
+        elif action == 'kill_port_process':
+            return self._generate_kill_port_commands(params)
         
         return []
     
@@ -193,16 +225,24 @@ class DeploymentRecovery:
         """从错误输出提取参数"""
         params = {}
         
-        if error_type in ['php_version_mismatch', 'node_version_mismatch']:
+        if error_type in ['php_version_mismatch', 'node_version_mismatch', 'python_version_mismatch']:
             if match:
                 # 提取版本号
-                version = match.group(1) or match.group(2)
-                params['required_version'] = version.split('-')[0]  # 7.1-7.4 -> 7.4
+                version = match.group(1) or match.group(2) or match.group(3) if match.lastindex >= 3 else match.group(1)
+                params['required_version'] = version.split('-')[0] if version else '3.8'  # 7.1-7.4 -> 7.4
         
         elif error_type == 'missing_system_library':
             if match:
                 lib_name = match.group(1)
                 params['missing_libs'] = [lib_name]
+        
+        elif error_type == 'port_already_in_use':
+            # 从错误信息中提取端口号
+            port_match = re.search(r':(\d+)|port\s+(\d+)', error_output)
+            if port_match:
+                params['port'] = port_match.group(1) or port_match.group(2)
+            else:
+                params['port'] = '8080'  # 默认
         
         return params
     
@@ -210,6 +250,53 @@ class DeploymentRecovery:
         if not repo_url:
             return ""
         return repo_url.rstrip('/').split('/')[-1].replace('.git', '')
+    
+    def _generate_pyenv_commands(self, params: Dict) -> List[str]:
+        """生成 Python 版本切换命令"""
+        required_version = params.get('required_version', '3.8')
+        
+        return [
+            f"curl https://pyenv.run | bash",
+            f"export PYENV_ROOT=\"$HOME/.pyenv\" && export PATH=\"$PYENV_ROOT/bin:$PATH\"",
+            f"eval \"$(pyenv init --path)\"",
+            f"pyenv install {required_version}",
+            f"pyenv global {required_version}",
+            f"cd {self.repo_name} && pip install -r requirements.txt"
+        ]
+    
+    def _generate_mirror_commands(self) -> List[str]:
+        """生成使用国内镜像的命令"""
+        return [
+            "# 配置 pip 使用清华镜像",
+            "pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple",
+            "# 配置 npm 使用淘宝镜像",
+            "npm config set registry https://registry.npmmirror.com",
+            f"cd {self.repo_name} && pip install -r requirements.txt || npm install"
+        ]
+    
+    def _generate_cleanup_commands(self) -> List[str]:
+        """生成磁盘清理命令"""
+        return [
+            "# 清理 Docker 缓存",
+            "docker system prune -af --volumes || true",
+            "# 清理包管理器缓存",
+            "rm -rf /root/.cache/pip /root/.npm /var/cache/apt/archives/*.deb",
+            "# 清理临时文件",
+            "find /tmp -type f -atime +1 -delete || true"
+        ]
+    
+    def _generate_kill_port_commands(self, params: Dict) -> List[str]:
+        """生成杀死占用端口进程的命令"""
+        # 从错误信息中提取端口号
+        port = params.get('port', '8080')  # 默认端口
+        
+        return [
+            f"# 查找并杀死占用端口 {port} 的进程",
+            f"lsof -ti:{port} | xargs kill -9 || true",
+            f"# 或使用 fuser",
+            f"fuser -k {port}/tcp || true",
+            f"sleep 2"
+        ]
 
 
 # 集成到MidExecReflector的示例

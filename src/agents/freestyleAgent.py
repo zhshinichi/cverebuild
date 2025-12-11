@@ -340,35 +340,106 @@ def verify_window_opener_vulnerability(victim_page_url: str) -> str:
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
         
-        driver = webdriver.Chrome(options=options)
-        driver.get(victim_page_url)
-        time.sleep(2)
+        # 模拟移动设备 User-Agent（smartbanner.js 只在移动设备上显示）
+        mobile_user_agents = [
+            # iOS Safari
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+            # Android Chrome
+            'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+        ]
         
-        # 查找所有 target="_blank" 的链接
-        links = driver.find_elements(By.CSS_SELECTOR, 'a[target="_blank"]')
-        
-        if not links:
-            driver.quit()
-            return "NOT VULNERABLE: 页面上没有找到 target=_blank 的链接"
-        
+        results = []
         vulnerable_links = []
         safe_links = []
         
-        for link in links:
-            rel_attr = link.get_attribute('rel') or ""
-            href = link.get_attribute('href') or ""
+        for ua in mobile_user_agents:
+            options_with_ua = Options()
+            options_with_ua.add_argument('--headless')
+            options_with_ua.add_argument('--no-sandbox')
+            options_with_ua.add_argument('--disable-dev-shm-usage')
+            options_with_ua.add_argument(f'--user-agent={ua}')
+            # 设置移动设备屏幕尺寸
+            options_with_ua.add_argument('--window-size=375,812')
             
-            if 'noopener' in rel_attr.lower():
-                safe_links.append(href[:80])
-            else:
-                vulnerable_links.append(href[:80])
+            driver = webdriver.Chrome(options=options_with_ua)
+            
+            try:
+                driver.get(victim_page_url)
+                time.sleep(3)  # 等待 smartbanner 加载
+                
+                # 查找所有 target="_blank" 的链接
+                links = driver.find_elements(By.CSS_SELECTOR, 'a[target="_blank"]')
+                
+                # 也检查 smartbanner 特定的链接选择器
+                smartbanner_links = driver.find_elements(By.CSS_SELECTOR, '.smartbanner__button, .smartbanner a, a.smartbanner__button__label')
+                all_links = list(set(links + smartbanner_links))
+                
+                platform = 'iOS' if 'iPhone' in ua else 'Android'
+                results.append(f"[{platform}] 找到 {len(all_links)} 个链接")
+                
+                for link in all_links:
+                    rel_attr = link.get_attribute('rel') or ""
+                    href = link.get_attribute('href') or ""
+                    target = link.get_attribute('target') or ""
+                    
+                    # 检查是否有 target="_blank" 但没有 noopener
+                    if target == '_blank' or 'smartbanner' in (link.get_attribute('class') or ''):
+                        if 'noopener' not in rel_attr.lower():
+                            vulnerable_links.append(f"[{platform}] {href[:80]}")
+                        else:
+                            safe_links.append(f"[{platform}] {href[:80]}")
+                
+                # 获取页面源码检查 smartbanner 是否加载
+                page_source = driver.page_source
+                if 'smartbanner' in page_source.lower():
+                    results.append(f"[{platform}] SmartBanner 已加载")
+                    
+                    # 直接检查源码中是否有漏洞特征
+                    if 'target="_blank"' in page_source and 'rel="noopener"' not in page_source:
+                        if not vulnerable_links:
+                            vulnerable_links.append(f"[{platform}] 源码中发现 target=_blank 但无 noopener")
+                else:
+                    results.append(f"[{platform}] SmartBanner 未加载")
+                    
+            finally:
+                driver.quit()
         
-        driver.quit()
+        # 汇总结果
+        summary = "\n".join(results)
         
         if vulnerable_links:
-            return f"VULNERABLE: 发现 {len(vulnerable_links)} 个没有 rel='noopener' 保护的链接: {vulnerable_links}"
+            return f"""VULNERABLE: 发现 window.opener 漏洞！
+
+检测结果:
+{summary}
+
+漏洞链接 ({len(vulnerable_links)} 个):
+{chr(10).join(vulnerable_links)}
+
+安全链接 ({len(safe_links)} 个):
+{chr(10).join(safe_links) if safe_links else '无'}
+
+漏洞证据: 链接使用 target="_blank" 但没有 rel="noopener" 保护，
+攻击者可以通过 window.opener 操控原始页面。"""
+        elif safe_links:
+            return f"""NOT VULNERABLE: 所有链接都有 noopener 保护
+
+检测结果:
+{summary}
+
+安全链接 ({len(safe_links)} 个):
+{chr(10).join(safe_links)}"""
         else:
-            return f"NOT VULNERABLE: 所有 {len(safe_links)} 个链接都有 noopener 保护"
+            # 没找到链接，尝试直接分析源码
+            return f"""INCONCLUSIVE: 未找到 target=_blank 链接
+
+检测结果:
+{summary}
+
+建议:
+1. 确认 smartbanner.js 已正确加载
+2. 检查 meta 标签配置是否正确
+3. 尝试手动在浏览器中访问页面并检查 smartbanner 是否显示"""
             
     except Exception as e:
         return f"ERROR: 验证失败: {str(e)}"
@@ -544,19 +615,65 @@ def browser_interact_spa(url: str, actions: str) -> str:
         return f"ERROR: 浏览器自动化失败: {str(e)}"
 
 
+# 常见 npm 库的使用说明（很多库有特殊的初始化方式）
+NPM_LIBRARY_USAGE_GUIDES = {
+    "smartbanner.js": """⚠️ smartbanner.js 使用指南：
+该库需要通过 HTML meta 标签配置，而不是 JavaScript API！
+
+正确用法（在 <head> 中添加 meta 标签）：
+```html
+<head>
+    <meta name="smartbanner:title" content="App Name">
+    <meta name="smartbanner:author" content="Author">
+    <meta name="smartbanner:button" content="View">
+    <meta name="smartbanner:button-url-apple" content="https://attacker.com">
+    <meta name="smartbanner:button-url-google" content="https://attacker.com">
+    <meta name="smartbanner:enabled-platforms" content="android,ios">
+    <meta name="smartbanner:close-label" content="Close">
+    <link rel="stylesheet" href="node_modules/smartbanner.js/dist/smartbanner.min.css">
+    <script src="node_modules/smartbanner.js/dist/smartbanner.min.js"></script>
+</head>
+```
+
+❌ 错误用法（不要这样做）：
+```javascript
+new SmartBanner({...});  // 这是错误的！库不导出构造函数
+```
+
+🔧 验证 window.opener 漏洞：
+使用专用工具 `verify_window_opener_vulnerability(url)` 可以自动检测页面上的链接是否有 rel="noopener" 保护。""",
+    
+    "prototype-pollution": """⚠️ Prototype Pollution 库使用指南：
+1. 直接 require/import 库
+2. 构造恶意输入 payload（如 {"__proto__": {"polluted": true}}）
+3. 调用库的解析/合并函数
+4. 检查 Object.prototype.polluted 是否被设置""",
+}
+
 @tools.tool
-def install_npm_package(package_name: str, version: str = "", work_dir: str = "") -> str:
+def install_npm_package(package_name: str, version: str = "", work_dir: str = "", cve_id: str = "") -> str:
     """
     安装 npm 包（用于测试 JavaScript 库漏洞）
     
     :param package_name: npm 包名 (如 smartbanner.js)
     :param version: 版本号 (如 1.14.0)，不指定则安装最新版
-    :param work_dir: 工作目录，不指定则使用默认目录
+    :param work_dir: 工作目录，不指定则使用当前 CVE 目录
+    :param cve_id: CVE ID，用于确定工作目录
     :return: 安装结果
     """
     try:
         if not work_dir:
-            work_dir = "/workspaces/submission/src/simulation_environments/npm_test"
+            # 优先使用 cve_id 确定目录
+            if cve_id:
+                work_dir = f"/workspaces/submission/src/simulation_environments/{cve_id}"
+            else:
+                # 尝试从环境变量获取
+                cve_from_env = os.environ.get('CURRENT_CVE_ID', '')
+                if cve_from_env:
+                    work_dir = f"/workspaces/submission/src/simulation_environments/{cve_from_env}"
+                else:
+                    # 回退到通用目录
+                    work_dir = "/workspaces/submission/src/simulation_environments/npm_packages"
         
         os.makedirs(work_dir, exist_ok=True)
         
@@ -576,7 +693,24 @@ def install_npm_package(package_name: str, version: str = "", work_dir: str = ""
         
         if result.returncode == 0:
             installed_path = os.path.join(work_dir, "node_modules", package_name)
-            return f"SUCCESS: 成功安装 {pkg_spec}, 路径: {installed_path}"
+            
+            # 构建基础成功消息
+            success_msg = f"""SUCCESS: 成功安装 {pkg_spec}
+路径: {installed_path}
+工作目录: {work_dir}
+
+提示: node_modules 已安装在 {work_dir}/node_modules
+创建 HTML 时应使用相对路径: node_modules/{package_name}/dist/...
+并确保 HTTP 服务器在同一目录启动"""
+            
+            # 检查是否有该库的特殊使用说明
+            pkg_lower = package_name.lower()
+            for lib_name, usage_guide in NPM_LIBRARY_USAGE_GUIDES.items():
+                if lib_name.lower() in pkg_lower or pkg_lower in lib_name.lower():
+                    success_msg += f"\n\n{'='*50}\n{usage_guide}"
+                    break
+            
+            return success_msg
         else:
             return f"ERROR: 安装失败: {result.stderr}"
     except Exception as e:
@@ -2372,6 +2506,11 @@ class FreestyleAgent(AgentWithHistory[dict, str]):
         self.DEPLOYMENT_STRATEGY = deployment_strategy or {}
         if work_dir:
             self.WORK_DIR = work_dir
+        
+        # 设置 CVE ID 环境变量，供工具使用
+        if cve_id:
+            os.environ['CURRENT_CVE_ID'] = cve_id
+            print(f"[FreestyleAgent] 📌 Set CURRENT_CVE_ID={cve_id}")
         
         # 🔍 启用中途反思机制（集成DeploymentStrategy + 智能恢复）
         if deployment_strategy:

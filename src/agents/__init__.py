@@ -38,5 +38,8 @@ from .projectSetup import ProjectSetupAgent
 from .serviceStart import ServiceStartAgent
 from .healthCheck import HealthCheckAgent
 
+# ExecutionReflector - 执行后反思 Agent
+from .executionReflector import ExecutionReflector, AgentExecutionContext, ExecutionAnalysis
+
 # 恢复原始 sys.path，确保其他模块（如 core）可以正常导入
 sys.path = _original_path
