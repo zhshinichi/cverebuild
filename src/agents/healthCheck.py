@@ -41,11 +41,17 @@ class HealthCheckAgent(AgentWithHistory):
             cls.__MAX_TOOL_ITERATIONS__ = max_iterations
     
     def __init__(self, service_result: str = None, port: int = None, target_url: str = None, **kwargs):
-        # 工具集：只包含诊断和检查相关的工具
+        # 工具集：扩展诊断能力
+        from toolbox.tools import TOOLS
+        
         tools = [
             execute_command_foreground,
             diagnose_service_failure,
+            TOOLS.get('get_file'),  # 读取日志文件
+            TOOLS.get('execute_linux_command'),  # 运行 netstat/ps 等命令
         ]
+        # 过滤掉 None 值
+        tools = [t for t in tools if t is not None]
         
         super().__init__(tools=tools, **kwargs)
         self.service_result = service_result

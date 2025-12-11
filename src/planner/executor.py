@@ -3,15 +3,23 @@ from __future__ import annotations
 
 import json
 import os
+import time
+import logging
 from typing import Any, Dict, List, Optional, Set
 
 from planner import ExecutionPlan, PlanStep
 from core.result_bus import ResultBus
 
+logger = logging.getLogger(__name__)
+
 
 class StepExecutionError(Exception):
     """步骤执行失败异常。"""
-    pass
+    
+    def __init__(self, message: str, step_id: str = None, retryable: bool = False):
+        super().__init__(message)
+        self.step_id = step_id
+        self.retryable = retryable
 
 
 class DAGExecutor:
@@ -118,6 +126,39 @@ class DAGExecutor:
                     self.artifacts[output_name] = outputs[output_name]
                     self.result_bus.store_artifact(step.id, output_name, outputs[output_name], artifact_type="json")
 
+            # ========== 检查是否有 ExecutionReflector 分析结果 ==========
+            execution_analysis = None
+            for output_value in outputs.values():
+                if isinstance(output_value, dict) and 'execution_analysis' in output_value:
+                    execution_analysis = output_value['execution_analysis']
+                    break
+            
+            if execution_analysis:
+                print(f"\n[DAGExecutor] 🔍 检测到 ExecutionReflector 分析结果")
+                suggested_agent = execution_analysis.get('suggested_agent')
+                
+                # 如果建议切换 Agent，尝试自动重试（如果配置允许）
+                if suggested_agent and suggested_agent != 'none':
+                    auto_switch = step.config.get('auto_switch_agent', False) if step.config else False
+                    
+                    if auto_switch:
+                        print(f"[DAGExecutor] 💡 自动切换到建议的 Agent: {suggested_agent}")
+                        # 这里可以实现自动切换逻辑
+                        # 暂时只记录建议
+                        self.result_bus.store_artifact(
+                            step.id, 
+                            'agent_switch_suggestion', 
+                            {
+                                'suggested_agent': suggested_agent,
+                                'root_cause': execution_analysis.get('root_cause'),
+                                'strategy': execution_analysis.get('suggested_strategy')
+                            },
+                            artifact_type='json'
+                        )
+                    else:
+                        print(f"[DAGExecutor] ℹ️ 建议切换 Agent ({suggested_agent})，但未启用自动切换")
+                        print(f"   提示: 在 step.config 中设置 'auto_switch_agent': true 以启用")
+
             # Check success condition
             if step.success_condition:
                 if not self._evaluate_success_condition(step.success_condition, outputs):
@@ -127,11 +168,132 @@ class DAGExecutor:
 
         except Exception as exc:
             self.result_bus.publish_event("step_failed", step_id=step.id, data={"error": str(exc)})
-            if not step.retry or step.retry.get("max", 0) <= 0:
-                raise StepExecutionError(f"Step {step.id} execution failed: {exc}") from exc
+            
+            # 检查是否配置了重试策略
+            retry_config = step.retry or {}
+            max_retries = retry_config.get("max", 0)
+            
+            if max_retries <= 0:
+                raise StepExecutionError(
+                    f"Step {step.id} execution failed: {exc}",
+                    step_id=step.id,
+                    retryable=False
+                ) from exc
+            
+            # 执行重试逻辑
+            self._execute_with_retry(step, max_retries, retry_config, exc)
 
-            # TODO: Implement retry logic
-            raise
+    def _execute_with_retry(
+        self,
+        step: PlanStep,
+        max_retries: int,
+        retry_config: Dict[str, Any],
+        initial_error: Exception
+    ) -> None:
+        """
+        执行步骤重试逻辑。
+        
+        Args:
+            step: 需要重试的步骤
+            max_retries: 最大重试次数
+            retry_config: 重试配置 (包含 delay, backoff_factor 等)
+            initial_error: 初始错误
+        """
+        delay = retry_config.get("delay", 2.0)  # 初始延迟秒数
+        backoff_factor = retry_config.get("backoff_factor", 2.0)  # 退避因子
+        max_delay = retry_config.get("max_delay", 60.0)  # 最大延迟
+        
+        last_error = initial_error
+        
+        for attempt in range(1, max_retries + 1):
+            # 计算当前延迟（指数退避）
+            current_delay = min(delay * (backoff_factor ** (attempt - 1)), max_delay)
+            
+            logger.warning(
+                f"Step {step.id} failed (attempt {attempt}/{max_retries}), "
+                f"retrying in {current_delay:.1f}s... Error: {last_error}"
+            )
+            self.result_bus.publish_event(
+                "step_retry",
+                step_id=step.id,
+                data={"attempt": attempt, "max_retries": max_retries, "delay": current_delay}
+            )
+            
+            time.sleep(current_delay)
+            
+            try:
+                # 重新执行步骤（不带重试配置，避免嵌套重试）
+                original_retry = step.retry
+                step.retry = None  # 临时禁用重试，防止无限嵌套
+                
+                try:
+                    self._execute_step_internal(step)
+                    logger.info(f"Step {step.id} succeeded on retry attempt {attempt}")
+                    self.result_bus.publish_event(
+                        "step_retry_success",
+                        step_id=step.id,
+                        data={"attempt": attempt}
+                    )
+                    return  # 成功，退出重试循环
+                finally:
+                    step.retry = original_retry  # 恢复重试配置
+                    
+            except Exception as exc:
+                last_error = exc
+                continue
+        
+        # 所有重试都失败
+        logger.error(f"Step {step.id} failed after {max_retries} retries")
+        raise StepExecutionError(
+            f"Step {step.id} failed after {max_retries} retries: {last_error}",
+            step_id=step.id,
+            retryable=False
+        ) from last_error
+
+    def _execute_step_internal(self, step: PlanStep) -> None:
+        """
+        执行单个步骤的内部逻辑（不含重试）。
+        提取自 _execute_step 以支持重试。
+        """
+        # Get capability implementation class
+        capability_class = self.capability_registry.get(step.implementation)
+        if not capability_class:
+            raise StepExecutionError(
+                f"Implementation not found: {step.implementation}",
+                step_id=step.id
+            )
+
+        # Prepare input parameters
+        inputs = {name: self.artifacts.get(name) for name in step.inputs}
+        
+        # Instantiate capability (pass result_bus and step config)
+        capability_instance = capability_class(self.result_bus, step.config or {})
+
+        # Execute capability (prefer execute; fallback to run for older implementations)
+        if hasattr(capability_instance, "execute"):
+            outputs = capability_instance.execute(inputs)
+        elif hasattr(capability_instance, "run"):
+            outputs = capability_instance.run(inputs)
+        else:
+            raise StepExecutionError(
+                f"Capability {step.implementation} has no execute/run method",
+                step_id=step.id
+            )
+
+        # Store output artifacts
+        for output_name in step.outputs:
+            if output_name in outputs:
+                self.artifacts[output_name] = outputs[output_name]
+                self.result_bus.store_artifact(step.id, output_name, outputs[output_name], artifact_type="json")
+
+        # Check success condition
+        if step.success_condition:
+            if not self._evaluate_success_condition(step.success_condition, outputs):
+                raise StepExecutionError(
+                    f"Step {step.id} failed success condition: {step.success_condition}",
+                    step_id=step.id,
+                    retryable=True  # 条件失败通常可以重试
+                )
 
     def _evaluate_success_condition(self, condition: str, outputs: Dict[str, Any]) -> bool:
         """Safely evaluate a simple success condition without exposing builtins."""

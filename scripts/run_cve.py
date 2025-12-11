@@ -13,18 +13,98 @@ import argparse
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import Optional, Tuple
+
+# 加载 .env 文件
+def load_env_file():
+    """Load environment variables from .env file."""
+    # 查找 .env 文件（优先级：当前目录 > 项目根目录 > scripts 目录）
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    
+    possible_paths = [
+        Path.cwd() / ".env",           # 当前工作目录
+        project_root / ".env",          # 项目根目录
+        script_dir / ".env",            # scripts 目录
+    ]
+    
+    # 支持多种编码格式
+    encodings = ['utf-8', 'utf-8-sig', 'utf-16', 'utf-16-le', 'gbk', 'latin-1']
+    
+    for env_path in possible_paths:
+        if env_path.exists():
+            print(f"[INFO] Loading .env from: {env_path}")
+            
+            # 尝试不同编码
+            content = None
+            for encoding in encodings:
+                try:
+                    with open(env_path, 'r', encoding=encoding) as f:
+                        content = f.read()
+                    break
+                except (UnicodeDecodeError, UnicodeError):
+                    continue
+            
+            if content is None:
+                print(f"[WARN] Could not read .env file with any known encoding")
+                return False
+            
+            for line in content.splitlines():
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, _, value = line.partition('=')
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    if key and value:
+                        os.environ.setdefault(key, value)
+            return True
+    return False
+
+load_env_file()
 
 # Container settings
 CONTAINER_NAME = "competent_dewdney"
 CONTAINER_WORKSPACE = "/workspaces/submission"
-#DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/large_scale/simple_web_cves_20.json"
-DEFAULT_DATA_JSON = f"{CONTAINER_WORKSPACE}/src/data/large_scale/data.json"
+
+# 数据源路径选择（优先 data.json，找不到则使用 simple_web_cves_20.json）
+def get_default_data_json():
+    """智能选择数据源路径"""
+    primary_path = f"{CONTAINER_WORKSPACE}/src/data/large_scale/data.json"
+    fallback_path = f"{CONTAINER_WORKSPACE}/src/data/large_scale/simple_web_cves_20.json"
+    
+    # 检查主数据文件是否存在（需要在容器内检查）
+    try:
+        check_cmd = [
+            "docker", "exec", CONTAINER_NAME,
+            "test", "-f", primary_path
+        ]
+        result = subprocess.run(check_cmd, capture_output=True, timeout=5)
+        
+        if result.returncode == 0:
+            print(f"[INFO] Using primary data source: {primary_path}")
+            return primary_path
+        else:
+            print(f"[INFO] Primary data source not found, using fallback: {fallback_path}")
+            return fallback_path
+    except Exception as e:
+        print(f"[WARN] Could not check data source: {e}, using primary path")
+        return primary_path
+
+DEFAULT_DATA_JSON = get_default_data_json()
 MAIN_PY = f"{CONTAINER_WORKSPACE}/src/main.py"
 
-# API settings (fallback to placeholder key if not provided)
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "sk-ziyWDSRgl3ymsBm3MWN8C5fPJwrzxaakqdsCYsWIB0dTqHmg")
+# API settings (from environment or .env file)
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai-hub.com/v1")
+
+if not OPENAI_API_KEY:
+    print("[ERROR] OPENAI_API_KEY not found")
+    print("        Option 1: Create .env file with OPENAI_API_KEY=your-key")
+    print("        Option 2: Set environment variable")
+    sys.exit(1)
+else:
+    print(f"[INFO] API Key loaded (ends with ...{OPENAI_API_KEY[-4:]})")
 
 
 def classify_cve(cve_id: str, data_json: str) -> Tuple[str, bool, str]:
@@ -48,15 +128,46 @@ def classify_cve(cve_id: str, data_json: str) -> Tuple[str, bool, str]:
         f'''
 import json
 import sys
+import os
 sys.path.insert(0, ".")
 from planner.llm_classifier import LLMVulnerabilityClassifier, LLMClassifierConfig
 
-with open("{data_json}") as f:
-    data = json.load(f)
+# 智能选择数据源（容器内降级逻辑 + CVE不存在时继续尝试fallback）
+primary_data = "{data_json}"
+fallback_data = "{CONTAINER_WORKSPACE}/src/data/large_scale/simple_web_cves_20.json"
 
-cve_entry = data.get("{cve_id}", {{}})
+cve_entry = None
+data_file = None
+
+# 尝试主数据源
+if os.path.exists(primary_data):
+    print(f"[Container-Classify] Checking primary data: {{primary_data}}")
+    try:
+        data = json.load(open(primary_data))
+        if "{cve_id}" in data:
+            cve_entry = data["{cve_id}"]
+            data_file = primary_data
+            print(f"[Container-Classify] ✅ Found {cve_id} in primary data")
+        else:
+            print(f"[Container-Classify] ⚠️ {cve_id} not in primary data, trying fallback...")
+    except Exception as e:
+        print(f"[Container-Classify] ⚠️ Error reading primary: {{e}}")
+
+# 如果主数据源没找到CVE，尝试fallback
+if not cve_entry and os.path.exists(fallback_data):
+    print(f"[Container-Classify] Checking fallback data: {{fallback_data}}")
+    try:
+        data = json.load(open(fallback_data))
+        if "{cve_id}" in data:
+            cve_entry = data["{cve_id}"]
+            data_file = fallback_data
+            print(f"[Container-Classify] ✅ Found {cve_id} in fallback data")
+    except Exception as e:
+        print(f"[Container-Classify] ⚠️ Error reading fallback: {{e}}")
+
+# 如果两个数据源都没找到CVE
 if not cve_entry:
-    print("ERROR:CVE not found in data.json")
+    print(f"ERROR:CVE {cve_id} not found in any data source")
     sys.exit(1)
 
 config = LLMClassifierConfig(use_llm=True, fallback_to_rules=True)
@@ -79,12 +190,14 @@ print(f"{{decision.profile}},{{needs_browser}},{{decision.execution_mode}}")
 
         if result.returncode != 0:
             print(f"[WARN] Classify failed: {result.stderr}")
-            return "native-local", False
+            return "native-local", False, "legacy"  # 修复：返回3个值
 
         output_lines = result.stdout.strip().split("\n")
         profile: Optional[str] = None
         needs_browser = False
 
+        parts = []  # 初始化 parts，避免未定义错误
+        
         for line in output_lines:
             line_stripped = line.strip()
             if line_stripped.startswith("Profile:"):

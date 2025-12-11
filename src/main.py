@@ -262,10 +262,29 @@ class CVEReproducer:
         if time.time() - self.start_time > TIMEOUT:
             raise TimeoutExpired(phase=phase)
 
-    def update_cost(self, cost: float, exception: bool = False):
+    def update_cost(self, cost: float, allow_exceed: bool = False, reason: str = None):
+        """
+        更新累计成本并检查是否超限。
+        
+        Args:
+            cost: 本次操作的成本
+            allow_exceed: 是否允许超出成本上限（仅用于关键结束阶段）
+            reason: 允许超限的原因（用于日志记录）
+        """
         self.total_cost += cost
-        if self.total_cost >= MAX_COST and not exception:
-            raise ValueError("Cost exceeds maximum limit")
+        
+        # 警告阈值：当成本超过上限的80%时发出警告
+        warning_threshold = MAX_COST * 0.8
+        if self.total_cost >= warning_threshold and self.total_cost < MAX_COST:
+            print(f"⚠️  Cost warning: ${self.total_cost:.4f} / ${MAX_COST:.2f} ({self.total_cost/MAX_COST*100:.1f}% of limit)")
+        
+        if self.total_cost >= MAX_COST:
+            if allow_exceed:
+                # 记录超限但允许继续的情况
+                exceed_reason = reason or "final verification phase"
+                print(f"⚠️  Cost exceeded but allowed: ${self.total_cost:.4f} / ${MAX_COST:.2f} (reason: {exceed_reason})")
+            else:
+                raise ValueError(f"Cost exceeds maximum limit: ${self.total_cost:.4f} >= ${MAX_COST:.2f}")
 
     def run(self):
         fix_only_mode = FIX_ADVISOR and not any([CVE_INFO_GEN, KB, PRE_REQ, REPO, EXPLOIT, CTF_VERIFIER])
@@ -590,7 +609,7 @@ class CVEReproducer:
                                     self.repo_build['time_left'] = TIMEOUT - (time.time() - self.start_time)
                                     helper.save_response(self.cve_id, self.repo_build, "repo_builder", struct=True)
                                     print(f"✅ Repo Builder Done!")
-                                self.update_cost(critic.get_cost(), exception=repo_done)
+                                self.update_cost(critic.get_cost(), allow_exceed=repo_done, reason="repo critic review")
                             else:
                                 repo_done = True
                                 self.repo_build['time_left'] = TIMEOUT - (time.time() - self.start_time)
@@ -779,7 +798,7 @@ class CVEReproducer:
                                 exploit_critic_feedback = None
                             else:
                                 print("❌ Exploiter gave up!")
-                        self.update_cost(exploiter.get_cost(), exception=exploit_done)
+                        self.update_cost(exploiter.get_cost(), allow_exceed=exploit_done, reason="exploit execution")
                     exploit_try += 1
                 
                 if not exploit_done:
@@ -884,7 +903,7 @@ class CVEReproducer:
                                 verifier_done = True
                                 helper.save_response(self.cve_id, self.ctf_verifier, "ctf_verifier", struct=True)
                                 print("✅ Critic accepted the verifier!")
-                            self.update_cost(sanity_guy.get_cost(), exception=True)
+                            self.update_cost(sanity_guy.get_cost(), allow_exceed=True, reason="sanity check in verification phase")
                         else:
                             verifier_done = True
                             helper.save_response(self.cve_id, self.ctf_verifier, "ctf_verifier", struct=True)
@@ -894,7 +913,7 @@ class CVEReproducer:
                         print("📋 Sending output feedback to CTF Verifier ...")
                         ctf_feedback = f"Previous Code: ```\n{self.ctf_verifier['verifier']}\n```\n\nOutput Logs: '''\n{validator.feedback}\n'''"
                     try_itr += 1
-                    self.update_cost(ctf_verifier.get_cost(), exception=True)
+                    self.update_cost(ctf_verifier.get_cost(), allow_exceed=True, reason="CTF verifier iteration")
                         
                 if not verifier_done:
                     print("❌ CTF Verifier failed!")
@@ -976,19 +995,52 @@ if __name__ == "__main__":
         if not args.json:
             parser.error("--json is required for DAG mode")
         
-        if not os.path.exists(args.json):
-            print(f"❌ Data file not found: {args.json}")
+        # 智能选择数据源（容器内降级逻辑 + CVE不存在时继续尝试fallback）
+        primary_data = args.json
+        # 修复：使用正确的绝对路径而不是相对路径
+        fallback_data = "/workspaces/submission/src/data/large_scale/simple_web_cves_20.json"
+        
+        cve_entry = None
+        data_file = None
+        
+        # 尝试主数据源
+        if os.path.exists(primary_data):
+            print(f"[DAG] Checking primary data: {primary_data}")
+            try:
+                import json
+                all_cve_data = json.load(open(primary_data, 'r', encoding='utf-8'))
+                if args.cve in all_cve_data:
+                    cve_entry = all_cve_data[args.cve]
+                    data_file = primary_data
+                    print(f"[DAG] ✅ Found {args.cve} in primary data")
+                else:
+                    print(f"[DAG] ⚠️ {args.cve} not in primary data, trying fallback...")
+            except Exception as e:
+                print(f"[DAG] ⚠️ Error reading primary data: {e}")
+        
+        # 如果主数据源没找到CVE，尝试fallback
+        if not cve_entry and os.path.exists(fallback_data):
+            print(f"[DAG] Checking fallback data: {fallback_data}")
+            try:
+                import json
+                all_cve_data = json.load(open(fallback_data, 'r', encoding='utf-8'))
+                if args.cve in all_cve_data:
+                    cve_entry = all_cve_data[args.cve]
+                    data_file = fallback_data
+                    print(f"[DAG] ✅ Found {args.cve} in fallback data")
+            except Exception as e:
+                print(f"[DAG] ⚠️ Error reading fallback data: {e}")
+        
+        # 如果两个数据源都没找到CVE
+        if not cve_entry:
+            error_msg = f"❌ {args.cve} not found in any data source\n"
+            error_msg += f"   Checked: {primary_data}\n"
+            if os.path.exists(fallback_data):
+                error_msg += f"   Checked: {fallback_data}"
+            else:
+                error_msg += f"   Fallback not available: {fallback_data}"
+            print(error_msg)
             sys.exit(1)
-        
-        import json
-        with open(args.json, 'r', encoding='utf-8') as f:
-            all_cve_data = json.load(f)
-        
-        if args.cve not in all_cve_data:
-            print(f"❌ {args.cve} not found in {args.json}")
-            sys.exit(1)
-        
-        cve_entry = all_cve_data[args.cve]
         
         # 导入新架构模块 - 使用 LLM 增强的分类器
         from planner.llm_classifier import LLMVulnerabilityClassifier, LLMClassifierConfig
@@ -1126,11 +1178,45 @@ if __name__ == "__main__":
             })
             result_bus.sync_to_local()
             
+            # 🔧 在成功/失败后立即保存日志并退出，清理工作放到后台
+            # 恢复原始输出并关闭日志文件
+            sys.stdout = original_stdout
+            sys.stderr = original_stderr
+            tee_logger.close()
+            print(f"✅ Log saved to: {log_file}")
+            
+            # 后台清理（不阻塞主进程退出）
+            import subprocess
+            subprocess.Popen(
+                [
+                    'sh', '-c',
+                    '''
+                    # 清理后台进程
+                    pkill -f "http.server" 2>/dev/null || true
+                    pkill -f "node.*http-server" 2>/dev/null || true
+                    # 清理缓存（静默执行）
+                    rm -rf /root/.cache/pip /root/.npm/_cacache /root/.cache/huggingface 2>/dev/null || true
+                    '''
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True  # 分离进程组，不受父进程影响
+            )
+            
+            # 根据执行结果返回正确的退出码
+            sys.exit(0 if success else 1)
+            
         except TimeoutExpired as e:
             signal.alarm(0)
             print(f"\n{'='*60}")
             print(f"ERROR: {e.message}")
             print(f"{'='*60}")
+            
+            # 恢复输出并退出
+            sys.stdout = original_stdout
+            sys.stderr = original_stderr
+            tee_logger.close()
+            sys.exit(1)  # 超时失败
         except Exception as e:
             signal.alarm(0)
             print(f"\n{'='*60}")
@@ -1138,58 +1224,12 @@ if __name__ == "__main__":
             import traceback
             traceback.print_exc()
             print(f"{'='*60}")
-        finally:
-            # ========== 关键: 清理残留进程 ==========
-            # 无论成功失败，都清理后台进程，防止 CPU/内存占满
-            try:
-                from toolbox.command_ops import cleanup_running_processes
-                cleanup_running_processes()
-            except Exception as cleanup_e:
-                print(f"⚠️ Failed to cleanup processes: {cleanup_e}")
             
-            # ========== 清理缓存目录，节省磁盘空间 ==========
-            try:
-                import shutil
-                cache_dirs = [
-                    '/root/.cache/pip',
-                    '/root/.npm/_cacache',
-                    '/root/.cache/huggingface',
-                    '/root/.cache/selenium',
-                    '/root/.nvm/.cache',
-                    '/tmp',  # 清理临时文件
-                ]
-                cleaned = 0
-                for cache_dir in cache_dirs:
-                    if os.path.exists(cache_dir):
-                        try:
-                            if cache_dir == '/tmp':
-                                # /tmp 只清理文件，不删除目录
-                                for item in os.listdir(cache_dir):
-                                    item_path = os.path.join(cache_dir, item)
-                                    try:
-                                        if os.path.isfile(item_path):
-                                            os.unlink(item_path)
-                                        elif os.path.isdir(item_path):
-                                            shutil.rmtree(item_path)
-                                        cleaned += 1
-                                    except:
-                                        pass
-                            else:
-                                shutil.rmtree(cache_dir)
-                                cleaned += 1
-                        except:
-                            pass
-                if cleaned > 0:
-                    print(f"🧹 Cleaned {cleaned} cache directories")
-            except Exception as cache_e:
-                pass  # 缓存清理失败不影响主流程
-            
+            # 恢复输出并退出
             sys.stdout = original_stdout
             sys.stderr = original_stderr
             tee_logger.close()
-            print(f"✅ Log saved to: {log_file}")
-        
-        sys.exit(0)
+            sys.exit(1)  # 错误失败
     
     # ========== Legacy 模式 ==========
     print("🔧 Running in Legacy mode (original architecture)\n")
@@ -1262,10 +1302,40 @@ if __name__ == "__main__":
     
     try:
         reproducer.run()
-    except Exception as e:
+    except TimeoutExpired as e:
         signal.alarm(0)
         print(f"\n{'='*60}")
-        print(f"ERROR: {str(e)}")
+        print(f"TIMEOUT ERROR: {e.message}")
+        reproducer.results = {"success": "False", "reason": e.message}
+        print(f"{'='*60}")
+    except ValueError as e:
+        # 成本超限等业务逻辑错误
+        signal.alarm(0)
+        print(f"\n{'='*60}")
+        print(f"VALUE ERROR: {str(e)}")
+        reproducer.results = {"success": "False", "reason": str(e)}
+        print(f"{'='*60}")
+    except (FileNotFoundError, IOError) as e:
+        # 文件操作错误
+        signal.alarm(0)
+        print(f"\n{'='*60}")
+        print(f"FILE ERROR: {str(e)}")
+        reproducer.results = {"success": "False", "reason": str(e)}
+        print(f"{'='*60}")
+    except KeyboardInterrupt:
+        signal.alarm(0)
+        print(f"\n{'='*60}")
+        print("INTERRUPTED: User cancelled operation")
+        reproducer.results = {"success": "False", "reason": "User interrupted"}
+        print(f"{'='*60}")
+    except Exception as e:
+        # 其他未预期的错误
+        signal.alarm(0)
+        print(f"\n{'='*60}")
+        print(f"UNEXPECTED ERROR: {type(e).__name__}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        reproducer.results = {"success": "False", "reason": f"{type(e).__name__}: {str(e)}"}
         print(f"{'='*60}")
     
     # 记录结束信息

@@ -326,11 +326,11 @@ class MidExecutionReflector:
                 if recovery_commands:
                     print(f"[MidExecReflector] 📋 Generated {len(recovery_commands)} recovery commands")
                     
-                    # 返回自动恢复结果
+                    # 返回自动恢复结果（修复字段名）
                     return ReflectionResult(
-                        should_change_approach=True,
-                        suggested_actions=recovery_commands[:3],  # 最多3条命令
-                        reasoning=f"检测到{strategy['type']}，自动生成恢复策略",
+                        should_intervene=True,
+                        analysis=f"检测到{strategy['type']}错误，已生成自动恢复策略",
+                        corrective_action='\n'.join(recovery_commands[:3]),  # 最多3条命令
                         confidence=0.9
                     )
         

@@ -86,6 +86,17 @@ You are an expert security researcher specialized in CVE vulnerability reproduct
 | `run_nikto(target_url, port)` | Web server vulnerability scanning |
 | `http_request(url, method, headers, data)` | Custom HTTP requests |
 
+## Specialized Vulnerability Tools (USE THESE FIRST!)
+| Tool | Purpose |
+|------|---------|
+| `verify_window_opener_vulnerability(url)` | Check if links have rel="noopener" protection (for smartbanner.js, etc.) |
+| `install_npm_package(name, version, cve_id)` | Install npm package with usage guidance |
+
+**⚠️ IMPORTANT**: When testing JavaScript library vulnerabilities:
+1. `install_npm_package` will provide library-specific usage instructions
+2. For `window.opener` vulnerabilities (like smartbanner.js), use `verify_window_opener_vulnerability` first
+3. Many npm libraries require special initialization (e.g., meta tags, not JavaScript API)
+
 ---
 
 # OUTPUT FORMAT

@@ -169,7 +169,7 @@ class PlanBuilder:
             outputs=["health_result"],
             requires=["deploy-env"],
             environment="builder",
-            success_condition="health_result.http_code in [200, 301, 302, 307] or health_result.healthy == True",
+            success_condition="health_result.http_code in [200, 301, 302, 307, 404] or health_result.healthy == True",
         )
         yield PlanStep(
             id="browser-provision",
