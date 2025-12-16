@@ -188,6 +188,20 @@ class WebAppDeployer(Capability):
         cve_entry = inputs.get('cve_entry', {})
         cve_knowledge = inputs.get('cve_knowledge', '')
         cve_id = inputs.get('cve_id', '')
+        deployment_strategy = inputs.get('deployment_strategy', {})
+        
+        # ========== 检查是否为硬件漏洞 ==========
+        if deployment_strategy.get('is_hardware'):
+            print(f"[WebAppDeployer] ⚠️ Hardware vulnerability detected - cannot deploy with software")
+            print(f"[WebAppDeployer] ℹ️ Notes: {deployment_strategy.get('deployment_notes', 'Hardware vulnerability')}")
+            return {
+                'build_result': {
+                    'success': 'no',
+                    'access': 'N/A',
+                    'method': 'hardware-skip',
+                    'notes': f"Hardware vulnerability: {deployment_strategy.get('deployment_notes', 'Cannot reproduce with software')}"
+                }
+            }
         
         # 获取软件信息
         sw_version_wget = cve_entry.get('sw_version_wget', '')
@@ -872,8 +886,19 @@ class PreReqBuilderAdapter(Capability):
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cve_knowledge = inputs.get('cve_knowledge', '')
         cve_entry = inputs.get('cve_entry', {})
+        deployment_strategy = inputs.get('deployment_strategy', {})
         dir_tree = cve_entry.get('dir_tree', '')
         sw_version = cve_entry.get('sw_version', '')
+        
+        # ========== 检查是否为硬件漏洞 ==========
+        if deployment_strategy.get('is_hardware'):
+            print(f"[PreReqBuilder] ⚠️ Hardware vulnerability detected - skipping prerequisite analysis")
+            return {
+                'prerequisites': {
+                    'overview': 'Hardware vulnerability - cannot analyze prerequisites',
+                    'is_hardware': True
+                }
+            }
         
         # ========== 关键优化: 当 dir_tree 为空时，使用智能推断 ==========
         # 这避免了 PreReqBuilder 在空目录中无限循环执行 ls 命令

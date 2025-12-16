@@ -221,7 +221,7 @@ class MidExecutionReflector:
     当检测到重复失败模式时，调用 LLM 分析错误并给出修正建议
     """
     
-    REFLECTION_PROMPT = """你是一个专业的错误分析专家。你需要分析以下连续失败的命令执行记录，找出根本原因，并给出具体的修正建议。
+    REFLECTION_PROMPT = """你是一个高级的错误分析专家。你需要分析以下连续失败的命令执行记录，找出**根本原因**，并给出**具体可执行**的修正建议。
 
 ## 当前任务上下文
 {{ context }}
@@ -229,24 +229,72 @@ class MidExecutionReflector:
 ## 失败记录
 {{ failure_summary }}
 
-## 分析要求
-1. 识别失败的根本原因（例如：包名错误、版本不存在、依赖冲突等）
-2. 判断当前的尝试策略是否正确
-3. 给出具体可行的修正建议
+## 🔍 深度分析要求
+
+### 1. 分析命令输出中的关键证据
+- **文件大小**：如果 curl/wget 下载的文件小于 1000 字节，几乎肯定是下载失败（返回了错误页面）
+  - 例如：`100     9  100     9` 表示只下载了9字节，这是GitHub的"Not Found"错误页面
+- **文件类型**：如果 `file xxx.zip` 返回 "ASCII text" 而不是 "Zip archive"，说明下载失败
+- **HTTP 状态码**：404 表示 URL 不存在，可能是版本号错误
+- **重复模式**：相同命令失败 N 次，说明策略根本错误而不是临时问题
+
+### 2. 识别失败的根本原因
+- **download_failed**：URL 无效或版本不存在，下载的是错误页面而不是实际文件
+- **version_not_exist**：指定的版本号不存在，需要检查可用版本
+- **file_corrupted**：下载的文件损坏，无法解压
+- **package_name_error**：包名错误，需要搜索正确的名称
+- **dependency_conflict**：依赖版本冲突
+- **permission_issue**：权限不足
+- **wrong_approach**：整体方法错误，需要完全不同的策略
+
+### 3. 给出具体可执行的替代方案
+
+⚠️ **重要**：不要给出笼统的建议（如"检查文件是否存在"），而是给出具体命令！
+
+⚠️ **GitHub URL 正确格式**：
+- ✅ 正确: `https://github.com/user/repo/archive/refs/tags/v1.4.8.zip`
+- ✅ 正确: `https://github.com/user/repo/archive/v1.4.8.zip`
+- ❌ 错误: `https://github.com/user/repo/archive/refs/tags/latest.zip` (GitHub没有latest标签)
+- ❌ 错误: `https://github.com/user/repo/archive/refs/heads/main.zip` (需要仓库存在且公开)
+
+🌟 **推荐方案：优先使用 git clone 而不是下载 zip**：
+
+```bash
+# 方案A: 直接克隆主分支
+git clone https://github.com/user/repo.git
+cd repo
+
+# 方案B: 查看可用版本后切换
+git clone https://github.com/user/repo.git
+cd repo
+git tag -l  # 查看所有可用标签
+git checkout v1.4.8  # 切换到指定版本
+
+# 方案C: 浅克隆特定分支（更快）
+git clone --depth 1 --branch v1.4.8 https://github.com/user/repo.git
+```
+
+如果版本号不存在，先克隆仓库然后查看可用版本：
+```bash
+git clone https://github.com/user/repo.git
+cd repo
+git tag -l | head -20  # 查看前20个标签
+git branch -r  # 查看远程分支
+```
 
 ## 输出格式
 请按以下格式输出：
 
 <analysis>
-[问题分析：简要说明失败的根本原因]
+[问题分析：说明你发现的关键证据，如"下载文件只有9字节，这不是有效的zip文件"]
 </analysis>
 
 <root_cause>
-[根本原因类型：package_name_error | version_not_exist | dependency_conflict | permission_issue | other]
+[根本原因类型：download_failed | version_not_exist | file_corrupted | package_name_error | dependency_conflict | permission_issue | wrong_approach | other]
 </root_cause>
 
 <corrective_action>
-[具体修正建议：给出应该执行的正确命令或策略调整]
+[具体修正建议：给出应该执行的**具体命令**，不要笼统的建议。优先推荐 git clone 而非下载 zip]
 </corrective_action>
 
 <confidence>

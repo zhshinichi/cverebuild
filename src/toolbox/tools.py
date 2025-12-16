@@ -7,6 +7,7 @@ from agentlib.lib import tools
 from . import peek_logs
 from . import file_ops
 from . import command_ops
+from . import security_tools
 
 TOOLS = {
     'get_file': file_ops.get_file,
@@ -16,6 +17,12 @@ TOOLS = {
     'execute_linux_command': command_ops.execute_linux_command,
     'set_environment_variable': command_ops.set_environment_variable,
     # 'show_log_at': peek_logs.show_log_at
+    
+    # 专业安全工具 - 优先使用这些工具而非编写复杂 Python
+    'run_sqlmap': security_tools.run_sqlmap,
+    'run_commix': security_tools.run_commix,
+    'run_nuclei': security_tools.run_nuclei,
+    'run_xss_scanner': security_tools.run_xss_scanner,
 }
 
 # @tools.tool

@@ -1,0 +1,252 @@
+{
+  "version": "1.0",
+  "created_at": "2025-12-15T12:45:27.221120",
+  "updated_at": "2025-12-15T12:45:27.221411",
+  "experiences": {
+    "dotnet": {
+      "library": {
+        "project_type": "dotnet",
+        "subtype": "library",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "OutputType is 'Library'",
+          "The current OutputType is 'Library'",
+          "OutputType='Library'",
+          ".nupkg",
+          "classlib"
+        ],
+        "startup_advice": "🔬 这是 .NET 类库项目，不是可执行程序！\n\n推荐复现策略：\n1. 【首选】使用 dotnet test 运行现有单元测试\n   命令: dotnet test\n   \n2. 如果需要验证特定功能，创建测试控制台程序：\n   dotnet new console -n VulnTest\n   cd VulnTest\n   dotnet add reference ../path/to/library.csproj\n   # 然后编写测试代码\n\n❌ 禁止使用的命令：\n- dotnet run（类库没有入口点）\n- dotnet build --run（同上）",
+        "common_pitfalls": [
+          "尝试用 dotnet run 启动类库",
+          "忽略 OutputType='Library' 错误信息",
+          "没有检查项目类型就尝试启动"
+        ],
+        "last_updated": "2025-12-15T12:45:27.221135",
+        "command_experiences": {
+          "dotnet run": {
+            "command_pattern": "dotnet run",
+            "success_count": 0,
+            "failure_count": 100,
+            "common_errors": [
+              "OutputType is 'Library'",
+              "Ensure you have a runnable project type"
+            ],
+            "solutions": [
+              "使用 dotnet test 替代",
+              "创建测试控制台程序"
+            ],
+            "alternatives": [
+              "dotnet test",
+              "创建控制台测试项目"
+            ],
+            "should_avoid": true,
+            "avoid_reason": "类库项目没有入口点，无法用 dotnet run 启动"
+          }
+        }
+      },
+      "web_app": {
+        "project_type": "dotnet",
+        "subtype": "web_app",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "Microsoft.NET.Sdk.Web",
+          "aspnetcore",
+          "WebApplication"
+        ],
+        "startup_advice": "🌐 这是 .NET Web 应用\n\n启动命令：\n- dotnet run --urls http://0.0.0.0:5000\n- 或查看 launchSettings.json 中的端口配置\n\n常用环境变量：\n- ASPNETCORE_ENVIRONMENT=Development\n- ASPNETCORE_URLS=http://0.0.0.0:5000",
+        "common_pitfalls": [
+          "忘记指定监听地址（默认只监听 localhost）",
+          "端口冲突"
+        ],
+        "last_updated": "2025-12-15T12:45:27.221137",
+        "command_experiences": {}
+      }
+    },
+    "node": {
+      "library": {
+        "project_type": "node",
+        "subtype": "library",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "Missing script: \"start\"",
+          "missing script: start",
+          "\"main\":"
+        ],
+        "startup_advice": "📦 这是 npm 库/包，不是可运行的 Web 应用！\n\n推荐复现策略：\n1. 【首选】运行现有测试\n   npm test\n   或 npm run test\n   \n2. 创建测试 HTML 页面引入该库：\n   创建 test.html，使用 <script src=\"node_modules/...\"> 引入\n\n3. 创建测试脚本：\n   node -e \"const lib = require('./'); ...\"\n\n❌ 禁止使用的命令：\n- npm start（没有 start 脚本）",
+        "common_pitfalls": [
+          "尝试 npm start 但没有 start 脚本",
+          "忽略 'Missing script: start' 错误"
+        ],
+        "last_updated": "2025-12-15T12:45:27.221138",
+        "command_experiences": {
+          "npm start": {
+            "command_pattern": "npm start",
+            "success_count": 0,
+            "failure_count": 100,
+            "common_errors": [
+              "Missing script: \"start\""
+            ],
+            "solutions": [
+              "使用 npm test",
+              "创建测试页面"
+            ],
+            "alternatives": [
+              "npm test",
+              "node test.js"
+            ],
+            "should_avoid": true,
+            "avoid_reason": "npm 库没有 start 脚本"
+          }
+        }
+      },
+      "web_app": {
+        "project_type": "node",
+        "subtype": "web_app",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "\"start\":",
+          "express",
+          "koa",
+          "fastify"
+        ],
+        "startup_advice": "🌐 这是 Node.js Web 应用\n\n启动命令：\n- npm start\n- 或 npm run dev（开发模式）\n- 或查看 package.json 中的 scripts\n\n常用端口：3000, 8080, 5000",
+        "common_pitfalls": [],
+        "last_updated": "2025-12-15T12:45:27.221140",
+        "command_experiences": {}
+      }
+    },
+    "python": {
+      "library": {
+        "project_type": "python",
+        "subtype": "library",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "pypi",
+          "pip install",
+          "setup.py",
+          "pyproject.toml",
+          "No module named 'flask'"
+        ],
+        "startup_advice": "📦 这是 Python 库/包\n\n推荐复现策略：\n1. 【首选】运行现有测试\n   pytest\n   或 python -m pytest\n   \n2. 创建测试脚本：\n   from vulnerable_lib import vulnerable_function\n   vulnerable_function(malicious_input)\n\n3. 使用 Python 交互式测试：\n   python -c \"from lib import ...; ...\"\n\n❌ 通常不适用的命令：\n- python app.py（如果没有 app.py）\n- flask run（如果不是 Flask 应用）",
+        "common_pitfalls": [
+          "尝试用 flask run 启动非 Flask 库",
+          "没有先安装库就尝试导入"
+        ],
+        "last_updated": "2025-12-15T12:45:27.221141",
+        "command_experiences": {
+          "flask run": {
+            "command_pattern": "flask run",
+            "success_count": 0,
+            "failure_count": 0,
+            "common_errors": [
+              "No module named 'flask'",
+              "Could not locate a Flask application"
+            ],
+            "solutions": [
+              "使用 pytest 运行测试",
+              "创建测试脚本"
+            ],
+            "alternatives": [
+              "pytest",
+              "python -m pytest",
+              "python test_script.py"
+            ],
+            "should_avoid": true,
+            "avoid_reason": "纯 Python 库不是 Flask 应用"
+          }
+        }
+      },
+      "web_app": {
+        "project_type": "python",
+        "subtype": "web_app",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "flask",
+          "django",
+          "fastapi",
+          "uvicorn"
+        ],
+        "startup_advice": "🌐 这是 Python Web 应用\n\n启动命令：\n- Flask: flask run --host=0.0.0.0 --port=5000\n- Django: python manage.py runserver 0.0.0.0:8000\n- FastAPI: uvicorn app:app --host 0.0.0.0 --port 8000\n\n环境变量：\n- FLASK_APP=app.py\n- FLASK_ENV=development",
+        "common_pitfalls": [],
+        "last_updated": "2025-12-15T12:45:27.221143",
+        "command_experiences": {}
+      }
+    },
+    "java": {
+      "library": {
+        "project_type": "java",
+        "subtype": "library",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "<packaging>jar</packaging>",
+          "maven-shade-plugin",
+          "no main manifest attribute"
+        ],
+        "startup_advice": "📦 这是 Java 库/JAR 包\n\n推荐复现策略：\n1. 【首选】运行单元测试\n   mvn test\n   或 gradle test\n   \n2. 创建测试类引用该库\n\n❌ 禁止使用的命令：\n- java -jar library.jar（没有 Main-Class）",
+        "common_pitfalls": [
+          "尝试 java -jar 运行没有主类的 JAR"
+        ],
+        "last_updated": "2025-12-15T12:45:27.221145",
+        "command_experiences": {
+          "java -jar": {
+            "command_pattern": "java -jar",
+            "success_count": 0,
+            "failure_count": 0,
+            "common_errors": [
+              "no main manifest attribute"
+            ],
+            "solutions": [
+              "使用 mvn test 运行测试"
+            ],
+            "alternatives": [
+              "mvn test",
+              "gradle test"
+            ],
+            "should_avoid": true,
+            "avoid_reason": "库 JAR 没有 Main-Class"
+          }
+        }
+      }
+    },
+    "go": {
+      "library": {
+        "project_type": "go",
+        "subtype": "library",
+        "total_tasks": 0,
+        "successful_tasks": 0,
+        "identifying_patterns": [
+          "package main not found",
+          "go: no Go source files"
+        ],
+        "startup_advice": "📦 这是 Go 库/包\n\n推荐复现策略：\n1. 【首选】运行测试\n   go test ./...\n   \n2. 创建测试程序引用该库\n\n❌ 通常不适用的命令：\n- go run .（如果没有 main 包）",
+        "common_pitfalls": [],
+        "last_updated": "2025-12-15T12:45:27.221146",
+        "command_experiences": {
+          "go run": {
+            "command_pattern": "go run",
+            "success_count": 0,
+            "failure_count": 0,
+            "common_errors": [
+              "package main not found"
+            ],
+            "solutions": [
+              "使用 go test 运行测试"
+            ],
+            "alternatives": [
+              "go test ./..."
+            ],
+            "should_avoid": true,
+            "avoid_reason": "Go 库没有 main 包"
+          }
+        }
+      }
+    }
+  }
+}

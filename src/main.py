@@ -627,7 +627,7 @@ class CVEReproducer:
                                 critic_feedback = None
                             else:
                                 print("❌ Repo agent gave up!")
-                        self.update_cost(repo_builder.get_cost(), exception=repo_done)
+                        self.update_cost(repo_builder.get_cost(), allow_exceed=repo_done, reason="repo build")
                     repo_try += 1
 
                 if not repo_done:
@@ -780,7 +780,7 @@ class CVEReproducer:
                                     self.exploit['time_left'] = TIMEOUT - (time.time() - self.start_time)
                                     helper.save_response(self.cve_id, self.exploit, "exploiter", struct=True)
                                     print(f"✅ Exploiter Done!")
-                                self.update_cost(critic.get_cost(), exception=exploit_done)
+                                self.update_cost(critic.get_cost(), allow_exceed=exploit_done, reason="exploit critic")
                             else:
                                 exploit_done = True
                                 self.exploit['time_left'] = TIMEOUT - (time.time() - self.start_time)
@@ -1104,6 +1104,22 @@ if __name__ == "__main__":
             print(f"🔍 Vulnerability classified as: {decision.profile}")
             print(f"📋 Required capabilities: {', '.join(decision.required_capabilities)}")
             print(f"💡 Confidence: {decision.confidence:.2f}\n")
+            
+            # 检查是否应该跳过复现（数据质量不足）
+            if decision.resource_hints.get('skip_reproduction', False):
+                quality_issue = decision.resource_hints.get('data_quality_issue', 'Unknown')
+                print(f"\n{'='*60}")
+                print(f"⚠️  跳过复现: {args.cve}")
+                print(f"📝 原因: {quality_issue}")
+                print(f"\n说明: 该漏洞缺乏足够的信息（如补丁、源码链接等），无法有效复现。")
+                print(f"{'='*60}")
+                
+                # 恢复输出并正常退出
+                sys.stdout = original_stdout
+                sys.stderr = original_stderr
+                tee_logger.close()
+                print(f"✅ Log saved to: {log_file}")
+                sys.exit(0)  # 跳过复现不算失败
             
             # 2. 生成执行计划
             builder = PlanBuilder()

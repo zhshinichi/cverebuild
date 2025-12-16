@@ -10,9 +10,992 @@ from dataclasses import dataclass, field
 
 from agentlib.lib import tools
 
+# 导入经验库（懒加载避免循环导入）
+def _get_experience_library():
+    """懒加载经验库，避免循环导入"""
+    from toolbox.experience_library import get_experience_library
+    return get_experience_library()
+
 # 全局反思器实例（懒加载）
 _mid_exec_reflector: Optional['MidExecutionReflector'] = None
 _reflection_enabled: bool = True
+
+
+# ==================== 智能上下文分析器 ====================
+@dataclass
+class ContextualInsight:
+    """上下文分析结果"""
+    issue_type: str  # download_failed, file_corrupted, version_not_exist, etc.
+    evidence: str  # 证据描述
+    blocking: bool  # 是否应该阻止后续相关命令
+    suggestion: str  # 具体建议
+    related_files: List[str] = field(default_factory=list)  # 相关文件
+
+
+class ContextAwareAnalyzer:
+    """
+    智能上下文感知分析器
+    
+    分析命令执行的上下文，识别深层问题：
+    - curl下载只有9字节 = 下载失败
+    - file xxx.zip: ASCII text = 文件不是zip
+    - 404 Not Found = URL错误
+    - OutputType='Library' = 类库项目，不能 dotnet run
+    
+    💡 记忆功能说明：
+    这个分析器实现了"强制记忆"，与普通的"建议"不同：
+    1. 失败模式被记录到 blocking_insights
+    2. 后续相同命令会被 should_block_command 强制阻止
+    3. Agent 无法绕过这个限制，必须采用新策略
+    
+    🔄 经验库集成：
+    与 ProjectExperienceLibrary 配合，实现：
+    1. 从历史任务中学习项目类型经验
+    2. 自动识别项目类型并应用对应经验
+    3. 跨任务共享失败模式和解决方案
+    """
+    
+    def __init__(self):
+        # 累积的上下文记忆
+        self.download_history: Dict[str, Dict] = {}  # filename -> {size, type, url, status}
+        self.known_bad_urls: set = set()  # 已知失败的URL
+        self.known_bad_versions: set = set()  # 已知不存在的版本
+        self.blocking_insights: List[ContextualInsight] = []  # 阻止性问题
+        
+        # 🆕 重复命令失败检测器
+        self.command_failure_counts: Dict[str, int] = defaultdict(int)  # 命令模式 -> 失败次数
+        self.blocked_command_patterns: set = set()  # 已被阻止的命令模式
+        self.MAX_REPEATED_FAILURES = 3  # 超过此次数自动阻止
+        
+        # 🆕 项目类型检测状态
+        self.detected_project_type: Optional[str] = None  # dotnet, python, node, java, go
+        self.project_files_detected: List[str] = []  # 检测到的项目文件
+        
+        # 经验库集成（懒加载）
+        self._experience_library = None
+    
+    @property
+    def experience_library(self):
+        """懒加载获取经验库"""
+        if self._experience_library is None:
+            try:
+                self._experience_library = _get_experience_library()
+            except Exception as e:
+                print(f"⚠️ 加载经验库失败: {e}")
+                self._experience_library = None
+        return self._experience_library
+    
+    def _proactive_check_dotnet_project(self, command: str) -> Optional[str]:
+        """
+        主动检测 .NET 项目类型
+        
+        在执行 dotnet run 之前，检查 .csproj 文件确定项目类型。
+        如果是类库项目，直接阻止执行。
+        
+        返回：阻止原因，或 None 表示允许执行
+        """
+        # 提取 .csproj 文件路径
+        proj_match = re.search(r'--project\s+(\S+\.csproj)', command)
+        if not proj_match:
+            # 尝试匹配简单格式: dotnet run xxx.csproj
+            proj_match = re.search(r'dotnet\s+run\s+.*?(\S+\.csproj)', command, re.IGNORECASE)
+        
+        if not proj_match:
+            return None
+        
+        csproj_path = proj_match.group(1)
+        
+        try:
+            # 读取 .csproj 文件内容
+            content = None
+            found_path = None
+            
+            # 搜索路径列表
+            search_paths = [
+                csproj_path,  # 原始路径
+                os.path.join('/workspaces/submission/src/simulation_environments', csproj_path),
+                os.path.join('/tmp', csproj_path),
+                os.path.join('.', csproj_path),
+            ]
+            
+            # 搜索包含项目名称的目录
+            proj_name = os.path.basename(csproj_path).replace('.csproj', '')
+            if proj_name:
+                # 在模拟环境目录中搜索
+                sim_env_base = '/workspaces/submission/src/simulation_environments'
+                try:
+                    if os.path.isdir(sim_env_base):
+                        for subdir in os.listdir(sim_env_base):
+                            potential_path = os.path.join(sim_env_base, subdir, csproj_path)
+                            search_paths.append(potential_path)
+                except:
+                    pass
+            
+            for path in search_paths:
+                if os.path.exists(path):
+                    with open(path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    found_path = path
+                    break
+            
+            if content is None:
+                return None  # 找不到文件，不阻止
+            
+            # 检查是否是类库项目
+            library_indicators = [
+                '<OutputType>Library</OutputType>',
+                '<OutputType>library</OutputType>',
+                "<OutputType>Library</OutputType>".lower(),
+            ]
+            
+            content_lower = content.lower()
+            
+            # 检测类库项目
+            # 关键：即使是 Web SDK，如果明确设置了 OutputType=Library，也应该阻止
+            if '<outputtype>library</outputtype>' in content_lower:
+                # 记录到经验库
+                if self.experience_library:
+                    self.experience_library.identify_project_type("OutputType is 'Library'", command)
+                
+                return f"""⛔ 主动检测到类库项目！
+
+📊 项目文件分析: {found_path or csproj_path}
+   检测到 <OutputType>Library</OutputType>
+   这是一个 .NET 类库/NuGet 包，不是可执行程序。
+
+✅ 推荐替代方案：
+   1. dotnet test  # 运行单元测试
+   2. 创建测试控制台程序引用该库
+
+❌ 阻止执行: {command[:60]}..."""
+            
+            # 检测是否缺少入口点（没有 Exe 类型且不是 Web SDK）
+            if '<outputtype>' not in content_lower:
+                # 默认可能是类库（没有明确指定 OutputType）
+                if 'microsoft.net.sdk.web' not in content_lower:
+                    # 进一步检查是否有 Main 入口
+                    # 如果是 classlib 模板，通常没有 OutputType
+                    if 'microsoft.net.sdk' in content_lower and 'aspnetcore' not in content_lower:
+                        return None  # 不确定，让它尝试
+        
+        except Exception as e:
+            # 读取失败，不阻止
+            print(f"⚠️ 主动检测失败: {e}")
+            return None
+        
+        return None
+    
+    def _proactive_check_npm_project(self) -> Optional[str]:
+        """
+        主动检测 npm 项目类型
+        
+        在执行 npm start 之前，检查 package.json 是否有 start 脚本。
+        如果没有 start 脚本，直接阻止执行。
+        
+        返回：阻止原因，或 None 表示允许执行
+        """
+        import json as json_module
+        
+        # 常见工作目录
+        search_paths = ['.', '/workspaces/submission/src/simulation_environments']
+        
+        for base_dir in search_paths:
+            package_json_path = os.path.join(base_dir, 'package.json')
+            if os.path.exists(package_json_path):
+                try:
+                    with open(package_json_path, 'r', encoding='utf-8') as f:
+                        package_data = json_module.load(f)
+                    
+                    scripts = package_data.get('scripts', {})
+                    
+                    # 检查是否有 start 脚本
+                    if 'start' not in scripts:
+                        # 记录到经验库
+                        if self.experience_library:
+                            self.experience_library.identify_project_type('Missing script: "start"', 'npm start')
+                        
+                        available_scripts = list(scripts.keys())[:5] if scripts else ['无']
+                        
+                        return f"""⛔ 主动检测到 npm 库项目！
+
+📊 package.json 分析: {package_json_path}
+   没有找到 'start' 脚本
+   可用脚本: {', '.join(available_scripts)}
+
+✅ 推荐替代方案：
+   1. npm test  # 运行测试
+   2. 创建测试 HTML 页面引入该库
+
+❌ 阻止执行: npm start"""
+                
+                except Exception as e:
+                    print(f"⚠️ npm 主动检测失败: {e}")
+                    return None
+                
+                break
+        
+        return None
+    
+    # ==================== 🆕 重复失败检测器 ====================
+    
+    def record_command_failure(self, command: str, error_output: str = "") -> Optional[str]:
+        """
+        记录命令失败，并检测是否超过重复次数限制
+        
+        返回：如果超过限制，返回阻止原因；否则返回 None
+        """
+        # 提取命令模式（去除参数）
+        pattern = self._extract_command_pattern(command)
+        
+        # 记录失败
+        self.command_failure_counts[pattern] += 1
+        count = self.command_failure_counts[pattern]
+        
+        print(f"📊 命令失败记录: '{pattern}' 已失败 {count} 次")
+        
+        # 检查是否超过限制
+        if count >= self.MAX_REPEATED_FAILURES:
+            self.blocked_command_patterns.add(pattern)
+            return f"""⛔ 命令已被自动阻止！
+
+📊 重复失败检测:
+   命令模式: {pattern}
+   已失败次数: {count}
+   最后错误: {error_output[:200] if error_output else '无'}
+
+⚠️ 同一命令反复失败 {self.MAX_REPEATED_FAILURES}+ 次，说明该方法根本不可行。
+✅ 请采用完全不同的策略！"""
+        
+        return None
+    
+    def _extract_command_pattern(self, command: str) -> str:
+        """提取命令模式（去除参数，保留核心命令）"""
+        parts = command.strip().split()
+        if not parts:
+            return command
+        
+        # 常见命令模式
+        if parts[0] in ['dotnet', 'npm', 'yarn', 'pip', 'pip3', 'python', 'python3', 'go', 'java', 'mvn', 'gradle', 'curl', 'wget']:
+            if len(parts) > 1:
+                # 特殊处理：如果第二个参数是文件路径，只保留文件名
+                second = parts[1]
+                if '/' in second:
+                    second = os.path.basename(second)
+                return f"{parts[0]} {second}"
+        
+        return parts[0]
+    
+    def is_command_blocked_by_repetition(self, command: str) -> Optional[str]:
+        """检查命令是否因重复失败被阻止"""
+        pattern = self._extract_command_pattern(command)
+        
+        if pattern in self.blocked_command_patterns:
+            count = self.command_failure_counts.get(pattern, 0)
+            return f"""⛔ 命令已被阻止（重复失败 {count} 次）
+
+📊 命令模式: {pattern}
+⚠️ 该命令已多次失败，请使用完全不同的方法！"""
+        
+        return None
+    
+    # ==================== 🆕 工具/语言匹配检测器 ====================
+    
+    def detect_tool_language_mismatch(self, command: str) -> Optional[str]:
+        """
+        检测是否使用了错误的工具处理项目
+        
+        例如：
+        - 用 pip install 安装 .NET NuGet 包
+        - 用 python 运行 .cs/.csproj 文件
+        - 用 dotnet 处理 Python 项目
+        - 🆕 在 dotnet 项目中使用 pip/python
+        """
+        cmd_lower = command.lower()
+        
+        # 🆕 增强：如果已检测到项目类型，检查工具是否匹配
+        if self.detected_project_type == 'dotnet':
+            # 在 .NET 项目中使用 Python 工具
+            if 'pip install' in cmd_lower or 'pip3 install' in cmd_lower:
+                return f"""⛔ 项目类型不匹配！
+
+🔍 已检测到: 这是一个 .NET/C# 项目
+   检测文件: {', '.join(self.project_files_detected[:3])}
+
+🚨 错误: 您在尝试使用 pip (Python 包管理器)
+   命令: {command[:50]}...
+
+✅ .NET 项目的正确方法:
+   1. dotnet restore  # 恢复依赖
+   2. dotnet build    # 编译
+   3. dotnet test     # 测试"""
+            
+            if ('python ' in cmd_lower or 'python3 ' in cmd_lower) and not 'python -c' in cmd_lower:
+                return f"""⛔ 项目类型不匹配！
+
+🔍 已检测到: 这是一个 .NET/C# 项目
+   检测文件: {', '.join(self.project_files_detected[:3])}
+
+🚨 错误: 您在尝试使用 Python 执行
+   命令: {command[:50]}...
+
+✅ .NET 项目的正确方法:
+   1. dotnet build    # 编译
+   2. dotnet run      # 运行（如果是可执行项目）
+   3. dotnet test     # 运行测试"""
+        
+        elif self.detected_project_type == 'node':
+            # 在 Node 项目中使用 dotnet
+            if 'dotnet ' in cmd_lower:
+                return f"""⛔ 项目类型不匹配！
+
+🔍 已检测到: 这是一个 Node.js/JavaScript 项目
+   检测文件: {', '.join(self.project_files_detected[:3])}
+
+🚨 错误: 您在尝试使用 dotnet (.NET CLI)
+
+✅ Node.js 项目的正确方法:
+   1. npm install  # 安装依赖
+   2. npm test     # 运行测试"""
+        
+        # 检测：用 pip 安装 .NET 包（通过命令关键词）
+        if 'pip install' in cmd_lower:
+            # 检查是否包含 .NET 项目关键词
+            dotnet_indicators = ['aspnetcore', 'nuget', '.net', 'microsoft.', 'system.']
+            for indicator in dotnet_indicators:
+                if indicator in cmd_lower:
+                    return f"""⛔ 工具类型错误！
+
+🚨 检测到您在尝试用 pip 安装 .NET 包
+   命令: {command[:60]}...
+   问题: pip 是 Python 包管理器，不能安装 .NET NuGet 包！
+
+✅ 正确方法:
+   1. dotnet restore  # 恢复 NuGet 依赖
+   2. dotnet build    # 编译项目
+   3. dotnet test     # 运行测试"""
+        
+        # 检测：用 python 运行 .cs/.csproj 文件
+        if 'python ' in cmd_lower or 'python3 ' in cmd_lower:
+            if '.cs' in command or '.csproj' in command:
+                return f"""⛔ 工具类型错误！
+
+🚨 检测到您在尝试用 Python 运行 C# 文件
+   命令: {command[:60]}...
+   问题: .cs 是 C# 源文件，不能用 Python 执行！
+
+✅ 正确方法:
+   1. dotnet build xxx.csproj  # 编译 C# 项目
+   2. dotnet test              # 运行测试
+   3. dotnet run               # 运行可执行项目"""
+        
+        # 检测：用 npm/node 处理 .NET 项目
+        if 'npm ' in cmd_lower or 'node ' in cmd_lower:
+            if '.csproj' in command or 'dotnet' in cmd_lower:
+                return f"""⛔ 工具类型错误！
+
+🚨 检测到您在尝试用 Node.js 处理 .NET 项目
+   命令: {command[:60]}...
+   问题: npm/node 是 JavaScript 工具，不能处理 .NET 项目！
+
+✅ 正确方法:
+   1. dotnet restore && dotnet build
+   2. dotnet test"""
+        
+        # 检测：用 dotnet 处理 Python 项目
+        if 'dotnet ' in cmd_lower:
+            if '.py' in command or 'setup.py' in command or 'requirements.txt' in command:
+                return f"""⛔ 工具类型错误！
+
+🚨 检测到您在尝试用 dotnet 处理 Python 项目
+   命令: {command[:60]}...
+   问题: dotnet 是 .NET CLI，不能处理 Python 项目！
+
+✅ 正确方法:
+   1. pip install -r requirements.txt  # 安装依赖
+   2. python setup.py install          # 安装包
+   3. pytest                            # 运行测试"""
+        
+        return None
+    
+    def detect_project_type_from_files(self) -> Optional[str]:
+        """
+        从当前目录的文件检测项目类型
+        
+        返回: 'dotnet', 'python', 'node', 'java', 'go' 或 None
+        """
+        # 搜索常见目录
+        search_dirs = [
+            '.',
+            '/workspaces/submission/src/simulation_environments'
+        ]
+        
+        # 文件类型 -> 项目类型映射
+        file_type_map = {
+            '.csproj': 'dotnet',
+            '.sln': 'dotnet',
+            '.cs': 'dotnet',
+            'package.json': 'node',
+            'requirements.txt': 'python',
+            'setup.py': 'python',
+            'pyproject.toml': 'python',
+            'pom.xml': 'java',
+            'build.gradle': 'java',
+            'go.mod': 'go',
+        }
+        
+        detected_files = []
+        detected_type = None
+        
+        for base_dir in search_dirs:
+            if not os.path.isdir(base_dir):
+                continue
+            try:
+                # 检查根目录
+                for entry in os.listdir(base_dir):
+                    entry_path = os.path.join(base_dir, entry)
+                    
+                    # 直接文件检查
+                    for pattern, proj_type in file_type_map.items():
+                        if entry.endswith(pattern) or entry == pattern:
+                            detected_files.append(entry)
+                            if detected_type is None:
+                                detected_type = proj_type
+                    
+                    # 子目录检查（只检查一层）
+                    if os.path.isdir(entry_path):
+                        try:
+                            for sub_entry in os.listdir(entry_path):
+                                for pattern, proj_type in file_type_map.items():
+                                    if sub_entry.endswith(pattern) or sub_entry == pattern:
+                                        detected_files.append(os.path.join(entry, sub_entry))
+                                        if detected_type is None:
+                                            detected_type = proj_type
+                        except:
+                            pass
+            except:
+                pass
+        
+        if detected_type:
+            self.detected_project_type = detected_type
+            self.project_files_detected = detected_files[:5]  # 只保留前5个
+            print(f"🔍 自动检测到项目类型: {detected_type} (文件: {', '.join(detected_files[:3])}...)")
+        
+        return detected_type
+    
+    def analyze_curl_wget_output(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析 curl/wget 下载命令的输出
+        
+        关键检测：
+        - 下载大小过小（< 100 bytes 通常是错误页面）
+        - 404 Not Found
+        - Connection refused
+        - 即使 exit_code=0 也检测文件大小！（GitHub返回的"Not Found"页面会导致curl成功但内容无效）
+        """
+        # 提取下载的文件名和URL
+        filename = None
+        url = None
+        
+        # curl -o filename URL 或 curl -L -o filename URL
+        match = re.search(r'curl\s+.*?-o\s+(\S+)\s+(https?://\S+)', command)
+        if match:
+            filename = match.group(1)
+            url = match.group(2)
+        else:
+            # wget URL 或 wget -O filename URL
+            match = re.search(r'wget\s+.*?(?:-O\s+(\S+)\s+)?(https?://\S+)', command)
+            if match:
+                url = match.group(2)
+                filename = match.group(1) or (url.split('/')[-1] if url else None)
+        
+        if not url:
+            return None
+        
+        # 🔴 关键修复：即使 exit_code=0 也检测下载文件大小
+        # curl 的 progress 格式：100     9  100     9 表示下载了9字节
+        # 这种格式意味着 100% 完成，但只有 9 字节
+        size_patterns = [
+            r'100\s+(\d+)\s+100\s+\d+',  # curl 标准格式
+            r'(\d+)\s+\d+%\s+\d+',       # wget 格式
+        ]
+        
+        for pattern in size_patterns:
+            size_match = re.search(pattern, output)
+            if size_match:
+                size = int(size_match.group(1))
+                # 🔴 核心检测：任何 < 1000 字节的下载都可能是错误页面
+                # GitHub 的 "Not Found" 页面通常只有 9 字节
+                if size < 1000:  # 扩大阈值，任何小于1KB的zip下载几乎肯定失败
+                    self.known_bad_urls.add(url)
+                    
+                    # 提取可能的仓库信息用于 git clone 建议
+                    repo_match = re.search(r'github\.com/([^/]+/[^/]+)', url)
+                    git_suggestion = ""
+                    if repo_match:
+                        repo_path = repo_match.group(1)
+                        git_suggestion = f"\n   推荐命令: git clone https://github.com/{repo_path}.git"
+                    
+                    insight = ContextualInsight(
+                        issue_type='download_failed',
+                        evidence=f"⚠️ 下载文件 '{filename}' 只有 {size} 字节！这不是有效的文件（GitHub 返回了错误页面而非实际内容）",
+                        blocking=True,
+                        suggestion=f"🛑 停止下载尝试！URL 返回了错误页面而非文件。{git_suggestion}\n   或使用: git clone --depth 1 <repo_url>  然后 git checkout <version>",
+                        related_files=[filename] if filename else []
+                    )
+                    self.blocking_insights.append(insight)
+                    if filename:
+                        self.download_history[filename] = {
+                            'size': size, 
+                            'status': 'failed', 
+                            'url': url,
+                            'reason': f'下载只有{size}字节，是错误页面而非实际文件'
+                        }
+                    return insight
+                break
+        
+        # 检测404错误
+        if '404' in output or 'Not Found' in output:
+            self.known_bad_urls.add(url)
+            # 尝试提取版本号
+            version_match = re.search(r'v?(\d+\.\d+\.\d+)', url)
+            if version_match:
+                self.known_bad_versions.add(version_match.group(1))
+            
+            # 提取仓库信息
+            repo_match = re.search(r'github\.com/([^/]+/[^/]+)', url)
+            git_suggestion = ""
+            if repo_match:
+                git_suggestion = f" 使用 git clone https://github.com/{repo_match.group(1)}.git 替代"
+            
+            insight = ContextualInsight(
+                issue_type='url_not_found',
+                evidence=f"URL返回404错误: {url}",
+                blocking=True,
+                suggestion=f"该URL不存在。{git_suggestion}\n或先 git clone 仓库，再 git tag -l 查看可用版本",
+                related_files=[filename] if filename else []
+            )
+            self.blocking_insights.append(insight)
+            return insight
+        
+        # 下载成功，记录（但只有文件大小足够大时才认为成功）
+        if exit_code == 0 and filename:
+            self.download_history[filename] = {'status': 'success', 'url': url}
+        
+        return None
+    
+    def analyze_file_command_output(self, command: str, output: str) -> Optional[ContextualInsight]:
+        """
+        分析 file 命令的输出，检测文件类型是否正确
+        并自动将无效文件记录到黑名单，阻止后续 unzip
+        """
+        # file xxx.zip: ASCII text
+        match = re.search(r'(\S+\.zip):\s*(.*)', output)
+        if match:
+            filename = match.group(1)
+            file_type = match.group(2).lower()
+            
+            # 如果zip文件不是实际的zip格式
+            if 'zip' not in file_type and 'archive' not in file_type:
+                # 🔴 关键：立即记录到下载历史，阻止后续 unzip
+                self.download_history[filename] = {
+                    'status': 'not_zip', 
+                    'type': file_type,
+                    'reason': f'file命令检测到实际类型是: {file_type}'
+                }
+                
+                insight = ContextualInsight(
+                    issue_type='file_corrupted',
+                    evidence=f"🚨 文件 '{filename}' 不是有效的ZIP文件！\n   file命令检测到实际类型是: {file_type}",
+                    blocking=True,
+                    suggestion=f"🛑 立即停止！不要继续尝试 unzip '{filename}'！\n   这个文件下载失败或损坏。\n   建议：使用 git clone 克隆仓库而不是下载 zip",
+                    related_files=[filename]
+                )
+                self.blocking_insights.append(insight)
+                return insight
+        
+        return None
+    
+    def analyze_ls_output(self, command: str, output: str) -> Optional[ContextualInsight]:
+        """
+        分析 ls -la 输出，检测异常小的文件
+        
+        例如：-rw-r--r-- 1 root root 9 Dec 12 08:36 lunary.zip
+        9字节的zip文件明显是无效的
+        """
+        # 检测 zip/tar.gz 等压缩文件的大小
+        # 格式: -rw-r--r-- 1 root root   9 Dec 12 08:36 lunary.zip
+        file_pattern = r'-[rwx-]+\s+\d+\s+\w+\s+\w+\s+(\d+)\s+\w+\s+\d+\s+[\d:]+\s+(\S+\.(?:zip|tar\.gz|tgz|tar|gz))'
+        
+        tiny_files = []
+        for match in re.finditer(file_pattern, output, re.IGNORECASE):
+            size = int(match.group(1))
+            filename = match.group(2)
+            
+            # 小于 1000 字节的压缩文件几乎肯定是无效的
+            if size < 1000:
+                tiny_files.append((filename, size))
+                # 记录到下载历史，阻止后续 unzip
+                self.download_history[filename] = {
+                    'status': 'failed', 
+                    'size': size,
+                    'reason': f'ls检测到文件只有{size}字节'
+                }
+        
+        if tiny_files:
+            file_list = ', '.join([f"'{f}'({s}字节)" for f, s in tiny_files])
+            insight = ContextualInsight(
+                issue_type='tiny_archive_detected',
+                evidence=f"⚠️ 发现异常小的压缩文件: {file_list}\n   正常的源码压缩包应该至少有几KB",
+                blocking=True,
+                suggestion=f"这些文件下载失败（可能是GitHub返回的错误页面）。\n   🛑 不要尝试 unzip 这些文件！\n   建议：rm {' '.join([f[0] for f in tiny_files])} && git clone <repo_url>",
+                related_files=[f[0] for f in tiny_files]
+            )
+            self.blocking_insights.append(insight)
+            return insight
+        
+        return None
+    
+    def analyze_unzip_output(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析 unzip 命令的输出
+        """
+        # 提取文件名
+        match = re.search(r'unzip\s+(?:-\w+\s+)*(\S+)', command)
+        if not match:
+            return None
+        
+        filename = match.group(1)
+        
+        # 检查是否是已知的损坏文件
+        if filename in self.download_history:
+            history = self.download_history[filename]
+            if history.get('status') in ['failed', 'corrupted']:
+                insight = ContextualInsight(
+                    issue_type='unzip_known_bad_file',
+                    evidence=f"尝试解压已知无效的文件 '{filename}'（之前的下载已失败）",
+                    blocking=True,
+                    suggestion=f"⚠️ 停止！这个文件 '{filename}' 已被检测为无效。请：1) 删除它 (rm {filename}) 2) 使用 git clone 替代下载zip 3) 检查正确的版本号和URL",
+                    related_files=[filename]
+                )
+                return insight
+        
+        # 检查 unzip 错误类型
+        if 'End-of-central-directory signature not found' in output:
+            insight = ContextualInsight(
+                issue_type='file_not_zip',
+                evidence=f"'{filename}' 不是有效的ZIP文件（缺少ZIP文件头）",
+                blocking=True,
+                suggestion=f"⚠️ 这个文件不是ZIP格式！可能原因：1) 下载URL返回了错误页面而非文件 2) 下载被重定向 3) 版本号不存在。解决方案：使用 git clone 直接克隆仓库",
+                related_files=[filename]
+            )
+            self.blocking_insights.append(insight)
+            self.download_history[filename] = {'status': 'not_zip'}
+            return insight
+        
+        return None
+    
+    def analyze_dotnet_output(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析 dotnet 命令输出，检测类库项目等问题
+        
+        通用检测：
+        - OutputType='Library' 表示项目是类库，不能用 dotnet run 启动
+        - 这类项目需要创建测试程序或使用 dotnet test
+        
+        经验库集成：
+        - 自动识别项目类型并加载对应经验
+        - 使用历史经验增强建议
+        """
+        combined = output + (command if command else '')
+        
+        # 检测 .NET Library 项目（无法用 dotnet run 运行）
+        if "OutputType is 'Library'" in output or "The current OutputType is 'Library'" in output:
+            # 从命令中提取项目路径
+            proj_match = re.search(r'--project\s+(\S+\.csproj)', command)
+            project_name = proj_match.group(1) if proj_match else "unknown"
+            
+            # 🔄 使用经验库识别项目类型并获取建议
+            advice = ""
+            if self.experience_library:
+                self.experience_library.identify_project_type(output, command)
+                advice = self.experience_library.get_current_advice() or ""
+                # 记录经验到经验库
+                self.experience_library.record_experience("dotnet", "library", {
+                    "command": "dotnet run",
+                    "success": False,
+                    "error": "OutputType is 'Library'",
+                    "lesson": "类库项目不能用 dotnet run 启动，应使用 dotnet test"
+                })
+            
+            # 优先使用经验库建议，否则使用默认建议
+            default_suggestion = """🛑 这是一个类库/NuGet包项目，不是 Web 应用！
+
+   对于此类漏洞，需要采用不同的复现策略：
+   1. 【推荐】使用 dotnet test 运行现有单元测试
+   2. 创建一个测试控制台程序引用该库并触发漏洞
+   3. 如果漏洞是逻辑问题（如参数验证缺陷），需要编写代码测试
+   
+   ❌ 不要继续尝试 'dotnet run' 命令
+   ✅ 运行: dotnet test 或创建测试程序"""
+            
+            insight = ContextualInsight(
+                issue_type='library_project_detected',
+                evidence=f"🚨 检测到 .NET 类库项目！\n   项目 '{project_name}' 的 OutputType='Library'，不是可执行程序。\n   类库项目不能用 'dotnet run' 启动。",
+                blocking=True,
+                suggestion=advice if advice else default_suggestion,
+                related_files=[project_name]
+            )
+            self.blocking_insights.append(insight)
+            return insight
+        
+        # 检测 dotnet run 失败但没有 runnable 项目
+        if 'Ensure you have a runnable project type' in output:
+            insight = ContextualInsight(
+                issue_type='not_runnable_project',
+                evidence="项目不是可执行类型（缺少 Main 入口点或 OutputType 不是 'Exe'）",
+                blocking=True,
+                suggestion="""这个项目不能直接运行。可能的原因：
+   1. 这是一个类库项目（需要创建测试程序）
+   2. 缺少 Main 方法入口点
+   3. 这是一个 NuGet 包而非 Web 应用
+   
+   解决方案：使用 dotnet test 或创建引用该库的测试程序""",
+                related_files=[]
+            )
+            self.blocking_insights.append(insight)
+            return insight
+        
+        return None
+    
+    def analyze_npm_yarn_output(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析 npm/yarn 命令输出，检测库项目问题
+        经验库集成：自动识别项目类型并记录经验
+        """
+        combined = output + (command if command else '')
+        
+        # 检测 npm 库项目（没有 start 脚本）
+        if 'Missing script: "start"' in output or 'missing script: start' in output.lower():
+            # 🔄 记录经验到经验库
+            if self.experience_library:
+                self.experience_library.identify_project_type(output, command)
+                self.experience_library.record_experience("node", "library", {
+                    "command": "npm start",
+                    "success": False,
+                    "error": 'Missing script: "start"',
+                    "lesson": "npm 库项目没有 start 脚本，应使用 npm test"
+                })
+            
+            advice = self.experience_library.get_current_advice() if self.experience_library else None
+            default_suggestion = """这是一个 npm 库/包，不是可运行的 Web 应用！
+   
+   对于此类漏洞：
+   1. 使用 npm test 运行现有测试
+   2. 创建测试 HTML 页面引入该库并触发漏洞
+   3. 查看 package.json 中的 scripts 部分找可用命令
+   
+   ❌ 不要继续尝试 npm start"""
+            
+            insight = ContextualInsight(
+                issue_type='npm_library_project',
+                evidence="检测到 npm 库项目：没有 'start' 脚本",
+                blocking=True,
+                suggestion=advice if advice else default_suggestion,
+                related_files=['package.json']
+            )
+            self.blocking_insights.append(insight)
+            return insight
+        
+        return None
+    
+    def analyze_python_output(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析 Python 命令输出，检测库项目问题
+        """
+        # 检测纯 Python 库（没有 web 入口点）
+        if 'No module named' in output and any(x in command.lower() for x in ['flask', 'django', 'uvicorn', 'gunicorn']):
+            lib_match = re.search(r"No module named '([^']+)'", output)
+            lib_name = lib_match.group(1) if lib_match else 'unknown'
+            
+            # 判断是否是 web 框架问题
+            if lib_name in ['flask', 'django', 'uvicorn', 'gunicorn', 'starlette', 'fastapi']:
+                insight = ContextualInsight(
+                    issue_type='python_library_project',
+                    evidence=f"缺少 Web 框架 '{lib_name}'，可能这是一个纯 Python 库而非 Web 应用",
+                    blocking=False,  # 只是警告，不阻止
+                    suggestion=f"""检测到可能的 Python 库项目。如果这是一个库：
+   1. 使用 pytest/python -m pytest 运行测试
+   2. 创建测试脚本 import 该库并触发漏洞
+   3. 如果确实是 Web 应用，运行: pip install {lib_name}""",
+                    related_files=[]
+                )
+                self.blocking_insights.append(insight)
+                return insight
+        
+        return None
+    
+    def analyze_command(self, command: str, output: str, exit_code: int) -> Optional[ContextualInsight]:
+        """
+        分析任意命令，返回上下文洞察
+        """
+        cmd_lower = command.lower().strip()
+        
+        # curl 或 wget 下载命令
+        if 'curl' in cmd_lower or 'wget' in cmd_lower:
+            return self.analyze_curl_wget_output(command, output, exit_code)
+        
+        # file 命令
+        if cmd_lower.startswith('file '):
+            return self.analyze_file_command_output(command, output)
+        
+        # ls 命令 - 检测异常小的压缩文件
+        if cmd_lower.startswith('ls '):
+            return self.analyze_ls_output(command, output)
+        
+        # unzip 命令
+        if 'unzip' in cmd_lower:
+            return self.analyze_unzip_output(command, output, exit_code)
+        
+        # dotnet 命令 - 检测类库项目
+        if 'dotnet' in cmd_lower:
+            return self.analyze_dotnet_output(command, output, exit_code)
+        
+        # npm/yarn 命令 - 检测 npm 库项目
+        if 'npm' in cmd_lower or 'yarn' in cmd_lower:
+            return self.analyze_npm_yarn_output(command, output, exit_code)
+        
+        # python/pip 命令 - 检测 Python 库项目
+        if 'python' in cmd_lower or 'pip' in cmd_lower:
+            return self.analyze_python_output(command, output, exit_code)
+        
+        return None
+    
+    def should_block_command(self, command: str) -> Optional[str]:
+        """
+        检查是否应该阻止执行某个命令
+        
+        检查顺序：
+        0. 🆕 自动检测项目类型（从文件系统）
+        1. 工具/语言匹配：检查是否用错误工具处理项目
+        2. 重复失败：同一命令失败超过N次自动阻止
+        3. 主动检测：对于 dotnet run，检查 .csproj 文件确定项目类型
+        4. 经验库：根据历史经验预先阻止已知会失败的命令
+        5. 当前会话记忆：根据本次任务中的失败记录阻止
+        
+        返回阻止原因，或 None 表示允许执行
+        """
+        cmd_lower = command.lower()
+        
+        # 🆕 步骤 0：如果还没检测项目类型，主动检测（只检测一次）
+        if self.detected_project_type is None:
+            self.detect_project_type_from_files()
+        
+        # 🆕 工具/语言匹配检测（防止用 pip 安装 .NET 包等）
+        mismatch_block = self.detect_tool_language_mismatch(command)
+        if mismatch_block:
+            return mismatch_block
+        
+        # 🆕 重复失败检测（同一命令失败超过N次自动阻止）
+        repetition_block = self.is_command_blocked_by_repetition(command)
+        if repetition_block:
+            return repetition_block
+        
+        # 🚨 主动检测：在执行 dotnet run 前检查项目文件
+        if 'dotnet run' in cmd_lower:
+            proactive_block = self._proactive_check_dotnet_project(command)
+            if proactive_block:
+                return proactive_block
+        
+        # 🚨 主动检测：在执行 npm start 前检查 package.json
+        if 'npm start' in cmd_lower or 'npm run start' in cmd_lower:
+            proactive_block = self._proactive_check_npm_project()
+            if proactive_block:
+                return proactive_block
+        
+        # 🔄 检查经验库（跨任务的历史经验）
+        if self.experience_library:
+            block_reason = self.experience_library.should_block_based_on_experience(command)
+            if block_reason:
+                return block_reason
+        
+        # 检查是否尝试解压已知损坏的文件
+        if 'unzip' in cmd_lower:
+            match = re.search(r'unzip\s+(?:-\w+\s+)*(\S+)', command)
+            if match:
+                filename = match.group(1)
+                if filename in self.download_history:
+                    status = self.download_history[filename].get('status')
+                    if status in ['failed', 'corrupted', 'not_zip']:
+                        return f"⛔ 阻止执行：文件 '{filename}' 已被检测为无效（{status}）。请使用 git clone 替代下载zip方式。"
+        
+        # 检查是否尝试下载已知失败的URL
+        for bad_url in self.known_bad_urls:
+            if bad_url in command:
+                return f"⛔ 阻止执行：URL '{bad_url[:50]}...' 之前下载失败。请检查正确的版本或使用其他方式获取代码。"
+        
+        # 检查是否已检测到类库项目，阻止继续尝试 dotnet run / npm start
+        for insight in self.blocking_insights:
+            if insight.issue_type == 'library_project_detected' and 'dotnet run' in cmd_lower:
+                return f"⛔ 阻止执行：已检测到这是 .NET 类库项目（OutputType='Library'）\n   请改用 'dotnet test' 或创建测试程序而不是继续尝试 'dotnet run'"
+            
+            if insight.issue_type == 'not_runnable_project' and 'dotnet run' in cmd_lower:
+                return f"⛔ 阻止执行：项目不是可执行类型\n   请改用 'dotnet test' 或创建测试程序"
+            
+            if insight.issue_type == 'npm_library_project' and ('npm start' in cmd_lower or 'npm run start' in cmd_lower):
+                return f"⛔ 阻止执行：已检测到这是 npm 库项目（没有 start 脚本）\n   请改用 'npm test' 或创建测试页面"
+        
+        return None
+    
+    def get_accumulated_insights(self) -> str:
+        """
+        获取累积的上下文洞察摘要
+        """
+        if not self.blocking_insights:
+            return ""
+        
+        summary = "\n📊 累积的问题分析：\n"
+        for i, insight in enumerate(self.blocking_insights[-3:], 1):  # 最近3个
+            summary += f"  {i}. [{insight.issue_type}] {insight.evidence[:80]}...\n"
+        
+        return summary
+    
+    def reset(self):
+        """重置分析器状态"""
+        self.download_history.clear()
+        self.known_bad_urls.clear()
+        self.known_bad_versions.clear()
+        self.blocking_insights.clear()
+        
+        # 🆕 重置重复失败检测器
+        self.command_failure_counts.clear()
+        self.blocked_command_patterns.clear()
+        
+        # 🆕 重置项目类型检测
+        self.detected_project_type = None
+        self.project_files_detected.clear()
+        
+        # 🔄 重置经验库会话（保留持久化经验）
+        if self.experience_library:
+            self.experience_library.reset_current_session()
+
+
+# 全局上下文分析器
+_context_analyzer: Optional[ContextAwareAnalyzer] = None
+
+
+def get_context_analyzer() -> ContextAwareAnalyzer:
+    """获取或创建全局上下文分析器"""
+    global _context_analyzer
+    if _context_analyzer is None:
+        _context_analyzer = ContextAwareAnalyzer()
+    return _context_analyzer
+
+
+def reset_context_analyzer():
+    """重置上下文分析器"""
+    global _context_analyzer
+    if _context_analyzer:
+        _context_analyzer.reset()
 
 
 # ==================== 重复命令检测器 ====================
@@ -114,12 +1097,22 @@ class RepetitiveCommandDetector:
     def check_command(self, command: str, output: str, exit_code: int) -> Optional[str]:
         """
         检查命令执行情况，返回干预消息（如果需要）
+        
+        增强版：集成上下文感知分析器，提供更智能的建议
         """
         self.total_commands += 1
         is_failure = exit_code != 0
         
         if is_failure:
             self.total_failures += 1
+        
+        # 🔍 步骤1：使用上下文分析器分析命令输出
+        context_analyzer = get_context_analyzer()
+        context_insight = context_analyzer.analyze_command(command, output, exit_code)
+        
+        # 如果发现上下文问题，生成更智能的干预消息
+        if context_insight and context_insight.blocking:
+            return self._generate_contextual_intervention(context_insight)
         
         # 规范化命令
         pattern = self._normalize_command(command)
@@ -146,7 +1139,14 @@ class RepetitiveCommandDetector:
         
         # 1. 检查相同命令重复失败
         if self.pattern_counts[pattern].failed_count >= self.MAX_SAME_COMMAND_FAILURES:
+            # 🆕 尝试从上下文分析器获取更具体的建议
+            accumulated_insights = context_analyzer.get_accumulated_insights()
             error_suggestion = self._extract_error_suggestion(output)
+            
+            # 如果有上下文洞察，优先使用
+            if accumulated_insights:
+                error_suggestion = accumulated_insights + "\n" + (error_suggestion or "")
+            
             intervention_msg = self._generate_intervention(
                 f"相同命令已失败 {self.pattern_counts[pattern].failed_count} 次",
                 command,
@@ -172,6 +1172,49 @@ class RepetitiveCommandDetector:
             intervention_msg = self._generate_high_failure_rate_warning()
         
         return intervention_msg
+    
+    def _generate_contextual_intervention(self, insight: 'ContextualInsight') -> str:
+        """
+        根据上下文洞察生成更智能的干预消息
+        """
+        # 根据问题类型选择图标
+        icon_map = {
+            'download_failed': '⬇️',
+            'url_not_found': '🔗',
+            'file_corrupted': '📄',
+            'file_not_zip': '📦',
+            'unzip_known_bad_file': '⚠️'
+        }
+        icon = icon_map.get(insight.issue_type, '❗')
+        
+        msg = f"""
+╔══════════════════════════════════════════════════════════════════╗
+║ {icon} 智能上下文分析 - 检测到根本问题                             ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 🔍 问题类型: {insight.issue_type:<52} ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 📝 证据:                                                               ║"""
+        
+        # 将证据分成多行
+        evidence_lines = [insight.evidence[i:i+62] for i in range(0, len(insight.evidence), 62)]
+        for line in evidence_lines[:3]:
+            msg += f"\n║   {line:<62} ║"
+        
+        msg += f"""
+╠══════════════════════════════════════════════════════════════════╣
+║ 💡 解决方案:                                                           ║"""
+        
+        # 将建议分成多行
+        suggestion_lines = [insight.suggestion[i:i+62] for i in range(0, len(insight.suggestion), 62)]
+        for line in suggestion_lines[:4]:
+            msg += f"\n║   {line:<62} ║"
+        
+        msg += f"""
+╠══════════════════════════════════════════════════════════════════╣
+║ 🚫 不要继续尝试相同的方法！请采用上述解决方案。              ║
+╚══════════════════════════════════════════════════════════════════╝"""
+        
+        return msg
     
     def _generate_intervention(self, reason: str, command: str, suggestion: Optional[str] = None) -> str:
         """生成干预消息"""
@@ -248,10 +1291,12 @@ def get_command_detector() -> RepetitiveCommandDetector:
 
 
 def reset_command_detector():
-    """重置命令检测器"""
+    """重置命令检测器和上下文分析器"""
     global _command_detector
     if _command_detector:
         _command_detector.reset()
+    # 同时重置上下文分析器
+    reset_context_analyzer()
 
 
 # ==================== 原有代码 ====================
@@ -702,6 +1747,22 @@ def execute_command_foreground(command: str) -> str:
     :return: The output of the command.
     """
     
+    # 🚫 步骤 0：检查是否应该阻止执行这个命令（基于之前的失败记忆）
+    context_analyzer = get_context_analyzer()
+    block_reason = context_analyzer.should_block_command(command)
+    if block_reason:
+        print(f"\n⛔ 命令被智能分析器阻止: {command[:50]}...")
+        return f"""
+╔══════════════════════════════════════════════════════════════════╗
+║ ⛔ 命令已被阻止执行                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 原因: {block_reason[:58]:<58} ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 此命令之前已失败，并且根本原因已被识别。                      ║
+║ 请采用不同的方法，不要继续尝试同样的失败操作！                  ║
+╚══════════════════════════════════════════════════════════════════╝
+"""
+    
     # ========== pip 命令隔离：保护系统环境 ==========
     original_command = command
     if is_pip_command(command):
@@ -750,6 +1811,22 @@ def execute_command_foreground(command: str) -> str:
     
     # Add exit code and status indicator
     status_icon = "✅" if exit_code == 0 else "⚠️"
+    
+    # 🆕 命令失败时，记录到 ContextAwareAnalyzer 的重复失败检测器
+    if exit_code != 0:
+        block_msg = context_analyzer.record_command_failure(original_command, tail_output)
+        if block_msg:
+            # 如果超过重复次数，返回阻止消息
+            return f"""
+╭──────────────────────────────────────────────────────────────────╮
+│ 🛑 重复失败检测触发！同一命令已失败多次                        │
+├──────────────────────────────────────────────────────────────────┤
+{block_msg}
+├──────────────────────────────────────────────────────────────────┤
+│ ❗ 此命令已被自动阻止，后续相同命令将不再执行               │
+│ ✅ 请采用完全不同的策略！                                      │
+╰──────────────────────────────────────────────────────────────────╯
+"""
     
     # 如果命令被隔离，在输出中说明
     isolation_note = ""
@@ -848,6 +1925,22 @@ def execute_command_background(command: str) -> str:
 
     original_command = command
     command = command.removesuffix('&')
+    
+    # 🚨 步骤 0：检查是否应该阻止执行这个命令（基于之前的失败记忆）
+    context_analyzer = get_context_analyzer()
+    block_reason = context_analyzer.should_block_command(command)
+    if block_reason:
+        print(f"\n⛔ 后台命令被智能分析器阻止: {command[:50]}...")
+        return f"""
+╔══════════════════════════════════════════════════════════════════╗
+║ ⛔ 后台命令已被阻止执行                                              ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 原因: {block_reason[:58]:<58} ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 这是一个类库项目，无法用此命令启动。                          ║
+║ 请改用 dotnet test 或创建测试程序来复现漏洞。                    ║
+╚══════════════════════════════════════════════════════════════════╝
+"""
     
     # ========== Python/pip 命令隔离：使用 venv ==========
     if is_pip_command(command):

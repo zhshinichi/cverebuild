@@ -59,3 +59,12 @@ RUN git clone --depth 1 https://github.com/s0md3v/XSStrike.git /opt/xsstrike && 
     pip3 install -r /opt/xsstrike/requirements.txt && \
     ln -s /opt/xsstrike/xsstrike.py /usr/local/bin/xsstrike && \
     chmod +x /opt/xsstrike/xsstrike.py
+
+# Install Nuclei (Template-based vulnerability scanner)
+# LLM generates YAML templates which Nuclei executes - more reliable than raw Python PoC
+RUN cd /tmp && \
+    wget -q https://github.com/projectdiscovery/nuclei/releases/download/v3.3.7/nuclei_3.3.7_linux_amd64.zip && \
+    unzip -o nuclei_3.3.7_linux_amd64.zip && \
+    mv nuclei /usr/local/bin/ && \
+    chmod +x /usr/local/bin/nuclei && \
+    rm -f nuclei_3.3.7_linux_amd64.zip LICENSE.md README*.md
