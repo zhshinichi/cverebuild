@@ -12,14 +12,80 @@ from core.result_bus import ResultBus
 
 logger = logging.getLogger(__name__)
 
+# 尝试导入 FailureCode 系统
+try:
+    from core.failure_codes import FailureCode, FailureAnalyzer, FailureDetail
+    HAS_FAILURE_CODES = True
+except ImportError:
+    HAS_FAILURE_CODES = False
+    FailureCode = None
+
 
 class StepExecutionError(Exception):
-    """步骤执行失败异常。"""
+    """步骤执行失败异常。
     
-    def __init__(self, message: str, step_id: str = None, retryable: bool = False):
+    Attributes:
+        step_id: 失败的步骤 ID
+        retryable: 是否可重试
+        failure_code: 失败原因码（如果启用了 FailureCode 系统）
+        failure_detail: 失败详情（包括根因、修复建议等）
+    """
+    
+    def __init__(
+        self, 
+        message: str, 
+        step_id: str = None, 
+        retryable: bool = False,
+        failure_code: 'FailureCode' = None,
+        failure_detail: 'FailureDetail' = None
+    ):
         super().__init__(message)
         self.step_id = step_id
         self.retryable = retryable
+        self.failure_code = failure_code
+        self.failure_detail = failure_detail
+        
+        # 如果没有提供 failure_code，尝试自动分析
+        if not self.failure_code and HAS_FAILURE_CODES:
+            analyzer = FailureAnalyzer()
+            self.failure_detail = analyzer.analyze(message)
+            self.failure_code = self.failure_detail.code
+            # 根据失败码自动判断是否可重试
+            if self.failure_code and not retryable:
+                self.retryable = self._is_retryable_code(self.failure_code)
+    
+    def _is_retryable_code(self, code: 'FailureCode') -> bool:
+        """根据失败原因码判断是否可重试"""
+        if not code:
+            return False
+        retryable_codes = {
+            # 网络问题通常可重试
+            'N001', 'N002', 'N003', 'N004',
+            # 服务暂时不可用
+            'E004', 'E007',
+            # 超时
+            'T003',
+        }
+        return code.value in retryable_codes
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """导出为字典格式"""
+        result = {
+            'message': str(self),
+            'step_id': self.step_id,
+            'retryable': self.retryable,
+        }
+        if self.failure_code:
+            result['failure_code'] = self.failure_code.value
+        if self.failure_detail:
+            result['failure_detail'] = {
+                'code': self.failure_detail.code.value,
+                'message': self.failure_detail.message,
+                'category': self.failure_detail.category,
+                'suggested_action': self.failure_detail.suggested_action,
+                'root_cause': self.failure_detail.root_cause
+            }
+        return result
 
 
 class DAGExecutor:
@@ -38,6 +104,7 @@ class DAGExecutor:
         self.artifacts: Dict[str, Any] = {}  # 运行时产物缓存
         self.completed_steps: Set[str] = set()
         self.total_cost: float = 0.0  # 累计成本
+        self.step_errors: List[Dict[str, Any]] = []  # 收集所有错误信息
 
     def execute(self) -> Dict[str, Any]:
         """执行整个 DAG，返回最终产物字典。"""
@@ -56,8 +123,31 @@ class DAGExecutor:
             self.result_bus.publish_event("plan_complete", data={"artifacts": list(self.artifacts.keys())})
             return self.artifacts
 
+        except StepExecutionError as exc:
+            # 收集结构化错误信息
+            error_data = exc.to_dict()
+            self.step_errors.append(error_data)
+            
+            # 发布带有 FailureCode 的失败事件
+            self.result_bus.publish_event("plan_failed", data=error_data)
+            
+            # 记录到 artifacts 便于分析
+            self.artifacts['_execution_errors'] = self.step_errors
+            raise
+            
         except Exception as exc:
-            self.result_bus.publish_event("plan_failed", data={"error": str(exc)})
+            # 通用异常也尝试分析
+            error_data = {"error": str(exc)}
+            if HAS_FAILURE_CODES:
+                analyzer = FailureAnalyzer()
+                detail = analyzer.analyze(str(exc))
+                error_data['failure_code'] = detail.code.value
+                error_data['failure_detail'] = {
+                    'message': detail.message,
+                    'category': detail.category,
+                    'suggested_action': detail.suggested_action
+                }
+            self.result_bus.publish_event("plan_failed", data=error_data)
             raise
 
     def _topological_sort(self) -> List[PlanStep]:

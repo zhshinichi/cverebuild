@@ -473,11 +473,67 @@ class WebAppDeployer(Capability):
                 
                 if hasattr(result, 'value') and isinstance(result.value, dict):
                     build_result = result.value
+                    
+                    # 🔴 检查是否为 "continue" 状态 - 表示 Agent 提前停止
+                    if build_result.get('success') == 'continue' or build_result.get('method') == 'in_progress':
+                        print(f"[WebAppDeployer] ⚠️ Agent stopped early (did not complete all steps)")
+                        print(f"[WebAppDeployer] Notes: {build_result.get('notes', 'Unknown')[:200]}")
+                        # 生成自动反馈让 Agent 继续
+                        critic_feedback = (
+                            "IMPORTANT: You stopped before completing all deployment steps. "
+                            "You MUST continue the deployment workflow: "
+                            "1) If repo was cloned, checkout the correct version (git checkout v{version}). "
+                            "2) Install dependencies (composer install / npm install / pip install). "
+                            "3) Start the service on the correct port. "
+                            "4) Verify the service with curl. "
+                            "5) Only output JSON after verification. "
+                            "Continue from where you left off."
+                        )
+                        attempt += 1
+                        continue
+                    
                     deployed_url = build_result.get('access', '')
                     if deployed_url:
                         target_url = deployed_url
                     
+                    # 统一端口来源：先用返回的 port，再从 URL 提取，最后回落到已推断的 port
+                    port_from_build = build_result.get('port')
+                    port_from_access = None
+                    if deployed_url:
+                        try:
+                            import re
+                            match = re.search(r':(\d+)', deployed_url)
+                            if match:
+                                port_from_access = int(match.group(1))
+                        except Exception:
+                            port_from_access = None
+                    # 优先使用已知/推断端口，其次才信任 builder 输出的 URL 里的端口，避免错回落到 9600
+                    port_final = port_from_build or port or port_from_access
+                    if port_final:
+                        target_url = f"http://localhost:{port_final}"
+                        port = port_final  # keep downstream health/check consistent
+                    
                     success = build_result.get('success', '').lower() == 'yes'
+                    
+                    # Guardrail: verify service is really up before accepting success
+                    if success and port_final:
+                        try:
+                            check_url = target_url or f"http://localhost:{port_final}"
+                            curl_result = subprocess.run(
+                                ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", check_url, "--max-time", "10"],
+                                capture_output=True,
+                                text=True,
+                                timeout=15
+                            )
+                            http_code = int(curl_result.stdout.strip()) if curl_result.stdout.strip().isdigit() else 0
+                            if not ((200 <= http_code < 400) or http_code == 404):
+                                success = False
+                                build_result['success'] = 'no'
+                                build_result['notes'] = f"Builder reported success but service not reachable (HTTP {http_code})"
+                        except Exception as e:
+                            success = False
+                            build_result['success'] = 'no'
+                            build_result['notes'] = f"Builder reported success but health check failed: {e}"
                     
                     # 提取部署日志
                     from toolbox import helper
@@ -489,6 +545,7 @@ class WebAppDeployer(Capability):
                             'build_result': {
                                 'success': 'yes',
                                 'access': target_url,
+                                'port': port_final,
                                 'method': f'web-env-builder-retry-{attempt}',
                                 'notes': build_result.get('notes', '')
                             }
@@ -521,6 +578,7 @@ class WebAppDeployer(Capability):
                             'build_result': {
                                 'success': 'yes',
                                 'access': target_url,
+                                'port': port_final,
                                 'method': f'web-env-builder-retry-{attempt}',
                                 'notes': 'Critic confirmed success'
                             }
@@ -554,6 +612,9 @@ class WebAppDeployer(Capability):
         # 注意：即使部署失败，也保持使用正确检测到的端口，不要回退到其他端口
         # 因为项目本身需要特定端口才能正常工作
         print(f"[WebAppDeployer] ⚠️ All deployment attempts failed")
+        # 若 URL 与当前端口不一致，统一到当前端口
+        if port:
+            target_url = f"http://localhost:{port}"
         print(f"[WebAppDeployer] 📍 Keeping target URL: {target_url} (port {port})")
         print(f"[WebAppDeployer] 💡 The service may need manual intervention to start")
         return {
@@ -977,11 +1038,27 @@ class RepoBuilderAdapter(Capability):
         self.config = config
     
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        cve_knowledge = inputs.get('cve_knowledge', '')
+        # ========== 处理 native-local 流程的特殊情况 ==========
+        # native-local 流程的 inputs 只有 cve_info，需要解包
+        cve_info = inputs.get('cve_info', {})
+        if cve_info and isinstance(cve_info, dict):
+            # 从 cve_info 中提取 cve_knowledge
+            cve_knowledge = cve_info.get('cve_knowledge', inputs.get('cve_knowledge', ''))
+            deployment_strategy = cve_info.get('deployment_strategy', {})
+        else:
+            cve_knowledge = inputs.get('cve_knowledge', '')
+            deployment_strategy = {}
+        
         cve_entry = inputs.get('cve_entry', {})
         prerequisites = inputs.get('prerequisites', {})
         feedback = inputs.get('feedback')
         critic_feedback = inputs.get('critic_feedback')
+        
+        # ========== 当 prerequisites 为空时，从 cve_knowledge 推断 ==========
+        if not prerequisites or not prerequisites.get('overview'):
+            print(f"[RepoBuilderAdapter] ⚠️ No prerequisites provided, inferring from cve_knowledge...")
+            prerequisites = self._infer_prerequisites(cve_knowledge, deployment_strategy)
+            print(f"[RepoBuilderAdapter] ✅ Inferred prerequisites: {prerequisites.get('overview', '')[:100]}...")
         
         # RepoBuilder 需要多个参数
         agent = RepoBuilder(
@@ -994,6 +1071,67 @@ class RepoBuilderAdapter(Capability):
         result = agent.invoke().value
         
         return {'build_result': result}
+    
+    def _infer_prerequisites(self, cve_knowledge: str, deployment_strategy: dict) -> dict:
+        """从 CVE 知识中推断项目需求（当没有单独的 PreReqBuilder 步骤时）"""
+        knowledge_lower = cve_knowledge.lower()
+        
+        # 尝试从 deployment_strategy 获取信息
+        repo_url = deployment_strategy.get('repository_url', '')
+        language = deployment_strategy.get('language', 'Unknown')
+        build_tool = deployment_strategy.get('build_tool', 'Unknown')
+        build_commands = deployment_strategy.get('build_commands', [])
+        start_commands = deployment_strategy.get('start_commands', [])
+        
+        # 检测框架类型
+        framework = "unknown"
+        services = "Application server"
+        output = "Service running on specified port"
+        
+        if 'symfony' in knowledge_lower:
+            framework = "Symfony (PHP)"
+            services = "PHP development server or Apache/Nginx"
+            output = "Symfony application running"
+        elif 'laravel' in knowledge_lower:
+            framework = "Laravel (PHP)"
+            services = "PHP artisan serve"
+            output = "Laravel application running"
+        elif 'django' in knowledge_lower:
+            framework = "Django (Python)"
+            services = "Django development server"
+            output = "Django server running on port 8000"
+        elif 'flask' in knowledge_lower:
+            framework = "Flask (Python)"
+            services = "Flask development server"
+            output = "Flask server running on port 5000"
+        elif 'express' in knowledge_lower or 'node' in knowledge_lower:
+            framework = "Express/Node.js"
+            services = "Node.js server"
+            output = "Node.js server running"
+        elif 'spring' in knowledge_lower:
+            framework = "Spring (Java)"
+            services = "Spring Boot application"
+            output = "Spring application running"
+        
+        overview = f"""Project Analysis for CVE vulnerability.
+Framework: {framework}
+Repository: {repo_url if repo_url else 'Not specified - check CVE knowledge for details'}
+Language: {language}
+Build Tool: {build_tool}
+
+This vulnerability requires setting up the vulnerable software version and exploiting it.
+Follow the build/start commands from the CVE knowledge if available."""
+        
+        files = f"""Source code should be obtained from the repository.
+Build commands: {'; '.join(build_commands) if build_commands else 'Check CVE knowledge'}
+Start commands: {'; '.join(start_commands) if start_commands else 'Check CVE knowledge'}"""
+        
+        return {
+            'overview': overview,
+            'files': files,
+            'services': services,
+            'output': output
+        }
 
 
 class RepoCriticAdapter(Capability):
@@ -1045,27 +1183,12 @@ class ExploiterAdapter(Capability):
 
 
 class ExploitCriticAdapter(Capability):
-    """ExploitCritic Agent 适配器"""
+    """ExploitCritic Agent 适配器
     
-    def __init__(self, result_bus: ResultBus, config: dict):
-        self.result_bus = result_bus
-        self.config = config
-    
-    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        cve_knowledge = inputs.get('cve_knowledge', '')
-        exploit_result = inputs.get('exploit_result', {})
-        
-        agent = ExploitCritic(
-            cve_knowledge=cve_knowledge,
-            exploit=exploit_result
-        )
-        result = agent.invoke().value
-        
-        return {'exploit_critic_feedback': result}
-
-
-class CTFVerifierAdapter(Capability):
-    """CTFVerifier Agent 适配器"""
+    增强功能：
+    1. 读取 Docker 容器日志，提供给 Critic 更多上下文
+    2. 分析 HTTP 响应和服务端错误
+    """
     
     def __init__(self, result_bus: ResultBus, config: dict):
         self.result_bus = result_bus
@@ -1076,15 +1199,285 @@ class CTFVerifierAdapter(Capability):
         exploit_result = inputs.get('exploit_result', {})
         build_result = inputs.get('build_result', {})
         
+        # ========== P2: 获取 Docker 容器日志 ==========
+        container_logs = self._get_container_logs(build_result)
+        
+        # 合并 exploit 结果和容器日志
+        exploit_logs = self._format_exploit_logs(exploit_result, container_logs)
+        
+        agent = ExploitCritic(
+            cve_knowledge=cve_knowledge,
+            exploit=exploit_result,
+            exploit_logs=exploit_logs
+        )
+        result = agent.invoke().value
+        
+        # 将容器日志信息附加到结果中
+        if container_logs:
+            result['container_logs_analyzed'] = True
+            result['container_log_snippet'] = container_logs[:500] if len(container_logs) > 500 else container_logs
+        
+        return {'exploit_critic_feedback': result}
+    
+    def _get_container_logs(self, build_result: dict) -> str:
+        """获取 Docker 容器的日志"""
+        if not build_result:
+            return ""
+        
+        # 获取容器名称
+        container_name = (
+            build_result.get('container_name') or
+            build_result.get('deployment_info', {}).get('container_name') or
+            build_result.get('deployment_info', {}).get('container_id')
+        )
+        
+        if not container_name:
+            # 尝试从部署方法推断
+            method = build_result.get('method', '').lower()
+            if 'docker' not in method and 'vulhub' not in method and 'prebuilt' not in method:
+                return ""  # 非 Docker 部署
+            
+            # 尝试列出最近的容器
+            try:
+                import subprocess
+                result = subprocess.run(
+                    ["docker", "ps", "-q", "--latest"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                if result.returncode == 0 and result.stdout.strip():
+                    container_name = result.stdout.strip()
+            except:
+                return ""
+        
+        if not container_name:
+            return ""
+        
+        # 获取容器日志
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["docker", "logs", "--tail", "100", container_name],
+                capture_output=True,
+                text=True,
+                timeout=15
+            )
+            
+            logs = ""
+            if result.stdout:
+                logs += f"=== STDOUT ===\n{result.stdout}\n"
+            if result.stderr:
+                logs += f"=== STDERR ===\n{result.stderr}\n"
+            
+            print(f"[ExploitCritic] 📋 Retrieved {len(logs)} chars of container logs from {container_name}")
+            return logs
+            
+        except subprocess.TimeoutExpired:
+            print(f"[ExploitCritic] ⚠️ Timeout getting logs from {container_name}")
+            return ""
+        except Exception as e:
+            print(f"[ExploitCritic] ⚠️ Failed to get container logs: {e}")
+            return ""
+    
+    def _format_exploit_logs(self, exploit_result: dict, container_logs: str) -> str:
+        """格式化 exploit 日志，供 Critic 分析"""
+        import re
+        logs_parts = []
+        
+        # 1. Exploit 执行结果
+        if isinstance(exploit_result, dict):
+            if exploit_result.get('exploit'):
+                logs_parts.append(f"=== EXPLOIT CODE ===\n{exploit_result['exploit'][:2000]}")
+            if exploit_result.get('poc'):
+                logs_parts.append(f"=== POC ===\n{exploit_result['poc'][:1000]}")
+            if exploit_result.get('output'):
+                logs_parts.append(f"=== EXPLOIT OUTPUT ===\n{exploit_result['output'][:1500]}")
+            if exploit_result.get('response'):
+                logs_parts.append(f"=== HTTP RESPONSE ===\n{exploit_result['response'][:1500]}")
+            if exploit_result.get('error'):
+                logs_parts.append(f"=== ERROR ===\n{exploit_result['error']}")
+        
+        # 2. 容器日志（重点关注错误）
+        if container_logs:
+            # 提取关键错误信息
+            error_patterns = [
+                r'(?i)(error|exception|traceback|fatal|failed|denied|refused).*',
+                r'(?i)(500|502|503|504)\s+.*',
+                r'(?i)(sql.*error|mysql.*error|pg.*error).*',
+                r'(?i)(permission.*denied|access.*denied).*',
+                r'(?i)(null.*pointer|segfault|core.*dump).*',
+            ]
+            
+            important_lines = []
+            for line in container_logs.split('\n'):
+                for pattern in error_patterns:
+                    if re.search(pattern, line):
+                        important_lines.append(line.strip())
+                        break
+            
+            if important_lines:
+                logs_parts.append(f"=== CONTAINER ERRORS (extracted) ===\n" + '\n'.join(important_lines[:30]))
+            
+            # 也包含最后几行日志
+            recent_lines = container_logs.strip().split('\n')[-20:]
+            logs_parts.append(f"=== CONTAINER LOGS (recent) ===\n" + '\n'.join(recent_lines))
+        
+        return '\n\n'.join(logs_parts)
+
+
+class CTFVerifierAdapter(Capability):
+    """CTFVerifier Agent 适配器
+    
+    增强功能：
+    1. 调用 LLM 生成 verifier 脚本
+    2. 使用 HardenedVerifier 进行客观验证（金丝雀检测）
+    3. 两者结果必须一致才算真正成功
+    """
+    
+    def __init__(self, result_bus: ResultBus, config: dict):
+        self.result_bus = result_bus
+        self.config = config
+    
+    def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        cve_knowledge = inputs.get('cve_knowledge', '')
+        exploit_result = inputs.get('exploit_result', {})
+        build_result = inputs.get('build_result', {})
+        
+        # 1. 调用 LLM 生成 verifier 脚本
         agent = CTFVerifier(
             cve_knowledge=cve_knowledge,
             project_access=build_result.get('access', ''),
             exploit=exploit_result.get('exploit', ''),
             poc=exploit_result.get('poc', '')
         )
-        result = agent.invoke().value
+        llm_result = agent.invoke().value
         
-        return {'verification_result': result}
+        # 2. 尝试使用 HardenedVerifier 进行客观验证
+        hardened_result = None
+        if self.config.get('enable_hardened_verification', True):
+            hardened_result = self._run_hardened_verification(
+                cve_knowledge=cve_knowledge,
+                exploit_result=exploit_result,
+                build_result=build_result
+            )
+        
+        # 3. 合并结果
+        final_result = {
+            'verifier': llm_result.get('verifier', '') if isinstance(llm_result, dict) else llm_result,
+            'llm_verification': llm_result,
+            'hardened_verification': hardened_result,
+        }
+        
+        # 如果启用了强化验证，两者必须一致
+        if hardened_result:
+            final_result['hardened_passed'] = hardened_result.get('verified', False)
+            if not hardened_result.get('verified', False):
+                print(f"[CTFVerifier] ⚠️ 强化验证失败: {hardened_result.get('failure_reason', 'unknown')}")
+                final_result['verification_warning'] = 'Hardened verification failed - LLM result may be unreliable'
+        
+        return {'verification_result': final_result}
+    
+    def _run_hardened_verification(
+        self, 
+        cve_knowledge: str, 
+        exploit_result: dict, 
+        build_result: dict
+    ) -> dict:
+        """使用 HardenedVerifier 进行客观验证"""
+        try:
+            from verification.hardened_verifier import HardenedVerifier, VulnType
+            from core.failure_codes import FailureCode
+            
+            # 从 CVE knowledge 推断漏洞类型
+            vuln_type = self._infer_vuln_type(cve_knowledge)
+            if not vuln_type:
+                return {
+                    'verified': None,
+                    'skipped': True,
+                    'reason': 'Could not infer vulnerability type from CVE knowledge'
+                }
+            
+            print(f"[CTFVerifier] 🔍 使用 HardenedVerifier 验证 {vuln_type.value} 漏洞...")
+            
+            # 获取目标 URL
+            target_url = build_result.get('access') or build_result.get('target_url') or 'http://localhost:9600'
+            
+            # 创建验证器
+            verifier = HardenedVerifier(
+                target_url=target_url,
+                vuln_type=vuln_type,
+                timeout=30.0
+            )
+            
+            # 获取金丝雀数据和 payload
+            oracle, canary_data = verifier.create_oracle(vuln_type)
+            
+            # 从 exploit_result 获取 exploit payload
+            exploit_payload = exploit_result.get('poc', '') or exploit_result.get('exploit', '')
+            
+            # 执行验证
+            result = verifier.verify(
+                exploit_payload=exploit_payload,
+                response_text=exploit_result.get('response', ''),
+                response_headers=exploit_result.get('headers', {}),
+                check_callback=None  # 可选的回调检测
+            )
+            
+            return {
+                'verified': result.verified,
+                'vuln_type': vuln_type.value,
+                'confidence': result.confidence,
+                'evidence': result.evidence,
+                'failure_reason': result.failure_reason,
+                'failure_code': result.failure_code.value if result.failure_code else None,
+                'canary_data': canary_data
+            }
+            
+        except ImportError as e:
+            print(f"[CTFVerifier] ⚠️ HardenedVerifier 模块不可用: {e}")
+            return {
+                'verified': None,
+                'skipped': True,
+                'reason': f'HardenedVerifier module not available: {e}'
+            }
+        except Exception as e:
+            print(f"[CTFVerifier] ⚠️ HardenedVerifier 执行失败: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                'verified': None,
+                'error': str(e),
+                'reason': f'HardenedVerifier execution failed: {e}'
+            }
+    
+    def _infer_vuln_type(self, cve_knowledge: str) -> 'VulnType':
+        """从 CVE knowledge 推断漏洞类型"""
+        try:
+            from verification.hardened_verifier import VulnType
+        except ImportError:
+            return None
+            
+        knowledge_lower = cve_knowledge.lower()
+        
+        # 按优先级匹配
+        patterns = [
+            (VulnType.RCE, ['remote code execution', 'rce', 'command injection', 'code execution', 'os command']),
+            (VulnType.SQLI, ['sql injection', 'sqli', 'blind sql', 'union select']),
+            (VulnType.XSS, ['cross-site scripting', 'xss', 'script injection', 'reflected xss', 'stored xss']),
+            (VulnType.SSRF, ['server-side request forgery', 'ssrf', 'url injection']),
+            (VulnType.LFI, ['local file inclusion', 'lfi', 'file read', 'arbitrary file']),
+            (VulnType.PATH_TRAVERSAL, ['path traversal', 'directory traversal', '../', '..\\', 'dot dot']),
+            (VulnType.AUTH_BYPASS, ['authentication bypass', 'auth bypass', 'access control']),
+            (VulnType.INFO_LEAK, ['information disclosure', 'info leak', 'sensitive data', 'data exposure']),
+        ]
+        
+        for vuln_type, keywords in patterns:
+            for keyword in keywords:
+                if keyword in knowledge_lower:
+                    return vuln_type
+        
+        return None
 
 
 class SanityGuyAdapter(Capability):
@@ -1351,11 +1744,14 @@ class ServiceStartAdapter(Capability):
 
 
 class HealthCheckAdapter(Capability):
-    """HealthCheckAgent 适配器 - 健康检查
+    """HealthCheckAgent 适配器 - 增强的健康检查
     
-    负责：
-    1. HTTP 验证
-    2. 诊断问题
+    使用 EnhancedHealthCheck 进行多维度检查：
+    1. 端口监听
+    2. HTTP 可达性（带重试）
+    3. 框架特定端点
+    4. 响应内容检查
+    5. 结构化失败原因码
     """
     
     
@@ -1364,7 +1760,6 @@ class HealthCheckAdapter(Capability):
         self.config = config
     
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        from agents.healthCheck import HealthCheckAgent
         import json, re
         
         build_result = inputs.get('build_result')
@@ -1389,32 +1784,128 @@ class HealthCheckAdapter(Capability):
             port = self.config.get('port', 9600)  # fallback
         
         # 根据部署方式决定使用哪个主机名
-        # - vulhub/vulfocus/docker-compose: 服务在独立容器中,需要用 host.docker.internal
-        # - venv/source/local: 服务在当前容器内,应该用 localhost
         deployment_method = build_result.get('method', '').lower()
-        docker_based_methods = ['vulhub', 'vulfocus', 'docker-compose', 'docker']
+        docker_based_methods = ['vulhub', 'vulfocus', 'docker-compose', 'docker', 'prebuilt']
         
         if any(m in deployment_method for m in docker_based_methods):
             target_host = "host.docker.internal"
         else:
-            # venv, source, local 等本地部署方式
             target_host = "localhost"
         
-        print(f"[HealthCheck] Checking service on {target_host}:{port} (method: {deployment_method})")
+        # 检测框架类型
+        framework = self._detect_framework(build_result, inputs.get('cve_knowledge', ''))
+        
+        print(f"[HealthCheck] Checking service on {target_host}:{port}")
+        print(f"[HealthCheck] Deployment method: {deployment_method}, Framework: {framework}")
         
         # 构造访问URL
         check_url = f"http://{target_host}:{port}"
         
-        # === 直接用代码执行HTTP检查,不依赖LLM ===
+        # === 使用增强的健康检查 ===
+        try:
+            from verification.enhanced_healthcheck import EnhancedHealthCheck, check_service_health
+            from core.failure_codes import FailureCode, FailureAnalyzer
+            
+            checker = EnhancedHealthCheck(
+                target_url=check_url,
+                framework=framework,
+                timeout_seconds=15,
+                retry_count=3,
+                retry_delay=2.0
+            )
+            
+            # 获取 Docker 容器名（如果有）
+            docker_container = build_result.get('container_name') or build_result.get('deployment_info', {}).get('container_name')
+            
+            # 执行增强健康检查
+            report = checker.check(docker_container=docker_container)
+            
+            print(f"[HealthCheck] {report.summary}")
+            
+            # 如果主检查失败，尝试 fallback 到 localhost
+            if not report.healthy and target_host == "host.docker.internal":
+                print(f"[HealthCheck] Trying fallback to localhost...")
+                fallback_url = f"http://localhost:{port}"
+                fallback_checker = EnhancedHealthCheck(
+                    target_url=fallback_url,
+                    framework=framework,
+                    timeout_seconds=10,
+                    retry_count=2,
+                    retry_delay=1.0
+                )
+                fallback_report = fallback_checker.check()
+                
+                if fallback_report.healthy:
+                    print(f"[HealthCheck] Fallback succeeded!")
+                    report = fallback_report
+                    check_url = fallback_url
+            
+            # 构建返回结果
+            http_code = 0
+            for check in report.checks:
+                if check.name == 'http_reachable' and 'status_code' in check.details:
+                    http_code = check.details['status_code']
+                    break
+            
+            health_result = {
+                'healthy': report.healthy,
+                'http_code': http_code,
+                'access_url': check_url,
+                'diagnosis': report.summary,
+                'failure_code': report.failure_code.value if report.failure_code else None,
+                'checks': report.to_dict()['checks'],
+                'total_duration_ms': report.total_duration_ms
+            }
+            
+        except ImportError:
+            # Fallback 到原有逻辑
+            print(f"[HealthCheck] Using legacy health check (enhanced module not available)")
+            health_result = self._legacy_health_check(check_url, target_host, port)
+        except Exception as e:
+            print(f"[HealthCheck] Enhanced check failed: {e}, using legacy")
+            health_result = self._legacy_health_check(check_url, target_host, port)
+        
+        print(f"[HealthCheck] HTTP {health_result.get('http_code', 0)} -> Healthy: {health_result['healthy']}")
+        return {'health_result': health_result}
+    
+    def _detect_framework(self, build_result: dict, cve_knowledge: str) -> str:
+        """从构建结果和 CVE knowledge 中检测框架类型"""
+        # 从 build_result 获取
+        framework = build_result.get('framework', '')
+        if framework:
+            return framework.lower()
+        
+        # 从 CVE knowledge 推断
+        knowledge_lower = cve_knowledge.lower()
+        framework_keywords = {
+            'django': 'django',
+            'flask': 'flask',
+            'fastapi': 'fastapi',
+            'spring': 'spring',
+            'express': 'express',
+            'laravel': 'laravel',
+            'symfony': 'symfony',
+            'rails': 'rails',
+            'nextjs': 'next.js',
+        }
+        
+        for fw, keyword in framework_keywords.items():
+            if keyword in knowledge_lower:
+                return fw
+        
+        return 'generic'
+    
+    def _legacy_health_check(self, check_url: str, target_host: str, port: int) -> dict:
+        """原有的健康检查逻辑（作为 fallback）"""
         import subprocess
+        
         http_code = 0
         diagnosis = ""
+        is_healthy = False
         
         try:
-            # 先等待服务启动
             subprocess.run(["sleep", "3"], capture_output=True)
             
-            # 执行curl检查
             curl_result = subprocess.run(
                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", check_url, "--max-time", "10"],
                 capture_output=True,
@@ -1422,20 +1913,14 @@ class HealthCheckAdapter(Capability):
                 timeout=15
             )
             http_code = int(curl_result.stdout.strip()) if curl_result.stdout.strip().isdigit() else 0
-            
-            # 2xx、3xx 和 404 都算成功
-            # 404 表示服务在运行，只是根路径不存在（常见于API服务）
             is_healthy = (200 <= http_code < 400) or http_code == 404
             
             if not is_healthy:
                 diagnosis = f"Service returned HTTP {http_code}"
-                # 如果失败,尝试获取更多信息
                 if http_code == 0:
                     diagnosis = "Connection failed - service may not be running"
-                    # 如果 host.docker.internal 失败，尝试 localhost 作为 fallback
                     if target_host == "host.docker.internal":
                         fallback_url = f"http://localhost:{port}"
-                        print(f"[HealthCheck] Trying fallback: {fallback_url}")
                         try:
                             fallback_result = subprocess.run(
                                 ["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", fallback_url, "--max-time", "5"],
@@ -1449,25 +1934,19 @@ class HealthCheckAdapter(Capability):
                                 is_healthy = True
                                 check_url = fallback_url
                                 diagnosis = "Accessible via localhost (fallback)"
-                                print(f"[HealthCheck] Fallback succeeded: HTTP {fallback_code}")
                         except:
                             pass
         except subprocess.TimeoutExpired:
-            is_healthy = False
             diagnosis = "Connection timeout"
         except Exception as e:
-            is_healthy = False
             diagnosis = f"Health check failed: {str(e)}"
         
-        health_result = {
+        return {
             'healthy': is_healthy,
             'http_code': http_code,
             'access_url': check_url,
             'diagnosis': diagnosis
         }
-        
-        print(f"[HealthCheck] HTTP {http_code} -> Healthy: {is_healthy}")
-        return {'health_result': health_result}
 
 
 # ============================================================

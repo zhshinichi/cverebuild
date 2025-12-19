@@ -720,7 +720,20 @@ def get_project_workspace(project_name: str = "") -> str:
         if result['matched_path']:
             result['tip'] = f"找到项目！使用完整路径: {result['matched_path']}"
         else:
-            result['tip'] = f"未找到项目 '{project_name}'。请先下载或检查目录内容。"
+            # 项目不存在时，提供明确的下一步指导
+            result['project_not_found'] = True
+            result['next_action'] = 'git_clone'
+            result['tip'] = f"""🚨 ACTION REQUIRED: Project '{project_name}' does not exist!
+
+⚠️ YOU MUST CALL execute_linux_command NOW! Do NOT just print bash code!
+
+🔧 CALL THIS TOOL IMMEDIATELY:
+execute_linux_command(command="cd {SIMULATION_ENV_DIR} && git clone https://github.com/lobehub/lobe-chat", background=False)
+
+❌ WRONG: Printing ```bash git clone...``` does NOTHING!
+✅ RIGHT: Calling execute_linux_command tool actually runs the command!
+
+⚠️ DO NOT OUTPUT TEXT! CALL THE TOOL NOW!"""
     
     return json.dumps(result, indent=2, ensure_ascii=False)
 

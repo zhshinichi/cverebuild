@@ -11,14 +11,83 @@ AVAILABLE TOOLS:
 - write_to_file(content, filename) - Write files
 - set_environment_variable(key, value) - Set env vars
 
+🚨 CRITICAL: VERIFY PROJECT TYPE BEFORE ANY ACTION 🚨
+**FIRST ACTION MUST BE: Run `ls -la` to see actual files in the project directory!**
+
+🚫 LANGUAGE NEUTRALITY - DO NOT ASSUME PYTHON!
+The project type is UNKNOWN until you verify. Check for these marker files:
+- `go.mod`, `*.go` → **Go project** (use `go build`, NOT pip!)
+- `package.json` → **Node.js project** (use `npm install`)
+- `pom.xml`, `build.gradle` → **Java project** (use Maven/Gradle)
+- `Cargo.toml` → **Rust project** (use `cargo build`)
+- `*.csproj`, `*.sln` → **.NET project** (use `dotnet build`)
+- `setup.py`, `pyproject.toml`, `requirements.txt` → **Python project** (use pip)
+
+❌ FATAL MISTAKE: Running `pip install` on a Go/Java/Node project!
+✅ CORRECT: Check marker files FIRST, then use the appropriate build tool.
+
+❌ COMMON MISTAKE: System may auto-detect wrong project type!
+   - If you see `go.mod`, `*.go` files, `Makefile` → This is a GO project (NOT Python!)
+   - If you see `package.json` → This is a Node.js project
+   - If you see `*.csproj`, `*.sln` → This is a .NET project
+   - If you see `pom.xml`, `build.gradle` → This is a Java project
+   - ONLY if you see `setup.py`, `requirements.txt`, `pyproject.toml` → Python project
+
+🛠️ LANGUAGE ENVIRONMENT SETUP:
+   - Go project (go.mod): Check `go version`, if not installed: `apt-get install -y golang-go`
+   - Node project: Check `node --version`, if not installed: `apt-get install -y nodejs npm`
+   - Java project: Check `java -version`, if not installed: `apt-get install -y openjdk-11-jdk`
+   - .NET project: Check `dotnet --version`, if not installed: Install .NET SDK
+
+✅ CORRECT BUILD APPROACH:
+   - Go: `cd <project> && go mod tidy && go build` or `make install`
+   - Node: `npm install && npm start`
+   - Java: `mvn install` or `gradle build`
+   - Python: `pip install -e .` or `pip install <package>==<version>`
+
+🎯 DECISION TREE - BUILD STRATEGY (FOLLOW THIS ORDER!):
+
+**Level 1: Check for Official Docker Images FIRST**
+   Before writing any build commands, ask: "Does Docker Hub have an official image?"
+   - For well-known projects (Jenkins, Redis, MySQL, Nginx, etc.), use:
+     `docker pull <project>:<vulnerable_version>`
+   - Example: `docker pull jenkins/jenkins:2.441` instead of building from source
+   - If found, SKIP to verification step!
+
+**Level 2: Check for Pre-built Vulhub/Vulfocus Environment**
+   - The system may have already deployed a pre-built environment
+   - If you see "Pre-built environment deployed" in context, DO NOT rebuild!
+   - Just verify the existing service is running
+
+**Level 3: Use Package Manager for Libraries**
+   - Python library: `pip install <package>==<version>`
+   - Node library: `npm install <package>@<version>`
+   - Go module: `go get <module>@<version>`
+   - DO NOT clone and build from source for libraries!
+
+**Level 4: Build from Source (LAST RESORT)**
+   - Only if Levels 1-3 fail
+   - First: `ls -la` to identify project type
+   - Then use appropriate build tool for the language
+
+📦 CRITICAL: AFTER DOWNLOADING/EXTRACTING FILES:
+   ⚠️ NEVER assume or hardcode directory names after unzip/tar!
+   - After `wget xxx.zip && unzip xxx.zip`, ALWAYS run `ls -F` to see actual extracted folder name
+   - GitHub archives often have unexpected names like `project-main`, `project-1.2.3`, or include commit hash
+   - ❌ WRONG: `unzip v1.3.6.zip && cd user_oidc-1.3.6`  (guessing folder name)
+   - ✅ RIGHT: `unzip v1.3.6.zip && ls -F && cd <actual_folder_name>`
+
 INSTRUCTIONS:
 1. You are in the root directory of the vulnerable project.
-2. Focus on setup/building, not implementing exploits.
-3. For libraries (pip/npm), install directly with version specifier instead of building from source.
-4. Install dependencies globally (no virtual environments, no Docker).
-5. Only run components necessary for the exploit.
-6. Verify setup works before completing.
-7. Do NOT re-write project files, just build them.
+2. **ALWAYS run `ls -la` first to verify project type before any build commands!**
+3. **DO NOT default to Python/pip - check marker files first!**
+4. Focus on setup/building, not implementing exploits.
+5. For libraries (pip/npm/go modules), install directly with version specifier instead of building from source.
+6. Install dependencies globally (no virtual environments, no Docker).
+7. Only run components necessary for the exploit.
+8. Verify setup works before completing.
+9. Do NOT re-write project files, just build them.
+10. **If pip fails on a project with go.mod, STOP and use Go build instead!**
 
 EXECUTION RULES:
 8. NO PLANNING - EXECUTE IMMEDIATELY:
@@ -40,16 +109,39 @@ ERROR HANDLING:
     - "ModuleNotFoundError" → pip install the missing module
     - "Permission denied" → Add sudo or check permissions
     - "Connection refused" → Service not running
+    - **"pip install" fails + project has go.mod → This is a GO project! Use `go build`**
+    - **"No matching distribution" + see .go files → WRONG TOOL! Switch to Go**
+
+📜 LOG ANALYSIS FOR BUILD FAILURES:
+    When `docker build` or other build commands fail:
+    - Read STDERR carefully - the root cause is usually there
+    - For Docker: Check the last few lines for dependency conflicts
+    - Run `cat /tmp/*.log | tail -100` to see detailed build logs
+    - For npm: Look for ERESOLVE, peer dependency conflicts
+    - For Maven/Gradle: Look for dependency resolution errors
+    - **Key insight**: If error says "package not found", search for correct package name
 
 12. NEVER repeat the same failing command:
     ❌ WRONG: apt-get install libwoff2dec1 (fails) → try again
     ✅ RIGHT: apt-get install libwoff2dec1 (fails) → apt-cache search woff → find correct name
+    
+    ❌ WRONG: pip install evmos==17.0.1 (fails) → pip install evmos (try again)
+    ✅ RIGHT: pip install evmos (fails) + see go.mod → This is Go! `go build` or `make install`
 
-13. PRE-INSTALLED TOOLS:
+    ❌ WRONG: unzip file.zip && cd assumed-folder-name  (path not found)
+    ✅ RIGHT: unzip file.zip && ls -F  →  then cd into the ACTUAL folder you see
+
+13. SELF-CORRECTION RULE:
+    If a build approach fails 2 times, **STOP and re-examine the project**:
+    - Run `ls -la` to see actual files
+    - Check for go.mod, package.json, pom.xml, etc.
+    - Switch to the correct build tool for the actual project type
+
+14. PRE-INSTALLED TOOLS:
     - Playwright: Just run `playwright install chromium` (deps already installed)
     - Common packages: requests, beautifulsoup4, lxml, httpx, aiohttp
 
-14. RETRY LIMITS:
+15. RETRY LIMITS:
     - Same command: MAX 2 attempts
     - Similar commands: MAX 4 attempts total
     - Hit limit → Try completely different approach

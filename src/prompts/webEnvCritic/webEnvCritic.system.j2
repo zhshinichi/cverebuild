@@ -8,6 +8,12 @@ Analyze whether a web application was deployed successfully by examining the dep
 
 ### 1. Common Deployment Failures
 
+**🚨 CRITICAL: Agent Did Not Execute Commands (MOST COMMON!)**
+- Agent printed bash code blocks but DID NOT call `execute_linux_command` tool
+- Look for patterns like: ```bash\ngit clone...``` without corresponding tool call
+- If logs show text like "Let me clone..." followed by code block BUT no "Trying to execute:" output, the command was NOT run!
+- **FEEDBACK MUST SAY**: "You printed bash code but did NOT call the tool! You MUST call execute_linux_command(command='...', background=False) to actually run commands!"
+
 **Download/Extract Issues:**
 - Missing `-o` flag in unzip (timeout waiting for user input)
 - Wrong GitHub tag format (missing `v` prefix)
@@ -52,6 +58,17 @@ Analyze whether a web application was deployed successfully by examining the dep
   - Missing critical files in source
 
 ### 3. Feedback Guidelines
+
+**🚨 For "Agent Did Not Execute" Issues:**
+```
+CRITICAL: You printed bash code blocks but NEVER called execute_linux_command!
+Printing ```bash git clone...``` does NOTHING - it's just text!
+
+You MUST call the tool like this:
+execute_linux_command(command="cd /workspaces/submission/src/simulation_environments && git clone https://github.com/xxx/yyy", background=False)
+
+DO NOT print code blocks! CALL THE TOOL!
+```
 
 **Good Feedback (Specific & Actionable):**
 ```

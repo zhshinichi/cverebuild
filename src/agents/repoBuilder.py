@@ -70,7 +70,9 @@ class MyParser(BaseParser):
                 try_itr += 1
 
 class RepoBuilder(AgentWithHistory[dict, str]):
-    __LLM_MODEL__ = 'gpt-4o-mini'
+    # 🔼 升级模型: gpt-4o-mini 处理复杂构建任务能力不足
+    # CVE-2024-32873 教训: 弱模型无法自我纠正项目类型误判
+    __LLM_MODEL__ = 'gpt-4o'
     __SYSTEM_PROMPT_TEMPLATE__ = 'repoBuilder/repoBuilder.system.j2'
     __USER_PROMPT_TEMPLATE__ = 'repoBuilder/repoBuilder.user.j2'
     __OUTPUT_PARSER__ = MyParser

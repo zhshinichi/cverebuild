@@ -158,12 +158,16 @@ def infer_deployment_strategy(cve_data: Dict, cve_description: str) -> Dict[str,
     }
     
     # 提取基本信息
+    affected_version = ""
     try:
         cna = cve_data.get('containers', {}).get('cna', {})
         affected = cna.get('affected', [])
         if affected:
             result['product_name'] = affected[0].get('product', '')
             result['vendor'] = affected[0].get('vendor', '')
+            versions = affected[0].get('versions', [])
+            if versions:
+                affected_version = versions[0].get('version', '')
     except:
         pass
     
@@ -263,8 +267,59 @@ def infer_deployment_strategy(cve_data: Dict, cve_description: str) -> Dict[str,
             else:
                 result['start_commands'] = ["python app.py  # 或 flask run / python manage.py runserver"]
         
-        elif '.js' in cve_description or 'node' in desc_lower or 'npm' in desc_lower or \
-             'javascript' in desc_lower or 'package.json' in cve_description or 'express' in desc_lower:
+        # 【修复】将 PHP 检测移到 JavaScript 之前，并增加对 Symfony/Laravel 等框架的检测
+        elif '.php' in cve_description or 'php' in desc_lower or 'composer' in desc_lower or \
+             'symfony' in desc_lower or 'laravel' in desc_lower or 'drupal' in desc_lower or \
+             'wordpress' in desc_lower or 'yii' in desc_lower or 'codeigniter' in desc_lower or \
+             'cakephp' in desc_lower or 'zend' in desc_lower or 'magento' in desc_lower or \
+             'prestashop' in desc_lower or 'opencart' in desc_lower or 'joomla' in desc_lower:
+            result['language'] = result.get('language') or 'php'
+            result['build_tool'] = result.get('build_tool') or 'composer'
+            
+            # 检查是否有工作目录配置（如CRMEB）
+            working_dir = result.get('working_directory')
+            repo_name = "$(basename {})".format(repo_url)
+            # Prefer tagged release matching affected_version; try with leading 'v' then raw
+            checkout_cmd = ""
+            if affected_version:
+                if affected_version.startswith('v'):
+                    checkout_cmd = f"git checkout {affected_version}"
+                else:
+                    checkout_cmd = f"git checkout v{affected_version} || git checkout {affected_version}"
+            
+            if working_dir:
+                # composer.json在子目录
+                result['build_commands'] = [
+                    f"git clone {repo_url}",
+                    f"cd {repo_name}/{working_dir} {'&& ' + checkout_cmd if checkout_cmd else ''}".strip(),
+                    "composer install"
+                ]
+            else:
+                # 标准结构
+                result['build_commands'] = [
+                    f"git clone {repo_url}",
+                    f"cd {repo_name} {'&& ' + checkout_cmd if checkout_cmd else ''}".strip(),
+                    "composer install"
+                ]
+            
+            # 检查是否建议docker-compose
+            if result.get('deployment_type') == 'docker-compose':
+                docker_path = result.get('docker_compose_path', 'docker-compose')
+                result['start_commands'] = [
+                    f"# 推荐: cd {repo_name}/{docker_path} && docker-compose up -d",
+                    f"# 或手动: php -S 0.0.0.0:8000 -t public"
+                ]
+            else:
+                result['start_commands'] = [
+                    "php -S 0.0.0.0:8000 -t public  # 或使用 Apache/Nginx"
+                ]
+        
+        # 【修复】使 JavaScript 检测更严格，避免误识别 PHP 项目中的 .js 资源文件
+        elif ('node' in desc_lower or 'npm ' in desc_lower or 'nodejs' in desc_lower or \
+              'express' in desc_lower or 'react' in desc_lower or 'vue' in desc_lower or \
+              'angular' in desc_lower or 'nextjs' in desc_lower or 'nuxt' in desc_lower or \
+              ('javascript' in desc_lower and 'php' not in desc_lower)) and \
+             not any(php_fw in desc_lower for php_fw in ['symfony', 'laravel', 'drupal', 'wordpress', 'php']):
             result['language'] = 'javascript'
             result['build_tool'] = 'npm'
             result['build_commands'] = [
@@ -287,41 +342,6 @@ def infer_deployment_strategy(cve_data: Dict, cve_description: str) -> Dict[str,
             result['start_commands'] = [
                 "./app"
             ]
-        
-        elif '.php' in cve_description or 'php' in desc_lower or 'composer' in desc_lower:
-            result['language'] = result.get('language') or 'php'
-            result['build_tool'] = result.get('build_tool') or 'composer'
-            
-            # 检查是否有工作目录配置（如CRMEB）
-            working_dir = result.get('working_directory')
-            repo_name = "$(basename {})".format(repo_url)
-            
-            if working_dir:
-                # composer.json在子目录
-                result['build_commands'] = [
-                    f"git clone {repo_url}",
-                    f"cd {repo_name}/{working_dir}",
-                    "composer install"
-                ]
-            else:
-                # 标准结构
-                result['build_commands'] = [
-                    f"git clone {repo_url}",
-                    f"cd {repo_name}",
-                    "composer install"
-                ]
-            
-            # 检查是否建议docker-compose
-            if result.get('deployment_type') == 'docker-compose':
-                docker_path = result.get('docker_compose_path', 'docker-compose')
-                result['start_commands'] = [
-                    f"# 推荐: cd {repo_name}/{docker_path} && docker-compose up -d",
-                    f"# 或手动: php -S 0.0.0.0:8000 -t public"
-                ]
-            else:
-                result['start_commands'] = [
-                    "php -S 0.0.0.0:8000 -t public  # 或使用 Apache/Nginx"
-                ]
         
         # 只有在deployment_notes为空时才设置默认值（避免覆盖产品映射的详细说明）
         if not result.get('deployment_notes'):

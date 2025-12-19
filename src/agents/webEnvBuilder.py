@@ -37,8 +37,27 @@ After completing the deployment, you MUST output the result in JSON format:
 
 
 class WebEnvBuilderParser(BaseParser):
-    """解析 WebEnvBuilder 的 JSON 输出"""
+    """解析 WebEnvBuilder 的 JSON 输出
+    
+    注意：只有当 Agent 明确表示完成验证后才解析 JSON 为最终结果
+    避免中间状态的 JSON 被误认为是最终结果
+    """
     MAX_FIX_FORMAT_TRIES = 3
+    
+    # 表示还在进行中的关键词（出现这些时不应认为是最终结果）
+    IN_PROGRESS_INDICATORS = [
+        "proceed with",
+        "let's proceed",
+        "i will",
+        "let me",
+        "next step",
+        "proceeding to",
+        "will now",
+        "going to",
+        "need to",
+        "should now",
+        "let us",
+    ]
 
     def get_format_instructions(self) -> str:
         return OUTPUT_DESCRIPTION
@@ -68,19 +87,55 @@ class WebEnvBuilderParser(BaseParser):
     def parse(self, text: str) -> dict:
         import json
         
+        # 检查是否包含"进行中"的指示词 - 如果有，不应认为是最终结果
+        text_lower = text.lower()
+        is_in_progress = any(indicator in text_lower for indicator in self.IN_PROGRESS_INDICATORS)
+        
+        # 如果文本表示还在进行中，不要解析 JSON 作为最终结果
+        # 返回特殊标记让 Agent 继续执行
+        if is_in_progress:
+            # 检查文本末尾是否有明确的结束标记
+            # 如果没有明确说 "completed" 或 "finished" 或 "verification"，就不要停止
+            completion_markers = ["completed", "finished", "verification complete", "deployment complete", "verified", "service is running"]
+            has_completion = any(marker in text_lower for marker in completion_markers)
+            
+            if not has_completion:
+                # 返回一个特殊的响应，表示不应停止
+                return {
+                    'success': 'continue',  # 特殊标记
+                    'access': '',
+                    'method': 'in_progress',
+                    'notes': f'Agent indicates more work needed: {text[:200]}...'
+                }
+        
         # 尝试直接解析 JSON
         try:
             # 查找 JSON 块
             json_match = re.search(r'```json\s*(\{.*?\})\s*```', text, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group(1))
+                result = json.loads(json_match.group(1))
+                # 验证是真正的最终结果
+                if result.get('success') in ['yes', 'no']:
+                    return result
             
             # 查找裸 JSON
             json_match = re.search(r'\{[^{}]*"success"[^{}]*\}', text, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group(0))
+                result = json.loads(json_match.group(0))
+                # 只有当文本不表示"进行中"时才返回
+                if not is_in_progress and result.get('success') in ['yes', 'no']:
+                    return result
         except json.JSONDecodeError:
             pass
+        
+        # 如果还在进行中但找到了 JSON，返回继续标记
+        if is_in_progress:
+            return {
+                'success': 'continue',
+                'access': '',
+                'method': 'in_progress', 
+                'notes': f'Agent is still working: {text[:200]}...'
+            }
         
         # 尝试修复格式
         try_itr = 1
@@ -120,7 +175,7 @@ class WebEnvBuilder(AgentWithHistory[dict, dict]):
     - diagnose_service_failure: 错误诊断
     """
     
-    __LLM_MODEL__ = 'gpt-4o-mini'
+    __LLM_MODEL__ = 'gpt-4o'  # Upgraded from gpt-4o-mini for better tool calling
     # 使用简化版 prompt（v2 版本依赖智能工具，prompt 更短）
     __SYSTEM_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.system.v2.j2'
     __USER_PROMPT_TEMPLATE__ = 'webEnvBuilder/webEnvBuilder.user.v2.j2'

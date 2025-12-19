@@ -8,6 +8,7 @@ from . import peek_logs
 from . import file_ops
 from . import command_ops
 from . import security_tools
+from . import project_analyzer
 
 TOOLS = {
     'get_file': file_ops.get_file,
@@ -23,6 +24,9 @@ TOOLS = {
     'run_commix': security_tools.run_commix,
     'run_nuclei': security_tools.run_nuclei,
     'run_xss_scanner': security_tools.run_xss_scanner,
+    
+    # 项目结构分析工具 - 在构建前分析项目类型，避免使用错误的工具
+    'analyze_project_structure': project_analyzer.analyze_project_structure,
 }
 
 # @tools.tool

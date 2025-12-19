@@ -12,8 +12,16 @@
 {% endif %}
 
 {% if feedback %}
-## Previous Attempt Feedback
+## 🚨 CRITICAL: Previous Attempt Failed - You Did NOT Execute Commands!
 {{ feedback }}
+
+**IMPORTANT: In your previous attempt, you printed bash code blocks but DID NOT call execute_linux_command!**
+**Printing ```bash git clone...``` does NOTHING - you MUST call the tool!**
+
+**THIS TIME, YOU MUST:**
+1. Call `get_project_workspace` first
+2. IMMEDIATELY call `execute_linux_command` to clone (DO NOT just print code!)
+3. Continue calling tools for each step
 {% endif %}
 
 ## Your Task

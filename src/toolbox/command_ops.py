@@ -417,17 +417,44 @@ class ContextAwareAnalyzer:
         
         return None
     
-    def detect_project_type_from_files(self) -> Optional[str]:
+    def detect_project_type_from_files(self, target_project_dir: Optional[str] = None) -> Optional[str]:
         """
-        从当前目录的文件检测项目类型
+        从目标项目目录的文件检测项目类型
+        
+        ⚠️ 重要修复 (CVE-2024-32873): 只在目标项目目录检测，排除框架自身文件！
+        之前的BUG：扫描到 agentlib/setup.py 导致 Go 项目被误判为 Python 项目
         
         返回: 'dotnet', 'python', 'node', 'java', 'go' 或 None
+        
+        Args:
+            target_project_dir: 目标项目目录（可选），如果不指定则使用 simulation_environments
         """
-        # 搜索常见目录
-        search_dirs = [
-            '.',
-            '/workspaces/submission/src/simulation_environments'
-        ]
+        # 🔴 P0修复: 只在目标项目目录下检测，不扫描框架自身目录
+        # 之前的问题：'.' 会扫描到 agentlib/setup.py，导致 Go 项目被误判为 Python
+        search_dirs = []
+        
+        # 优先使用指定的目标项目目录
+        if target_project_dir and os.path.isdir(target_project_dir):
+            search_dirs.append(target_project_dir)
+        
+        # 只搜索 simulation_environments 下的目录（目标项目所在位置）
+        sim_env_base = '/workspaces/submission/src/simulation_environments'
+        if os.path.isdir(sim_env_base):
+            search_dirs.append(sim_env_base)
+        
+        # ⚠️ 不再扫描当前目录 '.'，避免扫描到框架自身的 agentlib/setup.py
+        
+        # 需要排除的目录（框架自身的目录）
+        excluded_dirs = {
+            'agentlib',
+            'src/agentlib',
+            '/workspaces/submission/src/agentlib',
+            'toolbox',
+            'agents',
+            'prompts',
+            'orchestrator',
+            'planner',
+        }
         
         # 文件类型 -> 项目类型映射
         file_type_map = {
@@ -445,35 +472,60 @@ class ContextAwareAnalyzer:
         
         detected_files = []
         detected_type = None
+        type_votes = {}  # 多数投票，解决歧义
         
         for base_dir in search_dirs:
             if not os.path.isdir(base_dir):
                 continue
+            
+            # 🔴 检查是否在排除列表中
+            normalized_base = os.path.normpath(base_dir)
+            if any(excl in normalized_base for excl in excluded_dirs):
+                continue
+                
             try:
                 # 检查根目录
                 for entry in os.listdir(base_dir):
                     entry_path = os.path.join(base_dir, entry)
                     
+                    # 🔴 跳过框架自身的目录
+                    if entry in excluded_dirs:
+                        continue
+                    
                     # 直接文件检查
                     for pattern, proj_type in file_type_map.items():
                         if entry.endswith(pattern) or entry == pattern:
                             detected_files.append(entry)
+                            type_votes[proj_type] = type_votes.get(proj_type, 0) + 1
                             if detected_type is None:
                                 detected_type = proj_type
                     
                     # 子目录检查（只检查一层）
                     if os.path.isdir(entry_path):
+                        # 🔴 跳过框架自身的子目录
+                        if entry in excluded_dirs:
+                            continue
                         try:
                             for sub_entry in os.listdir(entry_path):
                                 for pattern, proj_type in file_type_map.items():
                                     if sub_entry.endswith(pattern) or sub_entry == pattern:
                                         detected_files.append(os.path.join(entry, sub_entry))
+                                        type_votes[proj_type] = type_votes.get(proj_type, 0) + 1
                                         if detected_type is None:
                                             detected_type = proj_type
                         except:
                             pass
             except:
                 pass
+        
+        # 🔴 使用多数投票来确定最终类型（解决歧义）
+        if type_votes:
+            # go.mod 优先于 setup.py（Go项目优先级更高，因为很多项目可能有setup.py但实际是其他语言）
+            priority_order = ['go', 'dotnet', 'java', 'node', 'python']
+            for priority_type in priority_order:
+                if priority_type in type_votes:
+                    detected_type = priority_type
+                    break
         
         if detected_type:
             self.detected_project_type = detected_type
@@ -1747,6 +1799,18 @@ def execute_command_foreground(command: str) -> str:
     :return: The output of the command.
     """
     
+    # 回调超时时间 - 根据命令类型动态调整
+    # npm install / yarn install / composer install 等安装命令需要更长时间
+    cmd_lower = command.lower()
+    if any(x in cmd_lower for x in ['npm install', 'yarn install', 'pnpm install', 'composer install', 'pip install -r', 'bundle install', 'cargo build', 'mvn install', 'gradle build']):
+        # 大型项目安装可能需要 10-15 分钟
+        timeout = 900  # 15 分钟
+        print(f"🕒 Using extended timeout ({timeout}s) for package installation...")
+    elif any(x in cmd_lower for x in ['git clone', 'docker pull', 'docker build']):
+        timeout = 600  # 10 分钟
+    else:
+        timeout = 300  # 5 分钟（默认）
+    
     # 🚫 步骤 0：检查是否应该阻止执行这个命令（基于之前的失败记忆）
     context_analyzer = get_context_analyzer()
     block_reason = context_analyzer.should_block_command(command)
@@ -1788,7 +1852,7 @@ def execute_command_foreground(command: str) -> str:
                 stdout=stdout,
                 stderr=stderr,
                 text=True,
-                timeout=300,
+                timeout=timeout,
                 errors="ignore",
                 env=os.environ.copy() | env
             )
@@ -1796,7 +1860,7 @@ def execute_command_foreground(command: str) -> str:
     except subprocess.TimeoutExpired:
         exit_code = 124  # 标准的超时退出码
         timeout_occurred = True
-        output = f"❌ Timed out after 300s! Command: {original_command}"
+        output = f"❌ Timed out after {timeout}s! Command: {original_command}"
         
         # 🔄 重复命令检测（超时也算失败）
         detector = get_command_detector()

@@ -90,20 +90,39 @@ class DeploymentRuleEngine:
     
     # 已知有 Docker 镜像的软件
     KNOWN_DOCKER_IMAGES = {
+        # 常见 Web 应用
         'mlflow': 'ghcr.io/mlflow/mlflow:{version}',
         'gitlab': 'gitlab/gitlab-ce:{version}',
         'jenkins': 'jenkins/jenkins:{version}',
         'wordpress': 'wordpress:{version}',
-        'django': 'django:{version}',
-        'flask': None,  # 需要从源码构建
-        'fastapi': None,
         'n8n': 'n8nio/n8n:{version}',
         'grafana': 'grafana/grafana:{version}',
+        'nginx': 'nginx:{version}',
+        'apache': 'httpd:{version}',
+        
+        # 数据库
         'mysql': 'mysql:{version}',
         'postgresql': 'postgres:{version}',
         'redis': 'redis:{version}',
-        'nginx': 'nginx:{version}',
-        'apache': 'httpd:{version}',
+        
+        # 流行的 AI/Chat 应用
+        'lobe-chat': 'lobehub/lobe-chat:{version}',
+        'lobechat': 'lobehub/lobe-chat:{version}',
+        'open-webui': 'ghcr.io/open-webui/open-webui:{version}',
+        'ollama': 'ollama/ollama:{version}',
+        
+        # 其他常见应用
+        'gitea': 'gitea/gitea:{version}',
+        'drone': 'drone/drone:{version}',
+        'minio': 'minio/minio:{version}',
+        'keycloak': 'quay.io/keycloak/keycloak:{version}',
+        'nextcloud': 'nextcloud:{version}',
+        'vaultwarden': 'vaultwarden/server:{version}',
+        
+        # 需要源码构建的（无官方镜像）
+        'django': None,
+        'flask': None,
+        'fastapi': None,
     }
     
     # IoT/硬件设备（通常无法复现）

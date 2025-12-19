@@ -27,6 +27,26 @@ Analyze the provided CVE data and output a deployment strategy in JSON format.
 
 ## Analysis Guidelines
 
+### 🚫 REPOSITORY EXCLUSION RULES (CRITICAL!)
+**NEVER select repositories that only contain documentation or advisories!**
+
+Exclude repositories matching these patterns:
+- `security-advisories` - Contains only vulnerability announcements, NOT source code
+- `*-docs`, `docs-*` - Documentation only
+- `*-examples`, `examples-*` - Example code, not the main project
+- `advisories`, `advisory` - Security bulletins
+
+**How to identify REAL source repositories:**
+- ✅ Contains build files: `package.json`, `pom.xml`, `setup.py`, `go.mod`, `Cargo.toml`
+- ✅ Has source code directories: `src/`, `lib/`, `app/`
+- ✅ Repository name matches the software product name
+- ❌ Only `.md` files = NOT a source repo
+- ❌ Repository description says "security advisory" or "CVE list" = NOT source
+
+**Example (CVE-2024-37312):**
+- ❌ WRONG: `nextcloud/security-advisories` (only contains markdown advisories)
+- ✅ RIGHT: `nextcloud/user_oidc` (actual source with PHP/JS files)
+
 ### Check for Docker Hub Images
 - Search knowledge: Is this a popular open-source project?
 - Common pattern: `{software}/{software}:{version}` or `ghcr.io/{org}/{software}:{version}`
@@ -80,3 +100,11 @@ Analyze the provided CVE data and output a deployment strategy in JSON format.
 - Be conservative with Docker images - only suggest if highly confident
 - Prefer source_build over not_feasible when GitHub URL is available
 - Extract port from description if mentioned
+- **NEVER use security-advisories or docs-only repositories as source_repo**
+- If multiple repositories are found, choose the one with actual build files
+
+### Confidence Reduction for Invalid Repositories
+If the only available repository contains `security-advisories`, `docs`, or `examples` in its name:
+- Set confidence to 0.3 or lower
+- Set strategy to `manual_setup` or `not_feasible`
+- Explain in reasoning: "No buildable source repository found"

@@ -101,3 +101,7 @@ CVE-2024-50353,False,"Error code: 400 - {'error': {'message': 'bad response stat
 CVE-2024-50353,False,CVEReproducer.update_cost() got an unexpected keyword argument 'exception',0.20711139999999997,944,gpt-4o-mini
 CVE-2024-50353,False,CVEReproducer.update_cost() got an unexpected keyword argument 'exception',0.0198601,122,gpt-4o-mini
 CVE-2024-50353,False,CTF Verifier failed,1.8708822999999999,1619,gpt-4o-mini
+CVE-2024-32873,False,Repo could not be built,0.040260250000000004,618,gpt-4o-mini
+CVE-2024-47814,False,Repo could not be built,0.11106139999999999,377,gpt-4o-mini
+CVE-2024-47814,False,"""Input to ChatPromptTemplate is missing variables {'BaseURL'}.  Expected: ['BaseURL', 'CRITIC_FEEDBACK', 'CVE_KNOWLEDGE', 'ERROR', 'FEEDBACK', 'PROJECT_ACCESS', 'PROJECT_DIR_TREE', 'PROJECT_OVERVIEW', 'agent_scratchpad', 'output_format'] Received: ['chat_history', 'PROJECT_DIR_TREE', 'CVE_KNOWLEDGE', 'PROJECT_OVERVIEW', 'PROJECT_ACCESS', 'FEEDBACK', 'CRITIC_FEEDBACK', 'ERROR', 'env', 'env_md', 'system_prompt_prefix', 'format_instructions', 'output_format', 'intermediate_steps', 'agent_scratchpad']\nNote: if you intended {BaseURL} to be part of the string and not a variable, please escape it with double curly braces like: '{{BaseURL}}'.""",0.16508145,495,gpt-4o-mini
+CVE-2024-47814,False,"Error code: 403 - {'error': {'message': '预扣费额度失败, 用户剩余额度: ＄0.675000, 需要预扣费额度: ＄1.248552 (request id: 20251218174842504045735W2X7MEAd)', 'type': 'rix_api_error', 'param': '', 'code': 'insufficient_user_quota'}}",0.24179495,710,gpt-4o-mini

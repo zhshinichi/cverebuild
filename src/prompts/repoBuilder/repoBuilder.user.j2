@@ -36,9 +36,26 @@
 """
 {% endif %}
 {% if CRITIC_FEEDBACK %}
-# CRITIC FEEDBACK ON THE PREVIOUS ATTEMPT (TRY NOT TO REPEAT WHAT YOU HAVE ALREADY DONE - JUST FOCUS ON FIXING THE ISSUES)
+🚨🚨🚨 [CRITICAL INSTRUCTION - MANDATORY EXECUTION] 🚨🚨🚨
+
+The Critic Agent has analyzed your previous attempt and provided MANDATORY steps.
+You MUST execute these steps in order. This is NOT optional.
+
+## CRITIC ANALYSIS AND REQUIRED ACTIONS:
 """
 {{CRITIC_FEEDBACK}}
 """
+
+**IMPORTANT: You MUST follow the Critic's plan exactly. Do NOT:**
+- Skip any step the Critic mentioned
+- Repeat the same mistakes from the previous attempt
+- Run `apt-get update` and then give up
+- Use the wrong build tool (e.g., pip for a Go project)
+
+**If the Critic identified a project type mismatch, you MUST:**
+1. First: `ls -la` to verify project type
+2. Use the correct build tool for the actual project type
+3. Follow ALL steps in the Critic's HIGH PRIORITY PLAN
+
 {% endif %}
 {% endif %}
