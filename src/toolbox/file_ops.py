@@ -102,6 +102,9 @@ def get_file(file_path: str, offset: int, num_lines:int) -> str:
         # Add the lines we are showing, add the line numbers at the beginning
         for idx, line in enumerate(file_lines_in_scope.splitlines()):
             idx = idx + offset
+            # 🔧 修复 CVE-2024-3651: 截断过长的单行（如二进制数据）
+            if len(line) > 500:
+                line = line[:500] + f"... [line truncated, {len(line) - 500} chars omitted]"
             file_view += f"{idx + 1}: {line}\n"
 
         # Finally, added the remaining line
@@ -109,7 +112,13 @@ def get_file(file_path: str, offset: int, num_lines:int) -> str:
         if lines_below > 0:
             file_view += f"({lines_below} lines below)\n"
         else:
-            file_view += f"(No lines below)\n"        
+            file_view += f"(No lines below)\n"
+        
+        # 🔧 最终字符数限制：防止超大文件导致 token 超限
+        MAX_FILE_OUTPUT_CHARS = 20000
+        if len(file_view) > MAX_FILE_OUTPUT_CHARS:
+            file_view = file_view[:MAX_FILE_OUTPUT_CHARS] + f"\n\n[... file output truncated at {MAX_FILE_OUTPUT_CHARS} chars to prevent token overflow ...]"
+        
         return file_view
     finally:
         os.chdir(cur_dir)

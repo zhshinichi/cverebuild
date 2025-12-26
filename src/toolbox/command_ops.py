@@ -269,21 +269,76 @@ class ContextAwareAnalyzer:
         return None
     
     def _extract_command_pattern(self, command: str) -> str:
-        """提取命令模式（去除参数，保留核心命令）"""
+        """
+        提取命令模式（保留足够的上下文避免误判）
+        
+        🔧 改进：保留更多上下文，避免将不同命令误判为相同模式
+        例如：cd project_a 和 cd project_b 应该是不同的模式
+        """
+        # 处理复合命令（&& 或 ;）
+        if '&&' in command:
+            # 取最后一个有意义的命令作为模式
+            parts = command.split('&&')
+            last_cmd = parts[-1].strip()
+            if last_cmd:
+                return self._extract_command_pattern(last_cmd)
+        
         parts = command.strip().split()
         if not parts:
             return command
         
-        # 常见命令模式
-        if parts[0] in ['dotnet', 'npm', 'yarn', 'pip', 'pip3', 'python', 'python3', 'go', 'java', 'mvn', 'gradle', 'curl', 'wget']:
-            if len(parts) > 1:
-                # 特殊处理：如果第二个参数是文件路径，只保留文件名
-                second = parts[1]
-                if '/' in second:
-                    second = os.path.basename(second)
-                return f"{parts[0]} {second}"
+        base_cmd = parts[0]
         
-        return parts[0]
+        # 🔧 修复：cd 命令需要保留目标目录
+        if base_cmd == 'cd' and len(parts) > 1:
+            target = parts[1]
+            # 保留最后两级目录作为模式
+            if '/' in target:
+                target_parts = target.rstrip('/').split('/')
+                target = '/'.join(target_parts[-2:]) if len(target_parts) > 1 else target_parts[-1]
+            return f"cd {target}"
+        
+        # 包管理器命令：保留命令 + 子命令 + 主要包名
+        if base_cmd in ['npm', 'yarn', 'pnpm', 'pip', 'pip3', 'composer']:
+            if len(parts) >= 3:
+                # npm install package-name -> "npm install package"
+                return f"{base_cmd} {parts[1]} {parts[2].split('@')[0].split('==')[0][:30]}"
+            elif len(parts) >= 2:
+                return f"{base_cmd} {parts[1]}"
+        
+        # 构建工具：保留命令 + 目标
+        if base_cmd in ['mvn', 'gradle', 'make', 'cargo']:
+            if len(parts) >= 2:
+                return f"{base_cmd} {parts[1]}"
+        
+        # dotnet：保留命令 + 子命令 + 项目文件
+        if base_cmd == 'dotnet' and len(parts) >= 2:
+            sub_cmd = parts[1]
+            if sub_cmd in ['run', 'build', 'test'] and len(parts) >= 3:
+                proj = parts[2] if parts[2].endswith('.csproj') else ''
+                if proj:
+                    return f"dotnet {sub_cmd} {os.path.basename(proj)}"
+            return f"dotnet {sub_cmd}"
+        
+        # curl/wget：保留完整 URL 的主机部分
+        if base_cmd in ['curl', 'wget']:
+            for part in parts[1:]:
+                if part.startswith('http'):
+                    # 提取主机名和路径开头
+                    import urllib.parse
+                    try:
+                        parsed = urllib.parse.urlparse(part)
+                        return f"{base_cmd} {parsed.netloc}{parsed.path[:30]}"
+                    except:
+                        pass
+            if len(parts) > 1:
+                return f"{base_cmd} {parts[1][:50]}"
+        
+        # 其他命令：保留前两个部分
+        if len(parts) >= 2:
+            return f"{base_cmd} {parts[1][:50]}"
+        
+        return base_cmd
     
     def is_command_blocked_by_repetition(self, command: str) -> Optional[str]:
         """检查命令是否因重复失败被阻止"""
@@ -1905,6 +1960,24 @@ def execute_command_foreground(command: str) -> str:
         f"{'Note: Exit code 0 = success, non-zero = error' if exit_code != 0 else ''}"
     )
     
+    # 🆕 关键修复：即使 exit_code == 0，对于下载命令也要分析是否真正成功
+    # curl/wget 可能返回 0 但下载的是错误页面（如 GitHub 404 页面）
+    if exit_code == 0 and any(x in cmd_lower for x in ['curl', 'wget']):
+        insight = context_analyzer.analyze_curl_wget_output(original_command, tail_output, exit_code)
+        if insight and insight.blocking:
+            # 下载虽然"成功"但实际是错误页面
+            output = output + f"\n\n" + f"""
+╔══════════════════════════════════════════════════════════════════╗
+║ ⚠️ 下载验证失败 - 文件内容无效                                    ║
+╠══════════════════════════════════════════════════════════════════╣
+║ {insight.evidence[:60]:<60} ║
+╠══════════════════════════════════════════════════════════════════╣
+║ {insight.suggestion[:60]:<60} ║
+╠══════════════════════════════════════════════════════════════════╣
+║ 💡 后续对此文件的操作（如 unzip）将被自动阻止              ║
+╚══════════════════════════════════════════════════════════════════╝
+"""
+    
     # 🔄 重复命令检测
     detector = get_command_detector()
     repetition_warning = detector.check_command(original_command, output, exit_code)
@@ -2075,14 +2148,32 @@ def create_unique_logfile(suffix: str) -> str:
     log_filename = f"/tmp/{uuid.uuid4().hex[:5]}_{suffix}.log"
     return log_filename
 
-def get_last_lines(file_path: str, line_count: int = 100):
-    """Retrieve the last `line_count` lines from a file."""
+def get_last_lines(file_path: str, line_count: int = 100, max_chars: int = 15000):
+    """
+    Retrieve the last `line_count` lines from a file.
+    
+    🔧 修复 CVE-2024-3651: 添加字符数限制防止 token 超限
+    - line_count: 最多返回多少行
+    - max_chars: 最多返回多少字符（约 3750 tokens）
+    """
     try:
         with open(file_path, "r", encoding='utf-8') as file:
-            r=file.readlines()
-            return "".join(r[-line_count:]), len(r)
+            r = file.readlines()
+            lines = r[-line_count:]
+            result = "".join(lines)
+            
+            # 🔧 字符数限制：防止超长输出导致 token 超限
+            if len(result) > max_chars:
+                result = result[-max_chars:]
+                # 找到第一个换行符，从完整行开始
+                first_newline = result.find('\n')
+                if first_newline > 0:
+                    result = result[first_newline + 1:]
+                result = f"[... output truncated, showing last {len(result)} chars ...]\n" + result
+            
+            return result, len(r)
     except Exception as e:
-        return f"Error reading log file: {e}"
+        return f"Error reading log file: {e}", 0
     
 def get_tail_log(stdout_log: str, stderr_log: str):
     last_stdout_lines, stdout_len = get_last_lines(stdout_log, 100)

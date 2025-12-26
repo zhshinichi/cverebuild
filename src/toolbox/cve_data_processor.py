@@ -235,30 +235,58 @@ class CVEDataProcessor:
         download_url = cve['sw_version_wget']
         print(f"📥 Downloading from: {download_url}")
         
-        # 尝试下载，带超时和错误检查
+        # 准备 codeload 备用 URL（用于 GitHub archive 下载失败时）
+        # https://github.com/user/repo/archive/refs/tags/v1.0.zip -> https://codeload.github.com/user/repo/zip/refs/tags/v1.0
+        codeload_url = None
+        if 'github.com' in download_url and '/archive/' in download_url:
+            import re
+            match = re.match(r'https://github\.com/([^/]+)/([^/]+)/archive/(.+)\.zip', download_url)
+            if match:
+                owner, repo, ref_path = match.groups()
+                codeload_url = f"https://codeload.github.com/{owner}/{repo}/zip/{ref_path}"
+        
+        zip_filename = download_url.split('/')[-1] if download_url.endswith('.zip') else 'download.zip'
+        
+        # 优先尝试原始方式（wget）
         wget_result = subprocess.run(
-            f"wget --timeout=120 --tries=3 {download_url}", 
+            f"wget --timeout=120 --tries=3 '{download_url}'", 
             shell=True, 
             capture_output=True,
             text=True
         )
         
-        if wget_result.returncode != 0:
+        download_success = wget_result.returncode == 0
+        
+        if not download_success:
             print(f"⚠️ wget failed with return code {wget_result.returncode}")
             print(f"stderr: {wget_result.stderr}")
-            # 尝试使用 curl 作为备选
-            print("🔄 Trying curl as fallback...")
-            zip_filename = download_url.split('/')[-1]
-            curl_result = subprocess.run(
-                f"curl -L -o {zip_filename} {download_url}",
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=300
-            )
-            if curl_result.returncode != 0:
+            
+            # 构建尝试列表：先正常 SSL，再忽略 SSL 验证（处理代理/MITM 环境）
+            curl_attempts = []
+            target_url = codeload_url if codeload_url else download_url
+            curl_attempts.append((f"curl -sSL --connect-timeout 60 --max-time 300 -o {zip_filename} '{target_url}'", "curl with SSL"))
+            curl_attempts.append((f"curl -sSL -k --connect-timeout 60 --max-time 300 -o {zip_filename} '{target_url}'", "curl with -k (insecure)"))
+            
+            for curl_cmd, desc in curl_attempts:
+                print(f"🔄 Trying {desc}: {target_url}")
+                curl_result = subprocess.run(
+                    curl_cmd,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=360
+                )
+                if curl_result.returncode == 0:
+                    # 检查下载的文件是否有效（不为空）
+                    if os.path.exists(zip_filename) and os.path.getsize(zip_filename) > 0:
+                        print(f"✅ Download succeeded with {desc}")
+                        download_success = True
+                        break
+                print(f"⚠️ {desc} failed: {curl_result.stderr}")
+            
+            if not download_success:
                 os.chdir(cur_dir)
-                raise RuntimeError(f"Failed to download {download_url}: wget and curl both failed")
+                raise RuntimeError(f"Failed to download {download_url}: all download methods failed")
 
         # 检查是否有 zip 文件
         zip_files = [file for file in os.listdir(".") if file.endswith(".zip")]
@@ -276,8 +304,19 @@ class CVEDataProcessor:
             os.chdir(cur_dir)
             raise FileNotFoundError(f"No directory found after unzipping {zip_name}. Directory contents: {os.listdir('.')}")
         
-        dir_name = dirs[0]
-        print(f"📂 Using directory: {dir_name}")
+        # 🔧 修复：选择与 zip 文件名最匹配的目录，避免选择残留目录
+        zip_base = zip_name.replace('.zip', '').lower()
+        # 尝试找到匹配的目录
+        matching_dirs = [d for d in dirs if zip_base in d.lower() or d.lower() in zip_base]
+        if matching_dirs:
+            dir_name = matching_dirs[0]
+        else:
+            # 没有匹配的，选择最新创建的目录（刚解压的）
+            dirs_with_time = [(d, os.path.getctime(d)) for d in dirs]
+            dirs_with_time.sort(key=lambda x: x[1], reverse=True)
+            dir_name = dirs_with_time[0][0]
+        
+        print(f"📂 Using directory: {dir_name} (from {len(dirs)} dirs)")
         os.chdir(dir_name)
         os.environ['REPO_PATH'] = f"{dir_name}/"
 

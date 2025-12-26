@@ -11,6 +11,14 @@ import os
 from capabilities.base import Capability
 from core.result_bus import ResultBus
 
+# P1 优化：幻觉检测
+from core.hallucination_guard import (
+    HallucinationDetector,
+    HallucinationStats,
+    detect_hallucination,
+    get_continuation_feedback
+)
+
 # 导入现有 Agent
 from agents import (
     KnowledgeBuilder,
@@ -184,6 +192,63 @@ class WebAppDeployer(Capability):
                 return framework
         return ''
     
+    def _check_agent_hallucination(self, agent, build_result: dict, sw_version: str = "") -> tuple:
+        """
+        P1 优化：检查 Agent 是否发生幻觉式停止
+        
+        检测 Agent 说 "I will proceed..." 但没有实际执行工具的情况
+        
+        Args:
+            agent: WebEnvBuilder agent 实例
+            build_result: Parser 解析的结果
+            sw_version: 软件版本（用于生成上下文反馈）
+            
+        Returns:
+            (is_hallucination, feedback): 是否幻觉及建议的反馈
+        """
+        # 如果 Parser 已经检测到 "continue" 状态，直接返回
+        if build_result.get('success') == 'continue':
+            return True, None  # 已经有处理，不需要额外反馈
+        
+        # 检查 chat_history 中最后一条 AI 消息
+        if not hasattr(agent, 'chat_history') or not agent.chat_history:
+            return False, None
+        
+        # 获取最后一条 AI 消息
+        last_ai_response = ""
+        for msg in reversed(agent.chat_history):
+            if hasattr(msg, 'type') and msg.type == 'ai':
+                last_ai_response = msg.content if hasattr(msg, 'content') else str(msg)
+                break
+            elif isinstance(msg, dict) and msg.get('role') == 'assistant':
+                last_ai_response = msg.get('content', '')
+                break
+        
+        if not last_ai_response:
+            return False, None
+        
+        # 检查是否有工具调用
+        has_tool_call = False
+        if hasattr(agent, 'executor') and hasattr(agent.executor, 'toolcall_metadata'):
+            # 检查最近是否有成功的工具调用
+            metadata = agent.executor.toolcall_metadata
+            for tool_name, tool_meta in metadata.items():
+                if tool_meta.get('num_successful_tool_calls', 0) > 0:
+                    has_tool_call = True
+                    break
+        
+        # 使用幻觉检测器
+        result = detect_hallucination(last_ai_response, has_tool_call=has_tool_call)
+        
+        if result.is_hallucination:
+            print(f"[WebAppDeployer] 🔴 Hallucination detected! Patterns: {result.patterns_matched}")
+            # 生成针对性的反馈
+            context = f"deploying {sw_version}" if sw_version else "web deployment"
+            feedback = get_continuation_feedback(last_ai_response, context)
+            return True, feedback
+        
+        return False, None
+
     def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cve_entry = inputs.get('cve_entry', {})
         cve_knowledge = inputs.get('cve_knowledge', '')
@@ -474,21 +539,35 @@ class WebAppDeployer(Capability):
                 if hasattr(result, 'value') and isinstance(result.value, dict):
                     build_result = result.value
                     
-                    # 🔴 检查是否为 "continue" 状态 - 表示 Agent 提前停止
-                    if build_result.get('success') == 'continue' or build_result.get('method') == 'in_progress':
+                    # 🔴 P1 优化：双重幻觉检测
+                    # 检测方式1: Parser 层检测 (success == 'continue')
+                    # 检测方式2: 响应文本层检测 (chat_history 分析)
+                    
+                    is_parser_hallucination = build_result.get('success') == 'continue' or build_result.get('method') == 'in_progress'
+                    is_text_hallucination, hallucination_feedback = self._check_agent_hallucination(
+                        agent, build_result, sw_version
+                    )
+                    
+                    if is_parser_hallucination or is_text_hallucination:
                         print(f"[WebAppDeployer] ⚠️ Agent stopped early (did not complete all steps)")
-                        print(f"[WebAppDeployer] Notes: {build_result.get('notes', 'Unknown')[:200]}")
-                        # 生成自动反馈让 Agent 继续
-                        critic_feedback = (
-                            "IMPORTANT: You stopped before completing all deployment steps. "
-                            "You MUST continue the deployment workflow: "
-                            "1) If repo was cloned, checkout the correct version (git checkout v{version}). "
-                            "2) Install dependencies (composer install / npm install / pip install). "
-                            "3) Start the service on the correct port. "
-                            "4) Verify the service with curl. "
-                            "5) Only output JSON after verification. "
-                            "Continue from where you left off."
-                        )
+                        print(f"[WebAppDeployer] Detection: Parser={is_parser_hallucination}, Text={is_text_hallucination}")
+                        if build_result.get('notes'):
+                            print(f"[WebAppDeployer] Notes: {build_result.get('notes', 'Unknown')[:200]}")
+                        
+                        # 使用幻觉检测器生成的反馈（如果有），否则用默认反馈
+                        if hallucination_feedback:
+                            critic_feedback = hallucination_feedback
+                        else:
+                            critic_feedback = (
+                                "CRITICAL: You stopped before completing all deployment steps. "
+                                "You MUST continue the deployment workflow: "
+                                f"1) If repo was cloned, checkout the correct version (git checkout {sw_version}). "
+                                "2) Install dependencies (composer install / npm install / pip install). "
+                                "3) Start the service on the correct port. "
+                                "4) Verify the service with curl. "
+                                "5) Only output JSON after verification succeeds. "
+                                "DO NOT describe what you will do - EXECUTE IT NOW."
+                            )
                         attempt += 1
                         continue
                     

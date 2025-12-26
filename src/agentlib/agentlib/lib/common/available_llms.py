@@ -96,15 +96,13 @@ class ModelRegistry(object):
             'gemini-2.5-pro-preview': 'google/gemini-2.5-pro-preview',
             'gemini-2-5-pro-preview': 'google/gemini-2.5-pro-preview',
 
-            # gemini-2.5-pro
-            'google/gemini-2.5-pro': (
+            # gemini-2.5-pro (注意：这个会被 OpenAI 注册覆盖，使用 GOOGLE_API_KEY)
+            'google/gemini-2.5-pro-native': (
                 'gemini-2.5-pro'
                     if cls.__USING_LLM_API__ else
                 'models/gemini-2.5-pro',
                 mcls
             ),
-            'gemini-2.5-pro': 'google/gemini-2.5-pro',
-            'gemini-2-5-pro': 'google/gemini-2.5-pro',
 
             # gemini-2.0-flash
             'google/gemini-2.0-flash': (
@@ -204,6 +202,7 @@ class ModelRegistry(object):
             cls.__OPENAI_MODEL_CLASS__= ChatApiOpenAi
             pfx = 'oai-'
         else:
+            import os
             from langchain_openai import ChatOpenAI
             from langchain.agents import create_openai_tools_agent
 
@@ -245,7 +244,23 @@ class ModelRegistry(object):
                 def create_tools_agent(self, *args, **kwargs):
                     return create_openai_tools_agent(self, *args, **kwargs)
 
+            # Gemini 专用类：使用 GOOGLE_API_KEY 但通过 OpenAI 兼容接口调用
+            class ChatGeminiViaOpenAI(ChatOpenAI, AgentLibLLM):
+                __SUPPORTS_TOOL_CALLS__ = True
+                __SUPPORTS_STRUCTURED_OUTPUT__ = False
+                
+                def __init__(self, **kwargs):
+                    # 使用 GOOGLE_API_KEY 而不是 OPENAI_API_KEY
+                    google_key = os.getenv('GOOGLE_API_KEY')
+                    if google_key:
+                        kwargs['api_key'] = google_key
+                    super().__init__(**kwargs)
+                
+                def create_tools_agent(self, *args, **kwargs):
+                    return create_openai_tools_agent(self, *args, **kwargs)
+
             cls.__OPENAI_MODEL_CLASS__ = ChatOpenAIAgentLib
+            cls.__GEMINI_VIA_OPENAI_CLASS__ = ChatGeminiViaOpenAI
 
         mcls = cls.__OPENAI_MODEL_CLASS__
         assert(mcls)
@@ -364,6 +379,12 @@ class ModelRegistry(object):
             # gpt-4o-mini
             'openai/gpt-4o-mini': (f'{pfx}gpt-4o-mini', mcls),
             'gpt-4o-mini': 'openai/gpt-4o-mini',
+
+            # Gemini 通过 OpenAI 兼容接口调用（使用 GOOGLE_API_KEY，覆盖 Google 原生注册）
+            'openai/gemini-2.5-pro': ('gemini-2.5-pro', cls.__GEMINI_VIA_OPENAI_CLASS__),
+            'gemini-2.5-pro': 'openai/gemini-2.5-pro',
+            'gemini-2-5-pro': 'openai/gemini-2.5-pro',
+            'google/gemini-2.5-pro': 'openai/gemini-2.5-pro',
 
             # gpt-4-turbo
             'openai/gpt-4-turbo-preview': (

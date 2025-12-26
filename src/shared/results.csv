@@ -105,3 +105,30 @@ CVE-2024-32873,False,Repo could not be built,0.040260250000000004,618,gpt-4o-min
 CVE-2024-47814,False,Repo could not be built,0.11106139999999999,377,gpt-4o-mini
 CVE-2024-47814,False,"""Input to ChatPromptTemplate is missing variables {'BaseURL'}.  Expected: ['BaseURL', 'CRITIC_FEEDBACK', 'CVE_KNOWLEDGE', 'ERROR', 'FEEDBACK', 'PROJECT_ACCESS', 'PROJECT_DIR_TREE', 'PROJECT_OVERVIEW', 'agent_scratchpad', 'output_format'] Received: ['chat_history', 'PROJECT_DIR_TREE', 'CVE_KNOWLEDGE', 'PROJECT_OVERVIEW', 'PROJECT_ACCESS', 'FEEDBACK', 'CRITIC_FEEDBACK', 'ERROR', 'env', 'env_md', 'system_prompt_prefix', 'format_instructions', 'output_format', 'intermediate_steps', 'agent_scratchpad']\nNote: if you intended {BaseURL} to be part of the string and not a variable, please escape it with double curly braces like: '{{BaseURL}}'.""",0.16508145,495,gpt-4o-mini
 CVE-2024-47814,False,"Error code: 403 - {'error': {'message': '预扣费额度失败, 用户剩余额度: ＄0.675000, 需要预扣费额度: ＄1.248552 (request id: 20251218174842504045735W2X7MEAd)', 'type': 'rix_api_error', 'param': '', 'code': 'insufficient_user_quota'}}",0.24179495,710,gpt-4o-mini
+CVE-2024-3935,False,"Error code: 503 - {'error': {'code': '', 'message': '所有令牌分组 base 下对于模型 o4-mini 均无可用渠道，请更换分组尝试 (request id: 20251222203121135506720iZmfyzba)', 'type': 'rix_api_error'}}",0.9998008,791,gpt-4o-mini
+CVE-2024-3651,False,Failed to download https://github.com/kjd/idna/archive/refs/tags/v3.6.zip: wget and curl both failed,0,1,gpt-4o-mini
+CVE-2024-3651,False,Failed to download https://github.com/kjd/idna/archive/refs/tags/v3.6.zip: wget and curl both failed,0,1,gpt-4o-mini
+CVE-2024-3651,False,"Error code: 400 - {'error': {'message': ""This model's maximum context length is 128000 tokens. However, your messages resulted in 202696 tokens (202011 in the messages, 685 in the functions). Please reduce the length of the messages or functions."", 'type': 'rix_api_error', 'param': 'messages', 'code': 'context_length_exceeded'}}",2.09617435,514,gpt-4o-mini
+CVE-2024-3651,False,"1 validation error for ChatGoogleAgentLib
+__root__
+  Did not find google_api_key, please add an environment variable `GOOGLE_API_KEY` which contains it, or pass `google_api_key` as a named parameter. (type=value_error)",0.4559609499999999,283,gpt-4o-mini
+CVE-2024-7254,False,Repo could not be built,1.8121958500000002,673,gpt-4o-mini
+CVE-2024-7254,False,Repo could not be built,0.30991955,271,gpt-4o-mini
+CVE-2024-3829,False,Repo could not be built,0.15048355,238,gpt-4o-mini
+CVE-2024-3829,False,Repo could not be built,0.16652944999999997,129,gpt-4o-mini
+CVE-2024-50349,False,Repo could not be built,0.19457865,283,gpt-4o-mini
+CVE-2024-50349,False,Repo could not be built,0.22137894999999996,491,gpt-4o-mini
+CVE-2024-35235,False,Repo could not be built,0.1406596,106,gpt-4o-mini
+CVE-2024-8948,False,Repo could not be built,0.7130989499999999,289,gpt-4o-mini
+CVE-2024-6984,False,Repo could not be built,0.95831605,531,gpt-4o-mini
+CVE-2024-6984,False,Repo could not be built,0.26754625,457,gpt-4o-mini
+CVE-2024-8948,False,Repo could not be built,0.86331855,670,gpt-4o-mini
+CVE-2025-1255,False,"❌ CVE-2025-1255 not found in any data source
+   Checked: /workspaces/submission/src/data/large_scale/data.json
+   Checked: /workspaces/submission/src/data/large_scale/simple_web_cves_20.json",0,1,gpt-4o-mini
+CVE-2024-8947,False,Empty Response From LLM,2.3098267999999997,2700,gpt-4o-mini
+CVE-2024-11407,False,"""Input to ChatPromptTemplate is missing variables {'BUILD_ADVICE'}.  Expected: ['BUILD_ADVICE', 'CRITIC_FEEDBACK', 'CVE_KNOWLEDGE', 'ERROR', 'FEEDBACK', 'PROJECT_DIR_TREE', 'PROJECT_FILES', 'PROJECT_OUTPUT', 'PROJECT_OVERVIEW', 'PROJECT_SERVICES', 'agent_scratchpad'] Received: ['chat_history', 'PROJECT_DIR_TREE', 'CVE_KNOWLEDGE', 'PROJECT_OVERVIEW', 'PROJECT_FILES', 'PROJECT_SERVICES', 'PROJECT_OUTPUT', 'FEEDBACK', 'ERROR', 'CRITIC_FEEDBACK', 'env', 'env_md', 'system_prompt_prefix', 'format_instructions', 'output_format', 'intermediate_steps', 'agent_scratchpad']\nNote: if you intended {BUILD_ADVICE} to be part of the string and not a variable, please escape it with double curly braces like: '{{BUILD_ADVICE}}'.""",0.0390729,1621,gpt-4o-mini
+CVE-2024-11165,False,Repo could not be built,0.6165976,1300,gpt-4o-mini
+CVE-2024-40635,False,Cost exceeds maximum limit: $5.2155 >= $5.00,5.2154869999999995,1288,gpt-4o-mini
+CVE-2025-0454,False,Repo could not be built,2.33524335,1338,gpt-4o-mini
+CVE-2024-21542,False,Repo could not be built,3.4634554999999994,586,gpt-4o-mini

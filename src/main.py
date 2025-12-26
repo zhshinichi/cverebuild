@@ -125,6 +125,16 @@ FIX_ADVISOR = False
 TIMEOUT = 2700
 MAX_COST = 5.00
 
+# 🔧 每个模块的费用限制（防止单个模块成本失控）
+MODULE_COST_LIMITS = {
+    "knowledge_builder": 0.15,    # Knowledge Builder 限制
+    "pre_req_builder": 0.30,      # Pre-Req Builder 限制
+    "repo_builder": 1.50,         # Repo Builder 限制（包括 Critic）
+    "exploiter": 2.50,            # Exploiter 限制（包括 Critic）
+    "ctf_verifier": 0.50,         # CTF Verifier 限制
+    "fix_advisor": 0.50,          # Fix Advisor 限制
+}
+
 # Web Driver 配置
 WEB_DRIVER_TARGET_URL = os.environ.get('WEB_DRIVER_TARGET_URL', 'http://localhost:9600')
 
@@ -235,7 +245,7 @@ class CVEReproducer:
             handle.write(advice)
 
         cost = advisor.get_cost()
-        self.update_cost(cost)
+        self.update_cost(cost, module="fix_advisor")
 
         print(f"✅ Fix recommendations saved to: {fix_file}")
         print(f"💡 Summary:\n{advice}\n")
@@ -262,7 +272,36 @@ class CVEReproducer:
         if time.time() - self.start_time > TIMEOUT:
             raise TimeoutExpired(phase=phase)
 
-    def update_cost(self, cost: float, allow_exceed: bool = False, reason: str = None):
+    def __init_module_costs(self):
+        """初始化模块费用追踪"""
+        if not hasattr(self, '_module_costs'):
+            self._module_costs = {k: 0.0 for k in MODULE_COST_LIMITS}
+    
+    def check_module_cost(self, module_name: str, cost: float) -> bool:
+        """
+        检查模块费用是否超限。
+        
+        Returns:
+            True 如果超限，False 如果未超限
+        """
+        self.__init_module_costs()
+        if module_name not in MODULE_COST_LIMITS:
+            return False
+        
+        self._module_costs[module_name] += cost
+        limit = MODULE_COST_LIMITS[module_name]
+        
+        if self._module_costs[module_name] >= limit:
+            print(f"🚨 Module '{module_name}' cost exceeded: ${self._module_costs[module_name]:.4f} >= ${limit:.2f}")
+            return True
+        
+        # 警告：模块费用超过 80%
+        if self._module_costs[module_name] >= limit * 0.8:
+            print(f"⚠️  Module '{module_name}' cost warning: ${self._module_costs[module_name]:.4f} / ${limit:.2f}")
+        
+        return False
+
+    def update_cost(self, cost: float, allow_exceed: bool = False, reason: str = None, module: str = None):
         """
         更新累计成本并检查是否超限。
         
@@ -270,8 +309,15 @@ class CVEReproducer:
             cost: 本次操作的成本
             allow_exceed: 是否允许超出成本上限（仅用于关键结束阶段）
             reason: 允许超限的原因（用于日志记录）
+            module: 模块名称（用于模块级别费用限制）
         """
         self.total_cost += cost
+        
+        # 检查模块级别费用
+        if module:
+            self.__init_module_costs()
+            if module in MODULE_COST_LIMITS:
+                self._module_costs[module] = self._module_costs.get(module, 0) + cost
         
         # 警告阈值：当成本超过上限的80%时发出警告
         warning_threshold = MAX_COST * 0.8
@@ -374,6 +420,31 @@ class CVEReproducer:
                     "# 1) 📚 Running CVE Processor ...\n" \
                     "########################################\n")
                 
+                # 🔧 运行前清空 simulation_environments，避免残留目录干扰
+                import shutil
+                sim_env_dir = os.path.join(os.path.dirname(__file__), "simulation_environments")
+                if os.path.exists(sim_env_dir):
+                    print(f"🧹 Cleaning simulation_environments directory...")
+                    for item in os.listdir(sim_env_dir):
+                        item_path = os.path.join(sim_env_dir, item)
+                        try:
+                            if os.path.isdir(item_path):
+                                shutil.rmtree(item_path)
+                            else:
+                                os.remove(item_path)
+                        except Exception as e:
+                            print(f"⚠️  Failed to remove {item}: {e}")
+                    print(f"✅ Cleaned simulation_environments")
+                
+                # 🔧 重置命令检测器和上下文分析器，避免上一个 CVE 的状态影响当前运行
+                try:
+                    from toolbox.command_ops import reset_command_detector, reset_context_analyzer
+                    reset_command_detector()
+                    reset_context_analyzer()
+                    print(f"🔄 Reset command detector and context analyzer")
+                except ImportError:
+                    pass
+                
                 print("\n----------------------------------------\n" \
                     "- a) 📋 CVE Data Processor \n" \
                     "-------------------------------------------\n")
@@ -406,7 +477,10 @@ class CVEReproducer:
                 res = knowledge_builder.invoke().value
                 print(f"⛺️ Knowledge Base: '''\n{res}\n'''")
                 helper.save_response(self.cve_id, res, "knowledge_builder")
-                self.update_cost(knowledge_builder.get_cost())
+                kb_cost = knowledge_builder.get_cost()
+                self.update_cost(kb_cost, module="knowledge_builder")
+                if self.check_module_cost("knowledge_builder", kb_cost):
+                    print("🚨 Knowledge Builder 模块费用超限，但继续执行...")
                 print(f"✅ Knowledge Builder Done!")
             else:
                 try:
@@ -432,11 +506,15 @@ class CVEReproducer:
 
                 pre_req_builder = PreReqBuilder(
                     cve_knowledge = self.cve_knowledge,
-                    project_dir_tree = self.cve_info['dir_tree']
+                    project_dir_tree = self.cve_info['dir_tree'],
+                    cve_raw_data = self.cve_info  # 传递完整的 CVE 数据
                 )
                 res = pre_req_builder.invoke().value
                 helper.save_response(self.cve_id, res, "pre_req_builder", struct=True)
-                self.update_cost(pre_req_builder.get_cost())
+                prereq_cost = pre_req_builder.get_cost()
+                self.update_cost(prereq_cost, module="pre_req_builder")
+                if self.check_module_cost("pre_req_builder", prereq_cost):
+                    print("🚨 Pre-Req Builder 模块费用超限，但继续执行...")
                 print(f"✅ Pre-Requsites Builder Done!")
             else:
                 try:
@@ -601,7 +679,8 @@ class CVEReproducer:
                                     print("📋 Sending feedback to repo builder!")
                                     critic_feedback = res['feedback']
                                     repo_feedback = None # Reset repo feedback for critic iteration
-                                    repo_try = 0
+                                    # 🔧 修复：不再重置 repo_try，避免无限循环
+                                    # repo_try = 0  # 旧代码：会导致重试循环过多
                                 else:
                                     print("✅ Critic accepted the repo build!")
                                     # ------------------------------------------
@@ -609,7 +688,7 @@ class CVEReproducer:
                                     self.repo_build['time_left'] = TIMEOUT - (time.time() - self.start_time)
                                     helper.save_response(self.cve_id, self.repo_build, "repo_builder", struct=True)
                                     print(f"✅ Repo Builder Done!")
-                                self.update_cost(critic.get_cost(), allow_exceed=repo_done, reason="repo critic review")
+                                self.update_cost(critic.get_cost(), allow_exceed=repo_done, reason="repo critic review", module="repo_builder")
                             else:
                                 repo_done = True
                                 self.repo_build['time_left'] = TIMEOUT - (time.time() - self.start_time)
@@ -627,7 +706,12 @@ class CVEReproducer:
                                 critic_feedback = None
                             else:
                                 print("❌ Repo agent gave up!")
-                        self.update_cost(repo_builder.get_cost(), allow_exceed=repo_done, reason="repo build")
+                        repo_cost = repo_builder.get_cost()
+                        self.update_cost(repo_cost, allow_exceed=repo_done, reason="repo build", module="repo_builder")
+                        # 检查 RepoBuilder 模块费用是否超限
+                        if self.check_module_cost("repo_builder", repo_cost) and not repo_done:
+                            print("🚨 Repo Builder 模块费用超限，停止重试!")
+                            break
                     repo_try += 1
 
                 if not repo_done:
@@ -679,6 +763,15 @@ class CVEReproducer:
                 print("\n########################################\n" \
                     "# 6) 🚀 Running Exploiter ...\n" \
                     "########################################\n")
+                
+                # 🔧 修复 CVE-2024-8947: 重置命令失败检测器
+                # RepoBuilder 阶段的失败不应影响 Exploiter 阶段的命令执行
+                try:
+                    from toolbox.command_ops import reset_command_detector
+                    reset_command_detector()
+                    print("🔄 已重置命令失败检测器，Exploiter 可以重新尝试构建命令\n")
+                except ImportError:
+                    pass
                 
                 exploit_done = False
                 exploit_feedback, exploit_critic_feedback = None, None
@@ -780,7 +873,7 @@ class CVEReproducer:
                                     self.exploit['time_left'] = TIMEOUT - (time.time() - self.start_time)
                                     helper.save_response(self.cve_id, self.exploit, "exploiter", struct=True)
                                     print(f"✅ Exploiter Done!")
-                                self.update_cost(critic.get_cost(), allow_exceed=exploit_done, reason="exploit critic")
+                                self.update_cost(critic.get_cost(), allow_exceed=exploit_done, reason="exploit critic", module="exploiter")
                             else:
                                 exploit_done = True
                                 self.exploit['time_left'] = TIMEOUT - (time.time() - self.start_time)
@@ -798,7 +891,12 @@ class CVEReproducer:
                                 exploit_critic_feedback = None
                             else:
                                 print("❌ Exploiter gave up!")
-                        self.update_cost(exploiter.get_cost(), allow_exceed=exploit_done, reason="exploit execution")
+                        exploit_cost = exploiter.get_cost()
+                        self.update_cost(exploit_cost, allow_exceed=exploit_done, reason="exploit execution", module="exploiter")
+                        # 检查 Exploiter 模块费用是否超限
+                        if self.check_module_cost("exploiter", exploit_cost) and not exploit_done:
+                            print("🚨 Exploiter 模块费用超限，停止重试!")
+                            break
                     exploit_try += 1
                 
                 if not exploit_done:
@@ -903,7 +1001,7 @@ class CVEReproducer:
                                 verifier_done = True
                                 helper.save_response(self.cve_id, self.ctf_verifier, "ctf_verifier", struct=True)
                                 print("✅ Critic accepted the verifier!")
-                            self.update_cost(sanity_guy.get_cost(), allow_exceed=True, reason="sanity check in verification phase")
+                            self.update_cost(sanity_guy.get_cost(), allow_exceed=True, reason="sanity check in verification phase", module="ctf_verifier")
                         else:
                             verifier_done = True
                             helper.save_response(self.cve_id, self.ctf_verifier, "ctf_verifier", struct=True)
@@ -913,7 +1011,7 @@ class CVEReproducer:
                         print("📋 Sending output feedback to CTF Verifier ...")
                         ctf_feedback = f"Previous Code: ```\n{self.ctf_verifier['verifier']}\n```\n\nOutput Logs: '''\n{validator.feedback}\n'''"
                     try_itr += 1
-                    self.update_cost(ctf_verifier.get_cost(), allow_exceed=True, reason="CTF verifier iteration")
+                    self.update_cost(ctf_verifier.get_cost(), allow_exceed=True, reason="CTF verifier iteration", module="ctf_verifier")
                         
                 if not verifier_done:
                     print("❌ CTF Verifier failed!")
@@ -990,6 +1088,31 @@ if __name__ == "__main__":
     # ========== DAG 模式 ==========
     if args.dag:
         print("🚀 Running in DAG mode (new architecture)")
+        
+        # 🔧 运行前清空 simulation_environments，避免残留目录干扰
+        import shutil
+        sim_env_dir = os.path.join(os.path.dirname(__file__), "simulation_environments")
+        if os.path.exists(sim_env_dir):
+            print(f"🧹 Cleaning simulation_environments directory...")
+            for item in os.listdir(sim_env_dir):
+                item_path = os.path.join(sim_env_dir, item)
+                try:
+                    if os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+                    else:
+                        os.remove(item_path)
+                except Exception as e:
+                    print(f"⚠️  Failed to remove {item}: {e}")
+            print(f"✅ Cleaned simulation_environments")
+        
+        # 🔧 重置命令检测器和上下文分析器，避免上一个 CVE 的状态影响当前运行
+        try:
+            from toolbox.command_ops import reset_command_detector, reset_context_analyzer
+            reset_command_detector()
+            reset_context_analyzer()
+            print(f"🔄 Reset command detector and context analyzer")
+        except ImportError:
+            pass
         
         # 加载 CVE 数据
         if not args.json:

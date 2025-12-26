@@ -22,6 +22,53 @@ from agentlib.lib import tools
 SIMULATION_ENV_DIR = "/workspaces/submission/src/simulation_environments"
 
 
+# ==================== 自动经验学习 ====================
+def _auto_record_experience(framework: str, command: str, success: bool, error: str = "", work_dir: str = ""):
+    """
+    自动记录部署经验到经验库。
+    
+    这个函数会在 cleanup_and_start_service 完成时自动调用，
+    记录成功/失败的经验供未来任务参考。
+    """
+    try:
+        from toolbox.experience_library import get_experience_library
+        
+        library = get_experience_library()
+        
+        # 确定项目子类型
+        subtype = "web_service"
+        
+        experience_data = {
+            "command": command,
+            "success": success,
+            "error": error[:200] if error else "",
+            "work_dir": work_dir,
+            "lesson": "",
+            "solution": "",
+        }
+        
+        # 根据错误类型添加教训和解决方案
+        if not success and error:
+            if "InvalidGitRepositoryError" in error or "/tmp" in error:
+                experience_data["lesson"] = "源码项目必须在项目目录运行，不能在 /tmp"
+                experience_data["solution"] = "使用 project_path 参数指定正确的项目目录"
+            elif "ModuleNotFoundError" in error or "ImportError" in error:
+                experience_data["lesson"] = "缺少依赖包，需要先安装 requirements.txt"
+                experience_data["solution"] = "pip install -r requirements.txt"
+            elif "Address already in use" in error:
+                experience_data["lesson"] = "端口被占用，需要先清理"
+                experience_data["solution"] = "fuser -k {port}/tcp"
+            elif "HTTP" in error:
+                experience_data["lesson"] = f"服务启动但响应异常: {error}"
+        
+        library.record_experience(framework.lower(), subtype, experience_data)
+        print(f"🎓 自动学习: {framework} {'✅ 成功' if success else '❌ 失败'}")
+        
+    except Exception as e:
+        # 经验记录失败不应该影响主流程
+        print(f"⚠️ 经验记录失败 (非致命): {e}")
+
+
 def resolve_project_path(project_path: str) -> str:
     """
     智能解析项目路径，处理相对路径。
@@ -215,11 +262,14 @@ def detect_web_framework(project_path: str, sw_version: str = "") -> str:
     
     这个工具会分析项目结构，自动识别：
     - 框架类型 (MLflow, Django, Flask, FastAPI, etc.)
-    - 推荐的安装方式 (PyPI 优先于源码)
+    - 推荐的安装方式 (优先 requirements.txt，然后 PyPI，最后源码)
     - 正确的启动命令
     
+    ⚠️ 重要：sw_version 是软件版本（如 v9.4），不是框架版本！
+    不要把软件版本当作 pip install 的版本号。
+    
     :param project_path: 项目根目录路径（可以是相对路径，会自动解析到 simulation_environments）
-    :param sw_version: 软件版本号，如 "v2.20.1" 或 "2.20.1"
+    :param sw_version: 软件版本号，如 "v2.20.1" 或 "2.20.1"（仅供参考，不用于 pip install）
     :return: 框架信息的 JSON 字符串
     """
     import json
@@ -227,8 +277,10 @@ def detect_web_framework(project_path: str, sw_version: str = "") -> str:
     # 智能解析路径（处理相对路径）
     resolved_path = resolve_project_path(project_path)
     
-    # 解析版本号
-    version = re.sub(r'^v', '', sw_version) if sw_version else ""
+    # 注意：sw_version 是软件版本，不是框架版本！
+    # 例如 lollms-webui v9.4 使用的 FastAPI 版本可能是 0.95.0
+    # 不要把 sw_version 直接用于 pip install
+    sw_version_clean = re.sub(r'^v', '', sw_version) if sw_version else ""
     
     result = {
         'framework': 'unknown',
@@ -238,13 +290,40 @@ def detect_web_framework(project_path: str, sw_version: str = "") -> str:
         'notes': [],
         'confidence': 0.0,
         'resolved_path': resolved_path,  # 告诉 Agent 实际路径
+        'sw_version': sw_version,  # 原始软件版本，供参考
     }
     
     if not os.path.isdir(resolved_path):
         result['notes'].append(f"Warning: {resolved_path} is not a directory (original: {project_path})")
         return json.dumps(result, indent=2)
     
-    # 检测框架
+    # ========== 优先检查 requirements.txt（最可靠的安装方式）==========
+    requirements_path = os.path.join(resolved_path, 'requirements.txt')
+    has_requirements = os.path.exists(requirements_path)
+    if has_requirements:
+        result['install_method'] = 'requirements'
+        result['install_cmd'] = 'pip install -r requirements.txt'
+        result['notes'].append('✅ 检测到 requirements.txt，将使用此文件安装依赖')
+    
+    # ========== 检查启动脚本 ==========
+    # 优先查找项目自带的启动脚本/入口点
+    common_entry_points = [
+        ('app.py', 'python app.py --host 0.0.0.0 --port {port}'),
+        ('main.py', 'python main.py --host 0.0.0.0 --port {port}'),
+        ('run.py', 'python run.py'),
+        ('server.py', 'python server.py'),
+        ('start.sh', 'bash start.sh'),
+        ('backend/start.sh', 'cd backend && bash start.sh'),
+    ]
+    
+    for entry_file, start_cmd_template in common_entry_points:
+        entry_path = os.path.join(resolved_path, entry_file)
+        if os.path.exists(entry_path):
+            result['start_cmd'] = start_cmd_template.format(port=9600)
+            result['notes'].append(f'找到入口点: {entry_file}')
+            break
+    
+    # ========== 检测框架类型（用于确定启动命令）==========
     for framework, config in FRAMEWORK_PATTERNS.items():
         score = 0
         for file_pattern, regex in config['indicators']:
@@ -278,17 +357,31 @@ def detect_web_framework(project_path: str, sw_version: str = "") -> str:
         if score > result['confidence'] * 3:
             result['framework'] = framework
             result['confidence'] = min(1.0, score / 3)
-            result['start_cmd'] = config['start_cmd'].format(port=9600)
-            result['notes'] = config['notes'].copy()
             
-            # 确定安装方式
-            if config.get('pypi_name') and version:
-                result['install_method'] = 'pypi'
-                result['install_cmd'] = f"pip install {config['pypi_name']}=={version}"
-                result['notes'].insert(0, f"推荐从 PyPI 安装: {result['install_cmd']}")
-            else:
-                result['install_method'] = 'source'
-                result['install_cmd'] = config.get('install_cmd', 'pip install -e .')
+            # 更新启动命令（如果之前没有找到更好的入口点）
+            if result['start_cmd'] == 'python app.py':
+                result['start_cmd'] = config['start_cmd'].format(port=9600)
+            
+            # 添加框架特定的注意事项
+            for note in config['notes']:
+                if note not in result['notes']:
+                    result['notes'].append(note)
+            
+            # ========== 安装方式优先级：requirements.txt > 源码 > PyPI ==========
+            # 注意：不要把软件版本当作 PyPI 包版本！
+            # 例如 lollms-webui v9.4 的 FastAPI 版本不是 9.4
+            if not has_requirements:
+                # 只有没有 requirements.txt 时才考虑其他方式
+                if os.path.exists(os.path.join(resolved_path, 'setup.py')) or \
+                   os.path.exists(os.path.join(resolved_path, 'pyproject.toml')):
+                    result['install_method'] = 'source'
+                    result['install_cmd'] = 'pip install -e .'
+                    result['notes'].append('从源码安装（存在 setup.py/pyproject.toml）')
+                elif config.get('pypi_name'):
+                    # PyPI 安装 - 不指定版本，让 pip 选择兼容版本
+                    result['install_method'] = 'pypi'
+                    result['install_cmd'] = f"pip install {config['pypi_name']}"
+                    result['notes'].append(f"⚠️ 从 PyPI 安装框架（不指定版本）: {result['install_cmd']}")
     
     # 如果没检测到，尝试从 pyproject.toml 或 setup.py 获取名称
     if result['framework'] == 'unknown':
@@ -389,23 +482,33 @@ def cleanup_and_start_service(
     result['log_file'] = log_file
     
     # ========== 关键修复: 智能判断工作目录 ==========
-    # 如果是 PyPI 安装（mlflow, django 等）或框架自带命令（如 mlflow server），
-    # 不需要 cd 到源码目录，直接在 /tmp 运行更安全，避免 Python 从当前目录导入
-    # 只有需要从源码运行时（如 python app.py 或 bash start.sh）才需要 cd 到项目目录
+    # 基本原则：
+    # 1. 如果有实际项目目录且需要从源码运行 → 在项目目录
+    # 2. 如果是纯 PyPI 框架命令（如 mlflow server）→ 在 /tmp
+    # 
+    # 修复 Bug：之前把 uvicorn app:app 误判为"框架命令"，导致在 /tmp 运行失败
+    # 实际上 uvicorn 命令也可能需要在项目目录运行（import 项目代码）
     
-    is_framework_cmd = any(fw in start_cmd.lower() for fw in ['mlflow', 'django', 'flask', 'uvicorn', 'streamlit'])
-    is_pip_installed = framework.lower() in FRAMEWORK_PATTERNS and FRAMEWORK_PATTERNS[framework.lower()].get('pypi_name')
+    # 检查是否有源码项目（包含常见项目文件）
+    has_source_project = os.path.isdir(resolved_project_path) and any(
+        os.path.exists(os.path.join(resolved_project_path, f))
+        for f in ['app.py', 'main.py', 'requirements.txt', 'setup.py', 'pyproject.toml', 'server.py']
+    )
     
-    # 检查命令是否需要项目目录（如 bash xxx.sh, python app.py 等）
-    needs_project_dir = any(pattern in start_cmd.lower() for pattern in [
-        'bash ', 'sh ', 'python ', './', '/'
-    ]) and not is_framework_cmd
+    # 只有这些纯框架服务才适合在 /tmp 运行（不依赖项目源码）
+    pure_framework_cmds = ['mlflow server', 'mlflow ui', 'django-admin', 'streamlit hello']
+    is_pure_framework = any(cmd in start_cmd.lower() for cmd in pure_framework_cmds)
     
-    if is_framework_cmd or is_pip_installed:
-        # 框架命令或 PyPI 安装的包，在干净目录运行
+    # ⚠️ 即使命令包含 uvicorn/flask/gunicorn，只要有源码项目就应该在项目目录运行
+    if has_source_project and not is_pure_framework:
+        # 有源码项目，在项目目录运行
+        work_dir = resolved_project_path
+        print(f"[cleanup_and_start_service] Using project directory: {work_dir} (has source files)")
+    elif is_pure_framework:
+        # 纯框架命令（如 mlflow server），在干净目录运行
         work_dir = "/tmp"
-        print(f"[cleanup_and_start_service] Using clean directory: {work_dir} (framework command or PyPI install)")
-    elif needs_project_dir or os.path.isdir(resolved_project_path):
+        print(f"[cleanup_and_start_service] Using clean directory: {work_dir} (pure framework command)")
+    elif os.path.isdir(resolved_project_path):
         # 需要源码的项目，cd 到项目目录
         work_dir = resolved_project_path
         print(f"[cleanup_and_start_service] Using project directory: {work_dir}")
@@ -453,10 +556,19 @@ def cleanup_and_start_service(
             result['message'] = f"进程启动后立即退出。日志:\n{log_proc.stdout}"
             
             # 诊断错误
+            error_msg = ""
             for pattern, diagnosis in ERROR_DIAGNOSIS.items():
                 if re.search(pattern, log_proc.stdout, re.IGNORECASE):
                     result['message'] += f"\n\n诊断: {diagnosis['cause']}\n建议: {diagnosis['fix']}"
+                    error_msg = diagnosis['cause']
                     break
+            
+            # 🎓 自动记录失败经验
+            _auto_record_experience(
+                framework, start_cmd, False, 
+                error_msg or log_proc.stdout[:200], 
+                work_dir
+            )
             
             return json.dumps(result, indent=2, ensure_ascii=False)
         
@@ -468,15 +580,23 @@ def cleanup_and_start_service(
         if http_code in ['200', '302', '301', '401', '403']:
             result['success'] = True
             result['message'] = f"服务启动成功! HTTP 状态码: {http_code}"
+            
+            # 🎓 自动记录成功经验
+            _auto_record_experience(framework, start_cmd, True, "", work_dir)
         elif http_code == '000':
             result['message'] = f"服务可能还在启动中，HTTP 请求超时。建议等待更长时间后重试 curl。"
         else:
             result['message'] = f"服务可能有问题，HTTP 状态码: {http_code}"
             
+            # 🎓 自动记录失败经验
+            _auto_record_experience(framework, start_cmd, False, f"HTTP {http_code}", work_dir)
+            
     except subprocess.TimeoutExpired:
         result['message'] = "启动命令超时"
+        _auto_record_experience(framework, start_cmd, False, "启动超时", work_dir)
     except Exception as e:
         result['message'] = f"启动失败: {str(e)}"
+        _auto_record_experience(framework, start_cmd, False, str(e), work_dir)
     
     return json.dumps(result, indent=2, ensure_ascii=False)
 

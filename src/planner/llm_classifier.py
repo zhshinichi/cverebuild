@@ -265,6 +265,18 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
         'sas token', 'sas url', 'signed url', 'presigned', 'access token',
     ]
     
+    # 云原生/基础设施关键词 - 这类漏洞需要完整的集群环境，无法在容器中复现
+    CLOUD_INFRASTRUCTURE_KEYWORDS = [
+        # 云编排工具
+        'juju', 'charm', 'canonical', 'lxd', 'lxc', 'microk8s', 'maas',
+        # Kubernetes 相关
+        'kubernetes', 'k8s', 'kubectl', 'helm', 'operator',
+        # 云服务
+        'terraform', 'pulumi', 'cloudformation', 'ansible',
+        # 虚拟化
+        'openstack', 'vmware', 'hypervisor', 'kvm', 'qemu',
+    ]
+    
     def __init__(self, config: Optional[LLMClassifierConfig] = None) -> None:
         self.config = config or LLMClassifierConfig()
         super().__init__(self.config)
@@ -338,6 +350,7 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
             'is_hardware': False,
             'is_library_project': False,  # 新增：是否是类库项目
             'is_logic_vulnerability': False,  # 新增：是否是逻辑漏洞
+            'is_cloud_infrastructure': False,  # 新增：是否是云基础设施漏洞（需要完整集群环境）
         }
         
         # 从 cve_entry 提取基本信息
@@ -392,6 +405,13 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
             if keyword in combined:
                 context['is_logic_vulnerability'] = True
                 context['tech_indicators'].append(f"逻辑漏洞: {keyword}")
+                break
+        
+        # 🟢 新增：检测是否是云基础设施漏洞（需要完整集群环境）
+        for keyword in self.CLOUD_INFRASTRUCTURE_KEYWORDS:
+            if keyword in combined:
+                context['is_cloud_infrastructure'] = True
+                context['tech_indicators'].append(f"云基础设施: {keyword}")
                 break
         
         # 🟢 新增：从补丁文件名检测项目类型
@@ -554,6 +574,26 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
                 execution_mode="freestyle",
             )
         
+        # 🟢 1.5 云基础设施检测（需要完整集群环境，跳过自动复现）
+        if context['is_cloud_infrastructure']:
+            matched_keyword = next((kw for kw in self.CLOUD_INFRASTRUCTURE_KEYWORDS 
+                                    if kw in str(cve_entry).lower()), 'unknown')
+            print(f"   ☁️ 检测到云基础设施漏洞 ({matched_keyword})，需要完整集群环境")
+            return ClassifierDecision(
+                cve_id=cve_id,
+                profile="cloud-config",
+                confidence=0.0,  # 置信度设为0表示不应该自动复现
+                required_capabilities=[],
+                resource_hints={
+                    "skip_reproduction": True,
+                    "is_cloud_infrastructure": True,
+                    "needs_browser": False,
+                    "data_quality_issue": f"Requires full {matched_keyword} cluster environment - cannot reproduce in container",
+                    "reproduction_hint": f"此漏洞需要完整的 {matched_keyword} 集群环境，无法在容器中自动复现",
+                },
+                execution_mode="freestyle",
+            )
+        
         # 🟢 2. 类库项目检测（优先于 Web 产品检测）
         if context['is_library_project']:
             print(f"   📚 检测到类库项目，分类为 native-local")
@@ -617,6 +657,28 @@ class LLMVulnerabilityClassifier(VulnerabilityClassifier):
                 confidence=0.9,
                 required_capabilities=self._infer_capabilities("iot-firmware"),
                 resource_hints={"is_hardware": True, "needs_browser": False},
+                execution_mode="freestyle",
+            )
+        
+        # ===== 云基础设施检测（需要完整集群环境，跳过自动复现）=====
+        if context['is_cloud_infrastructure']:
+            matched_keyword = next((kw for kw in self.CLOUD_INFRASTRUCTURE_KEYWORDS 
+                                    if kw in str(cve_entry).lower()), 'unknown')
+            print(f"\n🔍 分类 {cve_id}...")
+            print(f"   ☁️ 检测到云基础设施漏洞 ({matched_keyword})，需要完整集群环境")
+            print(f"   → 跳过复现 (skip_reproduction=True)")
+            return ClassifierDecision(
+                cve_id=cve_id,
+                profile="cloud-config",
+                confidence=0.0,
+                required_capabilities=[],
+                resource_hints={
+                    "skip_reproduction": True,
+                    "is_cloud_infrastructure": True,
+                    "needs_browser": False,
+                    "data_quality_issue": f"Requires full {matched_keyword} cluster environment - cannot reproduce in container",
+                    "reproduction_hint": f"此漏洞需要完整的 {matched_keyword} 集群环境，无法在容器中自动复现",
+                },
                 execution_mode="freestyle",
             )
         

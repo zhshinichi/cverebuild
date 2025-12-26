@@ -88,17 +88,61 @@ class PreReqBuilder(AgentWithHistory[dict, str]):
 
     CVE_KNOWLEDGE: Optional[str]
     PROJECT_DIR_TREE: Optional[str]
+    CVE_RAW_DATA: Optional[dict]  # 新增：CVE 原始结构化数据
+    DETECTED_LANGUAGE: Optional[str]  # 新增：检测到的语言
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.CVE_KNOWLEDGE = kwargs.get('cve_knowledge')
         self.PROJECT_DIR_TREE = kwargs.get('project_dir_tree')
+        self.CVE_RAW_DATA = kwargs.get('cve_raw_data', {})
+        
+        # 从 patch 文件路径自动检测语言
+        self.DETECTED_LANGUAGE = self._detect_language_from_patches()
+    
+    def _detect_language_from_patches(self) -> Optional[str]:
+        """从 patch 文件路径中检测编程语言"""
+        if not self.CVE_RAW_DATA:
+            return None
+        
+        patches = self.CVE_RAW_DATA.get('patch_commits', [])
+        for patch in patches:
+            content = patch.get('content', '')
+            
+            # 检查文件路径模式
+            if '/java/' in content or '.java' in content or 'pom.xml' in content:
+                return 'java'
+            elif '/python/' in content or '.py' in content or 'setup.py' in content or 'requirements.txt' in content:
+                return 'python'
+            elif '/cpp/' in content or '/cc/' in content or '.cpp' in content or '.cc' in content or 'CMakeLists.txt' in content:
+                return 'cpp'
+            elif '/go/' in content or '.go' in content or 'go.mod' in content:
+                return 'go'
+            elif '/js/' in content or '.js' in content or '.ts' in content or 'package.json' in content:
+                return 'javascript'
+            elif '/cs/' in content or '.cs' in content or '.csproj' in content:
+                return 'csharp'
+        
+        return None
     
     def get_input_vars(self, *args, **kwargs) -> dict:
         vars = super().get_input_vars(*args, **kwargs)
+        
+        # 构建语言提示信息
+        language_hint = ""
+        if self.DETECTED_LANGUAGE:
+            language_hint = f"\n\n⚠️ IMPORTANT: This project is a **{self.DETECTED_LANGUAGE.upper()}** project (detected from patch files).\n"
+            if self.DETECTED_LANGUAGE == 'java':
+                language_hint += "- Use Maven/Gradle for dependency management\n"
+                language_hint += "- Protobuf version 28.x corresponds to protobuf-java:3.28.x\n"
+            elif self.DETECTED_LANGUAGE == 'python':
+                language_hint += "- Use pip for dependency management\n"
+                language_hint += "- C++/Java protobuf v28.x corresponds to Python protobuf ~5.28.x\n"
+        
         vars.update(
-            CVE_KNOWLEDGE = self.CVE_KNOWLEDGE,
-            PROJECT_DIR_TREE = self.PROJECT_DIR_TREE
+            CVE_KNOWLEDGE = self.CVE_KNOWLEDGE + language_hint,
+            PROJECT_DIR_TREE = self.PROJECT_DIR_TREE,
+            DETECTED_LANGUAGE = self.DETECTED_LANGUAGE or 'unknown'
         )
         return vars
 

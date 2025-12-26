@@ -48,38 +48,75 @@ class MyParser(BaseParser):
         )
         return fixed_text
     
-    def raise_format_error(self) -> None:
-        raise ValueError(f'🤡 Output format is not correct!!')
+    def _get_tag(self, tag: str, text: str) -> Optional[str]:
+        """Helper to extract content from tags with robustness."""
+        # Case-insensitive search, handle whitespace, DOTALL for multiline content
+        pattern = f'<{tag}>(.*?)</{tag}>'
+        match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+        return match.group(1).strip() if match else None
 
     def parse(self, text: str) -> dict:
         try_itr = 1
+        raw_text = text
+        
         while try_itr <= self.MAX_FIX_FORMAT_TRIES:
             try:
-                m = re.search(r'<analysis>(.*?)</analysis>', text, re.DOTALL)
-                analysis = m.group(1) if m else self.raise_format_error()
-                m = re.search(r'<decision>(.*?)</decision>', text, re.DOTALL)
-                decision = m.group(1) if m else self.raise_format_error()
-                if decision not in ['yes', 'no']:
-                    raise ValueError(f'🤡 Decision must be either "yes" or "no", got: {decision}')
-                m = re.search(r'<possible>(.*?)</possible>', text, re.DOTALL)
-                possible = m.group(1) if m else self.raise_format_error()
-                if possible not in ['yes', 'no', 'n/a']:
-                    raise ValueError(f'🤡 Possible must be either "yes" or "no", got: {possible}')
-                m = re.search(r'<feedback>(.*?)</feedback>', text, re.DOTALL)
-                feedback = m.group(1) if m else self.raise_format_error()
-                print(f"🪖 Critic Response: '''\n{text}\n'''")
+                analysis = self._get_tag('analysis', text)
+                decision = self._get_tag('decision', text)
+                possible = self._get_tag('possible', text)
+                feedback = self._get_tag('feedback', text)
+
+                # Check if any tag is missing
+                missing_tags = [t for t, v in [('analysis', analysis), ('decision', decision), 
+                                             ('possible', possible), ('feedback', feedback)] if v is None]
+                if missing_tags:
+                    raise ValueError(f'Missing tags: {", ".join(missing_tags)}')
+
+                # Validate and normalize decision
+                decision = decision.lower()
+                if 'yes' in decision:
+                    decision = 'yes'
+                elif 'no' in decision:
+                    decision = 'no'
+                else:
+                    raise ValueError(f'Invalid decision: {decision}')
+
+                # Validate and normalize possible
+                possible = possible.lower()
+                if 'yes' in possible:
+                    possible = 'yes'
+                elif 'no' in possible:
+                    possible = 'no'
+                elif 'n/a' in possible:
+                    possible = 'n/a'
+                else:
+                    possible = 'no' # Default to no if unclear
+
+                print(f"🪖 Critic Response: '''\n{text[:500]}...\n'''")
                 print(f'✅ Successfully parsed the output!')
+                
                 return dict(
-                    analysis=analysis.strip(),
-                    decision=decision.strip(),
-                    possible=possible.strip(),
-                    feedback=feedback.strip()
+                    analysis=analysis,
+                    decision=decision,
+                    possible=possible,
+                    feedback=feedback
                 )
+
             except Exception as e:
-                print(f'🤡 Regex Error: {e}')
-                print(f'🤡 Trying to fix the format ... Attempt {try_itr}!!')
-                text = self.fix_patch_format(text)
+                print(f'🤡 Parsing Error: {e}')
+                if try_itr < self.MAX_FIX_FORMAT_TRIES:
+                    print(f'🤡 Trying to fix the format ... Attempt {try_itr}!!')
+                    text = self.fix_patch_format(text)
                 try_itr += 1
+
+        # Final Fallback to prevent system crash
+        print(f"⚠️ Failed to parse RepoCritic output after {self.MAX_FIX_FORMAT_TRIES} attempts. Using fallback.")
+        return dict(
+            analysis=f"FAILED_TO_PARSE: {raw_text[:200]}...",
+            decision="no",
+            possible="yes",
+            feedback="The critic's output was malformed and could not be parsed automatically. Please ensure the output follows the <tag> format strictly."
+        )
 
 class RepoCritic(AgentWithHistory[dict, str]):
     __LLM_MODEL__ = 'o3'

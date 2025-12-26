@@ -1,0 +1,2150 @@
+{
+  "summary": {
+    "total": 841,
+    "traditional": 145,
+    "uncertain": 114,
+    "web": 582
+  },
+  "traditional_cves": [
+    {
+      "cve_id": "CVE-2024-2914",
+      "software": "v0.26.0",
+      "vuln_type": "CWE-29 Path Traversal: '\\..\\filename'",
+      "description": "A TarSlip vulnerability exists in the deepjavalibrary/djl, affecting version 0.26.0 and fixed in ver"
+    },
+    {
+      "cve_id": "CVE-2024-6782",
+      "software": "v7.14.0",
+      "vuln_type": "CWE-863 Incorrect Authorization",
+      "description": "Improper access control in Calibre 6.9.0 ~ 7.14.0 allow unauthenticated attackers to achieve remote "
+    },
+    {
+      "cve_id": "CVE-2024-7254",
+      "software": "v28.1",
+      "vuln_type": "CWE-20 Improper Input Validation",
+      "description": "Any project that parses untrusted Protocol Buffers data containing an arbitrary number of nested gro"
+    },
+    {
+      "cve_id": "CVE-2024-3935",
+      "software": "v2.0.18",
+      "vuln_type": "CWE-415 Double Free",
+      "description": "In Eclipse Mosquito, versions from 2.0.0 through 2.0.18, if a Mosquitto broker is configured to crea"
+    },
+    {
+      "cve_id": "CVE-2024-3651",
+      "software": "v3.6",
+      "vuln_type": "CWE-400 Uncontrolled Resource Consumption",
+      "description": "A vulnerability was identified in the kjd/idna library, specifically within the `idna.encode()` func"
+    },
+    {
+      "cve_id": "CVE-2024-3829",
+      "software": "v1.8.4",
+      "vuln_type": "CWE-20 Improper Input Validation",
+      "description": "qdrant/qdrant version 1.9.0-dev is vulnerable to arbitrary file read and write during the snapshot r"
+    },
+    {
+      "cve_id": "CVE-2024-3760",
+      "software": "v1.2.7",
+      "vuln_type": "CWE-770 Allocation of Resources Without Limits or Throttling",
+      "description": "In lunary-ai/lunary version 1.2.7, there is a lack of rate limiting on the forgot password page, lea"
+    },
+    {
+      "cve_id": "CVE-2024-50349",
+      "software": "v2.40.3",
+      "vuln_type": "CWE-116: Improper Encoding or Escaping of Output",
+      "description": "Git is a fast, scalable, distributed revision control system with an unusually rich command set that"
+    },
+    {
+      "cve_id": "CVE-2024-35235",
+      "software": "v2.4.8",
+      "vuln_type": "CWE-59: Improper Link Resolution Before File Access ('Link Following')",
+      "description": "OpenPrinting CUPS is an open source printing system for Linux and other Unix-like operating systems."
+    },
+    {
+      "cve_id": "CVE-2024-35227",
+      "software": "v3.2.2",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "Discourse is an open-source discussion platform. Prior to version 3.2.3 on the `stable` branch and v"
+    },
+    {
+      "cve_id": "CVE-2024-8948",
+      "software": "v1.23.0",
+      "vuln_type": "Heap-based Buffer Overflow",
+      "description": "A vulnerability was found in MicroPython 1.23.0. It has been rated as critical. Affected by this iss"
+    },
+    {
+      "cve_id": "CVE-2024-8765",
+      "software": "v1.4.22",
+      "vuln_type": "CWE-41 Improper Resolution of Path Equivalence",
+      "description": "In lunary-ai/lunary, the privilege check mechanism is flawed in version git afc5df4. The system inco"
+    },
+    {
+      "cve_id": "CVE-2024-8947",
+      "software": "v1.22.2",
+      "vuln_type": "Use After Free",
+      "description": "A vulnerability was found in MicroPython 1.22.2. It has been declared as critical. Affected by this "
+    },
+    {
+      "cve_id": "CVE-2024-8946",
+      "software": "v1.23.0",
+      "vuln_type": "Heap-based Buffer Overflow",
+      "description": "A vulnerability was found in MicroPython 1.23.0. It has been classified as critical. Affected is the"
+    },
+    {
+      "cve_id": "CVE-2024-40635",
+      "software": "v1.6.37",
+      "vuln_type": "CWE-190: Integer Overflow or Wraparound",
+      "description": "containerd is an open-source container runtime. A bug was found in containerd prior to versions 1.6."
+    },
+    {
+      "cve_id": "CVE-2024-11193",
+      "software": "v2.20.6.0",
+      "vuln_type": "CWE-532: Information Exposure Through Log Files",
+      "description": "An information disclosure vulnerability exists in Yugabyte Anywhere, where the LDAP bind password is"
+    },
+    {
+      "cve_id": "CVE-2024-11407",
+      "software": "v1.66.1",
+      "vuln_type": "CWE-682 Incorrect Calculation",
+      "description": "There exists a denial of service through Data corruption in gRPC-C++ - gRPC-C++ servers with transmi"
+    },
+    {
+      "cve_id": "CVE-2024-11165",
+      "software": "v2.20.6.0",
+      "vuln_type": "CWE-532: Information Exposure Through Log Files",
+      "description": "An information disclosure vulnerability exists in the backup configuration process where the SAS tok"
+    },
+    {
+      "cve_id": "CVE-2024-11172",
+      "software": "v0.7.6-rc1",
+      "vuln_type": "CWE-400 Uncontrolled Resource Consumption",
+      "description": "A vulnerability in danny-avila/librechat version git a1647d7 allows an unauthenticated attacker to c"
+    },
+    {
+      "cve_id": "CVE-2024-54148",
+      "software": "v0.13.1-rc.1",
+      "vuln_type": "CWE-61: UNIX Symbolic Link (Symlink) Following",
+      "description": "Gogs is an open source self-hosted Git service. A malicious user is able to commit and edit a crafte"
+    },
+    {
+      "cve_id": "CVE-2024-21542",
+      "software": "v3.5.2",
+      "vuln_type": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "description": "Versions of the package luigi before 3.6.0 are vulnerable to Arbitrary File Write via Archive Extrac"
+    },
+    {
+      "cve_id": "CVE-2024-21537",
+      "software": "v3.1.0",
+      "vuln_type": "Arbitrary Code Execution",
+      "description": "Versions of the package lilconfig from 3.1.0 and before 3.1.1 are vulnerable to Arbitrary Code Execu"
+    },
+    {
+      "cve_id": "CVE-2024-55947",
+      "software": "v0.13.1-rc.1",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "Gogs is an open source self-hosted Git service. A malicious user is able to write a file to an arbit"
+    },
+    {
+      "cve_id": "CVE-2024-55953",
+      "software": "v1.18.26",
+      "vuln_type": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+      "description": "DataEase is an open source business analytics tool. Authenticated users can read and deserialize arb"
+    },
+    {
+      "cve_id": "CVE-2024-45595",
+      "software": "v3.14.0",
+      "vuln_type": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+      "description": "D-Tale is a visualizer for Pandas data structures. Users hosting D-Tale publicly can be vulnerable t"
+    },
+    {
+      "cve_id": "CVE-2024-45306",
+      "software": "v9.1.0038",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "Vim is an open source, command line text editor. Patch v9.1.0038 optimized how the cursor position i"
+    },
+    {
+      "cve_id": "CVE-2024-45054",
+      "software": "v0.14.5",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Hwameistor is an HA local storage system for cloud-native stateful workloads. This ClusterRole has *"
+    },
+    {
+      "cve_id": "CVE-2024-45309",
+      "software": "v11.0.8",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "OneDev is a Git server with CI/CD, kanban, and packages. A vulnerability in versions prior to 11.0.9"
+    },
+    {
+      "cve_id": "CVE-2024-51738",
+      "software": "v0.23.1",
+      "vuln_type": "CWE-305: Authentication Bypass by Primary Weakness",
+      "description": "Sunshine is a self-hosted game stream host for Moonlight. In 0.23.1 and earlier, Sunshine's pairing "
+    },
+    {
+      "cve_id": "CVE-2024-51756",
+      "software": "v3.4.0",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "The cap-std project is organized around the eponymous `cap-std` crate, and develops libraries to mak"
+    },
+    {
+      "cve_id": "CVE-2024-51737",
+      "software": "v2.0.0",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "RediSearch is a Redis module that provides querying, secondary indexing, and full-text search for Re"
+    },
+    {
+      "cve_id": "CVE-2024-9287",
+      "software": "v3.9.20",
+      "vuln_type": "CWE-428 Unquoted Search Path or Element",
+      "description": "A vulnerability has been found in the CPython `venv` module and CLI where path names provided when c"
+    },
+    {
+      "cve_id": "CVE-2024-41952",
+      "software": "v2.53.0",
+      "vuln_type": "CWE-203: Observable Discrepancy",
+      "description": "Zitadel is an open source identity management system. ZITADEL administrators can enable a setting ca"
+    },
+    {
+      "cve_id": "CVE-2024-41820",
+      "software": "v0.17.5",
+      "vuln_type": "CWE-732: Incorrect Permission Assignment for Critical Resource",
+      "description": "Kubean is a cluster lifecycle management toolchain based on kubespray and other cluster LCM engine. "
+    },
+    {
+      "cve_id": "CVE-2024-41965",
+      "software": "v9.1.0647",
+      "vuln_type": "CWE-416: Use After Free",
+      "description": "Vim is an open source command line text editor. double-free in dialog_changed() in Vim < v9.1.0648. "
+    },
+    {
+      "cve_id": "CVE-2024-41815",
+      "software": "v1.0.0",
+      "vuln_type": "CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "description": "Starship is a cross-shell prompt. Starting in version 1.0.0 and prior to version 1.20.0, undocumente"
+    },
+    {
+      "cve_id": "CVE-2024-41950",
+      "software": "v2.3.1-rc1",
+      "vuln_type": "CWE-1336: Improper Neutralization of Special Elements Used in a Template Engine",
+      "description": "Haystack is an end-to-end LLM framework that allows you to build applications powered by LLMs, Trans"
+    },
+    {
+      "cve_id": "CVE-2024-41956",
+      "software": "v0.7.4",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "Soft Serve is a self-hostable Git server for the command line. Prior to 0.7.5, it is possible for a "
+    },
+    {
+      "cve_id": "CVE-2024-41957",
+      "software": "v9.1.0646",
+      "vuln_type": "CWE-415: Double Free",
+      "description": "Vim is an open source command line text editor. Vim < v9.1.0647 has double free in src/alloc.c:616. "
+    },
+    {
+      "cve_id": "CVE-2024-10188",
+      "software": "v1.53.1.dev1",
+      "vuln_type": "CWE-400 Uncontrolled Resource Consumption",
+      "description": "A vulnerability in BerriAI/litellm, as of commit 26c03c9, allows unauthenticated users to cause a De"
+    },
+    {
+      "cve_id": "CVE-2024-10273",
+      "software": "v1.5.6",
+      "vuln_type": "CWE-269 Improper Privilege Management",
+      "description": "In lunary-ai/lunary v1.5.0, improper privilege management in the models.ts file allows users with vi"
+    },
+    {
+      "cve_id": "CVE-2024-10525",
+      "software": "v2.0.18",
+      "vuln_type": "CWE-122 Heap-based Buffer Overflow",
+      "description": "In Eclipse Mosquitto, from version 1.3.2 through 2.0.18, if a malicious broker sends a crafted SUBAC"
+    },
+    {
+      "cve_id": "CVE-2024-56406",
+      "software": "v5.41.10",
+      "vuln_type": "CWE-122 Heap-based Buffer Overflow",
+      "description": "A heap buffer overflow vulnerability was discovered in Perl. \n\nRelease branches 5.34, 5.36, 5.38 and"
+    },
+    {
+      "cve_id": "CVE-2024-56138",
+      "software": "v1.3.0-rc.1",
+      "vuln_type": "CWE-299: Improper Check for Certificate Revocation",
+      "description": "notion-go is a collection of libraries for supporting sign and verify OCI artifacts. Based on Notary"
+    },
+    {
+      "cve_id": "CVE-2024-52587",
+      "software": "v2.10.1",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "StepSecurity's Harden-Runner provides network egress filtering and runtime security for GitHub-hoste"
+    },
+    {
+      "cve_id": "CVE-2024-52524",
+      "software": "v2.15.4",
+      "vuln_type": "CWE-1333: Inefficient Regular Expression Complexity",
+      "description": "Giskard is an evaluation and testing framework for AI systems. A Remote Code Execution (ReDoS) vulne"
+    },
+    {
+      "cve_id": "CVE-2024-52811",
+      "software": "v1.9.0",
+      "vuln_type": "CWE-670: Always-Incorrect Control Flow Implementation",
+      "description": "The ngtcp2 project is an effort to implement IETF QUIC protocol in C. In affected versions acks are "
+    },
+    {
+      "cve_id": "CVE-2024-52522",
+      "software": "v1.59.0",
+      "vuln_type": "CWE-59: Improper Link Resolution Before File Access ('Link Following')",
+      "description": "Rclone is a command-line program to sync files and directories to and from different cloud storage p"
+    },
+    {
+      "cve_id": "CVE-2024-52296",
+      "software": "v2.3.0",
+      "vuln_type": "CWE-476: NULL Pointer Dereference",
+      "description": "libosdp is an implementation of IEC 60839-11-5 OSDP (Open Supervised Device Protocol) and provides a"
+    },
+    {
+      "cve_id": "CVE-2024-52803",
+      "software": "v0.9.0",
+      "vuln_type": "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+      "description": "LLama Factory enables fine-tuning of large language models. A critical remote OS command injection v"
+    },
+    {
+      "cve_id": "CVE-2024-37306",
+      "software": "v2.2.0",
+      "vuln_type": "CWE-352: Cross-Site Request Forgery (CSRF)",
+      "description": "Computer Vision Annotation Tool (CVAT) is an interactive video and image annotation tool for compute"
+    },
+    {
+      "cve_id": "CVE-2024-37157",
+      "software": "v3.2.2",
+      "vuln_type": "CWE-918: Server-Side Request Forgery (SSRF)",
+      "description": "Discourse is an open-source discussion platform. Prior to version 3.2.3 on the `stable` branch and v"
+    },
+    {
+      "cve_id": "CVE-2024-37904",
+      "software": "v0.0.51",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "Minder is an open source Software Supply Chain Security Platform. Minder's Git provider is vulnerabl"
+    },
+    {
+      "cve_id": "CVE-2024-37299",
+      "software": "v3.2.4",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "Discourse is an open source discussion platform. Prior to 3.2.5 and 3.3.0.beta5, crafting requests t"
+    },
+    {
+      "cve_id": "CVE-2024-42482",
+      "software": "v1.6.11",
+      "vuln_type": "CWE-140: Improper Neutralization of Delimiters",
+      "description": "fish-shop/syntax-check is a GitHub action for syntax checking fish shell files. Improper neutralizat"
+    },
+    {
+      "cve_id": "CVE-2024-42355",
+      "software": "v6.5.8.12",
+      "vuln_type": "CWE-1336: Improper Neutralization of Special Elements Used in a Template Engine",
+      "description": "Shopware, an open ecommerce platform, has a new Twig Tag `sw_silent_feature_call` which silences dep"
+    },
+    {
+      "cve_id": "CVE-2024-42368",
+      "software": "v0.80.0",
+      "vuln_type": "CWE-208: Observable Timing Discrepancy",
+      "description": "OpenTelemetry, also known as OTel, is a vendor-neutral open source Observability framework for instr"
+    },
+    {
+      "cve_id": "CVE-2024-53260",
+      "software": "v3.0.2",
+      "vuln_type": "CWE-1236: Improper Neutralization of Formula Elements in a CSV File",
+      "description": "Autolab is a course management service that enables auto-graded programming assignments. A user can "
+    },
+    {
+      "cve_id": "CVE-2024-53866",
+      "software": "v9.14.4",
+      "vuln_type": "CWE-426: Untrusted Search Path",
+      "description": "The package manager pnpm prior to version 9.15.0 seems to mishandle overrides and global cache: Over"
+    },
+    {
+      "cve_id": "CVE-2024-53256",
+      "software": "v0.7.3",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "Rizin is a UNIX-like reverse engineering framework and command-line toolset. `rizin.c` still had an "
+    },
+    {
+      "cve_id": "CVE-2024-53263",
+      "software": "v0.1.0",
+      "vuln_type": "CWE-74: Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+      "description": "Git LFS is a Git extension for versioning large files. When Git LFS requests credentials from Git fo"
+    },
+    {
+      "cve_id": "CVE-2024-36122",
+      "software": "v3.2.2",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Discourse is an open-source discussion platform. Prior to version 3.2.3 on the `stable` branch and v"
+    },
+    {
+      "cve_id": "CVE-2024-36113",
+      "software": "v3.2.2",
+      "vuln_type": "CWE-862: Missing Authorization",
+      "description": "Discourse is an open-source discussion platform. Prior to version 3.2.3 on the `stable` branch, vers"
+    },
+    {
+      "cve_id": "CVE-2024-12704",
+      "software": "v0.12.5",
+      "vuln_type": "CWE-755 Improper Handling of Exceptional Conditions",
+      "description": "A vulnerability in the LangChainLLM class of the run-llama/llama_index repository, version v0.12.5, "
+    },
+    {
+      "cve_id": "CVE-2024-43380",
+      "software": "v1.11.0",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "fugit contains time tools for flor and the floraison group. The fugit \"natural\" parser, that turns \""
+    },
+    {
+      "cve_id": "CVE-2024-43790",
+      "software": "v9.1.0688",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "Vim is an open source command line text editor. When performing a search and displaying the search-c"
+    },
+    {
+      "cve_id": "CVE-2024-43374",
+      "software": "v9.1.0677",
+      "vuln_type": "CWE-416: Use After Free",
+      "description": "The UNIX editor Vim prior to version 9.1.0678 has a use-after-free error in argument list handling. "
+    },
+    {
+      "cve_id": "CVE-2024-43405",
+      "software": "v3.0.0",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "Nuclei is a vulnerability scanner powered by YAML based templates. Starting in version 3.0.0 and pri"
+    },
+    {
+      "cve_id": "CVE-2024-43802",
+      "software": "v9.1.0696",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "Vim is an improved version of the unix vi text editor. When flushing the typeahead buffer, Vim moves"
+    },
+    {
+      "cve_id": "CVE-2024-32871",
+      "software": "v11.0.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "Pimcore is an Open Source Data & Experience Management Platform. The Pimcore thumbnail generation ca"
+    },
+    {
+      "cve_id": "CVE-2024-47818",
+      "software": "v1.0.0-beta.15",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "Saltcorn is an extensible, open source, no-code database application builder. A logged-in user with "
+    },
+    {
+      "cve_id": "CVE-2024-47814",
+      "software": "v9.1.0763",
+      "vuln_type": "CWE-416: Use After Free",
+      "description": "Vim is an open source, command line text editor. A use-after-free was found in Vim < 9.1.0764. When "
+    },
+    {
+      "cve_id": "CVE-2024-47074",
+      "software": "v1.18.24",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "DataEase is an open source data visualization analysis tool. In Dataease, the PostgreSQL data source"
+    },
+    {
+      "cve_id": "CVE-2024-47609",
+      "software": "v0.12.2",
+      "vuln_type": "CWE-755: Improper Handling of Exceptional Conditions",
+      "description": "Tonic is a native gRPC client & server implementation with async/await support. When using tonic::tr"
+    },
+    {
+      "cve_id": "CVE-2024-47172",
+      "software": "v2.0.0",
+      "vuln_type": "CWE-863: Incorrect Authorization",
+      "description": "Computer Vision Annotation Tool (CVAT) is an interactive video and image annotation tool for compute"
+    },
+    {
+      "cve_id": "CVE-2024-47827",
+      "software": "v3.6.0-rc1",
+      "vuln_type": "CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+      "description": "Argo Workflows is an open source container-native workflow engine for orchestrating parallel jobs on"
+    },
+    {
+      "cve_id": "CVE-2024-47877",
+      "software": "v3.1.1",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "Extract is aA Go library to extract archives in zip, tar.gz or tar.bz2 formats. A maliciously crafte"
+    },
+    {
+      "cve_id": "CVE-2024-39302",
+      "software": "v2.6.17",
+      "vuln_type": "CWE-269: Improper Privilege Management",
+      "description": "BigBlueButton is an open-source virtual classroom designed to help teachers teach and learners learn"
+    },
+    {
+      "cve_id": "CVE-2024-39904",
+      "software": "v3.18.0",
+      "vuln_type": "CWE-73: External Control of File Name or Path",
+      "description": "VNote is a note-taking platform. Prior to 3.18.1, a code execution vulnerability existed in VNote, w"
+    },
+    {
+      "cve_id": "CVE-2024-39695",
+      "software": "v0.28.0",
+      "vuln_type": "CWE-125: Out-of-bounds Read",
+      "description": "Exiv2 is a command-line utility and C++ library for reading, writing, deleting, and modifying the me"
+    },
+    {
+      "cve_id": "CVE-2024-39700",
+      "software": "v4.3.2",
+      "vuln_type": "CWE-94: Improper Control of Generation of Code ('Code Injection')",
+      "description": "JupyterLab extension template is a  `copier` template for JupyterLab extensions. Repositories create"
+    },
+    {
+      "cve_id": "CVE-2024-4146",
+      "software": "v1.2.25",
+      "vuln_type": "CWE-863 Incorrect Authorization",
+      "description": "In lunary-ai/lunary version v1.2.13, an incorrect authorization vulnerability exists that allows una"
+    },
+    {
+      "cve_id": "CVE-2024-4343",
+      "software": "v0.5.0",
+      "vuln_type": "CWE-78 Improper Neutralization of Special Elements used in an OS Command",
+      "description": "A Python command injection vulnerability exists in the `SagemakerLLM` class's `complete()` method wi"
+    },
+    {
+      "cve_id": "CVE-2024-0397",
+      "software": "v3.8.19",
+      "vuln_type": "n/a",
+      "description": "A defect was discovered in the Python “ssl” module where there is a memory\nrace condition with the s"
+    },
+    {
+      "cve_id": "CVE-2024-48914",
+      "software": "v2.3.2",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "Vendure is an open-source headless commerce platform. Prior to versions 3.0.5 and 2.3.3, a vulnerabi"
+    },
+    {
+      "cve_id": "CVE-2024-48909",
+      "software": "v1.35.0",
+      "vuln_type": "CWE-172: Encoding Error",
+      "description": "SpiceDB is an open source database for scalably storing and querying fine-grained authorization data"
+    },
+    {
+      "cve_id": "CVE-2024-49771",
+      "software": "v8.3.5",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "MPXJ is an open source library to read and write project plans from a variety of file formats and da"
+    },
+    {
+      "cve_id": "CVE-2024-38518",
+      "software": "v2.6.17",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "BigBlueButton is an open-source virtual classroom designed to help teachers teach and learners learn"
+    },
+    {
+      "cve_id": "CVE-2024-5181",
+      "software": "v2.15.0",
+      "vuln_type": "CWE-78 Improper Neutralization of Special Elements used in an OS Command",
+      "description": "A command injection vulnerability exists in the mudler/localai version 2.14.0. The vulnerability ari"
+    },
+    {
+      "cve_id": "CVE-2024-5569",
+      "software": "v3.19.0",
+      "vuln_type": "CWE-400 Uncontrolled Resource Consumption",
+      "description": "A Denial of Service (DoS) vulnerability exists in the jaraco/zipp library, affecting all versions pr"
+    },
+    {
+      "cve_id": "CVE-2024-5129",
+      "software": "v1.2.7",
+      "vuln_type": "CWE-862 Missing Authorization",
+      "description": "A Privilege Escalation Vulnerability exists in lunary-ai/lunary version 1.2.2, where any user can de"
+    },
+    {
+      "cve_id": "CVE-2025-2592",
+      "software": "v5.4.3",
+      "vuln_type": "Heap-based Buffer Overflow",
+      "description": "A vulnerability, which was classified as critical, has been found in Open Asset Import Library Assim"
+    },
+    {
+      "cve_id": "CVE-2025-3016",
+      "software": "v5.4.3",
+      "vuln_type": "Resource Consumption",
+      "description": "A vulnerability classified as problematic was found in Open Asset Import Library Assimp 5.4.3. This "
+    },
+    {
+      "cve_id": "CVE-2025-25186",
+      "software": "v0.3.2",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "Net::IMAP implements Internet Message Access Protocol (IMAP) client functionality in Ruby. Starting "
+    },
+    {
+      "cve_id": "CVE-2025-25293",
+      "software": "v1.12.3",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "ruby-saml provides security assertion markup language (SAML) single sign-on (SSO) for Ruby. Prior to"
+    },
+    {
+      "cve_id": "CVE-2025-25202",
+      "software": "v4.1.0",
+      "vuln_type": "CWE-269: Improper Privilege Management",
+      "description": "Ash Authentication is an authentication framework for Elixir applications. Applications which have b"
+    },
+    {
+      "cve_id": "CVE-2025-31499",
+      "software": "v10.10.6",
+      "vuln_type": "CWE-88: Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')",
+      "description": "Jellyfin is an open source self hosted media server. Versions before 10.10.7 are vulnerable to argum"
+    },
+    {
+      "cve_id": "CVE-2025-31115",
+      "software": "v5.3.3alpha",
+      "vuln_type": "CWE-366: Race Condition within a Thread",
+      "description": "XZ Utils provide a general-purpose data-compression library plus command-line tools. In XZ Utils 5.3"
+    },
+    {
+      "cve_id": "CVE-2025-21606",
+      "software": "v2.11.20",
+      "vuln_type": "CWE-345: Insufficient Verification of Data Authenticity",
+      "description": "stats is a macOS system monitor in for the menu bar. The Stats application is vulnerable to a local "
+    },
+    {
+      "cve_id": "CVE-2025-30202",
+      "software": "v0.5.2",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "vLLM is a high-throughput and memory-efficient inference and serving engine for LLMs. Versions start"
+    },
+    {
+      "cve_id": "CVE-2025-30370",
+      "software": "v0.51.0",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "jupyterlab-git is a JupyterLab extension for version control using Git. On many platforms, a third p"
+    },
+    {
+      "cve_id": "CVE-2025-30356",
+      "software": "v1.3.3",
+      "vuln_type": "CWE-191: Integer Underflow (Wrap or Wraparound)",
+      "description": "CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Exte"
+    },
+    {
+      "cve_id": "CVE-2025-30355",
+      "software": "v1.127.0",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "Synapse is an open source Matrix homeserver implementation. A malicious server can craft events whic"
+    },
+    {
+      "cve_id": "CVE-2025-30216",
+      "software": "v1.3.3",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Exte"
+    },
+    {
+      "cve_id": "CVE-2025-30152",
+      "software": "v1.6.1",
+      "vuln_type": "CWE-472: External Control of Assumed-Immutable Web Parameter",
+      "description": "The Syliud PayPal Plugin is the Sylius Core Team’s plugin for the PayPal Commerce Platform. Prior to"
+    },
+    {
+      "cve_id": "CVE-2025-24373",
+      "software": "v4.0.0-beta-4",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "woocommerce-pdf-invoices-packing-slips is an extension which allows users to create, print & automat"
+    },
+    {
+      "cve_id": "CVE-2025-24355",
+      "software": "v0.92.0",
+      "vuln_type": "CWE-359: Exposure of Private Personal Information to an Unauthorized Actor",
+      "description": "Updatecli is a tool used to apply file update strategies. Prior to version 0.93.0, private maven rep"
+    },
+    {
+      "cve_id": "CVE-2025-24883",
+      "software": "v1.14.0",
+      "vuln_type": "CWE-248: Uncaught Exception",
+      "description": "go-ethereum (geth) is a golang execution layer implementation of the Ethereum protocol. A vulnerable"
+    },
+    {
+      "cve_id": "CVE-2025-24354",
+      "software": "v3.27.1",
+      "vuln_type": "CWE-918: Server-Side Request Forgery (SSRF)",
+      "description": "imgproxy is server for resizing, processing, and converting images. Imgproxy does not block the 0.0."
+    },
+    {
+      "cve_id": "CVE-2025-24357",
+      "software": "v0.6.6",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "vLLM is a library for LLM inference and serving. vllm/model_executor/weight_utils.py implements hf_m"
+    },
+    {
+      "cve_id": "CVE-2025-24376",
+      "software": "v1.7.0",
+      "vuln_type": "CWE-285: Improper Authorization",
+      "description": "kubewarden-controller is a Kubernetes controller that allows you to dynamically register Kubewarden "
+    },
+    {
+      "cve_id": "CVE-2025-24808",
+      "software": "v3.3.3",
+      "vuln_type": "CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+      "description": "Discourse is an open-source discussion platform. Prior to versions `3.3.4` on the `stable` branch an"
+    },
+    {
+      "cve_id": "CVE-2025-24794",
+      "software": "v2.7.12",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "The Snowflake Connector for Python provides an interface for developing Python applications that can"
+    },
+    {
+      "cve_id": "CVE-2025-24014",
+      "software": "v9.1.1042",
+      "vuln_type": "CWE-787: Out-of-bounds Write",
+      "description": "Vim is an open source, command line text editor. A segmentation fault was found in Vim before 9.1.10"
+    },
+    {
+      "cve_id": "CVE-2025-46735",
+      "software": "v1.0.4",
+      "vuln_type": "CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "description": "Terraform WinDNS Provider allows users to manage their Windows DNS server resources through Terrafor"
+    },
+    {
+      "cve_id": "CVE-2025-46836",
+      "software": "v2.10",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "net-tools is a collection of programs that form the base set of the NET-3 networking distribution fo"
+    },
+    {
+      "cve_id": "CVE-2025-46326",
+      "software": "v2.1.2",
+      "vuln_type": "CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition",
+      "description": "snowflake-connector-net is the Snowflake Connector for .NET. Versions starting from 2.1.2 to before "
+    },
+    {
+      "cve_id": "CVE-2025-46327",
+      "software": "v1.7.0",
+      "vuln_type": "CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition",
+      "description": "gosnowflake is the Snowflake Golang driver. Versions starting from 1.7.0 to before 1.13.3, are vulne"
+    },
+    {
+      "cve_id": "CVE-2025-23216",
+      "software": "v2.13.0",
+      "vuln_type": "CWE-209: Generation of Error Message Containing Sensitive Information",
+      "description": "Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. A vulnerability was discov"
+    },
+    {
+      "cve_id": "CVE-2025-27512",
+      "software": "v0.0.24",
+      "vuln_type": "CWE-783: Operator Precedence Logic Error",
+      "description": "Zincati is an auto-update agent for Fedora CoreOS hosts. Zincati ships a polkit rule which allows th"
+    },
+    {
+      "cve_id": "CVE-2025-27591",
+      "software": "v0.8.1",
+      "vuln_type": "Incorrect Permission Assignment for Critical Resource (CWE-732)",
+      "description": "A privilege escalation vulnerability existed in the Below service prior to v0.9.0 due to the creatio"
+    },
+    {
+      "cve_id": "CVE-2025-27520",
+      "software": "v1.3.4",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "BentoML is a Python library for building online serving systems optimized for AI apps and model infe"
+    },
+    {
+      "cve_id": "CVE-2025-27100",
+      "software": "v1.49.1",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "lakeFS is an open-source tool that transforms your object storage into a Git-like repository. In aff"
+    },
+    {
+      "cve_id": "CVE-2025-27090",
+      "software": "v1.5.26",
+      "vuln_type": "CWE-918: Server-Side Request Forgery (SSRF)",
+      "description": "Sliver is an open source cross-platform adversary emulation/red team framework, it can be used by or"
+    },
+    {
+      "cve_id": "CVE-2025-27423",
+      "software": "v9.1.1163",
+      "vuln_type": "CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "description": "Vim is an open source, command line text editor. Vim is distributed with the tar.vim plugin, that al"
+    },
+    {
+      "cve_id": "CVE-2025-32376",
+      "software": "v3.4.2",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "Discourse is an open-source discussion platform. Prior to versions 3.4.3 on the stable branch and 3."
+    },
+    {
+      "cve_id": "CVE-2025-32383",
+      "software": "v1.10.3-lts",
+      "vuln_type": "CWE-94: Improper Control of Generation of Code ('Code Injection')",
+      "description": "MaxKB (Max Knowledge Base) is an open source knowledge base question-answering system based on a lar"
+    },
+    {
+      "cve_id": "CVE-2025-32444",
+      "software": "v0.6.5",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "vLLM is a high-throughput and memory-efficient inference and serving engine for LLMs. Versions start"
+    },
+    {
+      "cve_id": "CVE-2025-32034",
+      "software": "v1.61.2-rc.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "The Apollo Router Core is a configurable, high-performance graph router written in Rust to run a fed"
+    },
+    {
+      "cve_id": "CVE-2025-32776",
+      "software": "v3.10.1",
+      "vuln_type": "CWE-125: Out-of-bounds Read",
+      "description": "OpenRazer is an open source driver and user-space daemon to control Razer device lighting and other "
+    },
+    {
+      "cve_id": "CVE-2025-32780",
+      "software": "v4.6.2",
+      "vuln_type": "CWE-427: Uncontrolled Search Path Element",
+      "description": "BleachBit cleans files to free disk space and to maintain privacy. BleachBit for Windows up to versi"
+    },
+    {
+      "cve_id": "CVE-2025-32380",
+      "software": "v1.61.2-rc.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "The Apollo Router Core is a configurable, high-performance graph router written in Rust to run a fed"
+    },
+    {
+      "cve_id": "CVE-2025-22605",
+      "software": "v4.0.0-beta.18",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "Coolify is an open-source and self-hostable tool for managing servers, applications, and databases. "
+    },
+    {
+      "cve_id": "CVE-2025-22134",
+      "software": "v9.1.1002",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "When switching to other buffers using the :all command and visual mode still being active, this may "
+    },
+    {
+      "cve_id": "CVE-2025-4002",
+      "software": "v0.14.2.AB",
+      "vuln_type": "NULL Pointer Dereference",
+      "description": "A vulnerability was found in RefindPlusRepo RefindPlus 0.14.2.AB and classified as problematic. Affe"
+    },
+    {
+      "cve_id": "CVE-2025-4003",
+      "software": "v0.14.2.AB",
+      "vuln_type": "NULL Pointer Dereference",
+      "description": "A vulnerability was found in RefindPlusRepo RefindPlus 0.14.2.AB. It has been classified as problema"
+    },
+    {
+      "cve_id": "CVE-2025-29783",
+      "software": "v0.8.0rc2",
+      "vuln_type": "CWE-502: Deserialization of Untrusted Data",
+      "description": "vLLM is a high-throughput and memory-efficient inference and serving engine for LLMs. When vLLM is c"
+    },
+    {
+      "cve_id": "CVE-2025-29912",
+      "software": "v1.3.3",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Exte"
+    },
+    {
+      "cve_id": "CVE-2025-29769",
+      "software": "v8.16.0",
+      "vuln_type": "CWE-122: Heap-based Buffer Overflow",
+      "description": "libvips is a demand-driven, horizontally threaded image processing library.  The heifsave operation "
+    },
+    {
+      "cve_id": "CVE-2025-29909",
+      "software": "v1.3.3",
+      "vuln_type": "CWE-191: Integer Underflow (Wrap or Wraparound)",
+      "description": "CryptoLib provides a software-only solution using the CCSDS Space Data Link Security Protocol - Exte"
+    },
+    {
+      "cve_id": "CVE-2025-29778",
+      "software": "v1.13.6",
+      "vuln_type": "CWE-285: Improper Authorization",
+      "description": "Kyverno is a policy engine designed for cloud native platform engineering teams. Prior to version 1."
+    },
+    {
+      "cve_id": "CVE-2025-1945",
+      "software": "v0.0.22",
+      "vuln_type": "CWE-345 Insufficient Verification of Data Authenticity",
+      "description": "picklescan before 0.0.23 fails to detect malicious pickle files inside PyTorch model archives when c"
+    },
+    {
+      "cve_id": "CVE-2025-1944",
+      "software": "v0.0.22",
+      "vuln_type": "CWE-345 Insufficient Verification of Data Authenticity",
+      "description": "picklescan before 0.0.23 is vulnerable to a ZIP archive manipulation attack that causes it to crash "
+    },
+    {
+      "cve_id": "CVE-2025-1215",
+      "software": "v9.1.1096",
+      "vuln_type": "Memory Corruption",
+      "description": "A vulnerability classified as problematic was found in vim up to 9.1.1096. This vulnerability affect"
+    },
+    {
+      "cve_id": "CVE-2025-1497",
+      "software": "v0.0.6",
+      "vuln_type": "CWE-77 Improper Neutralization of Special Elements used in a Command ('Command Injection')",
+      "description": "A vulnerability, that could result in Remote Code Execution (RCE), has been found in PlotAI. Lack of"
+    }
+  ],
+  "uncertain_cves": [
+    {
+      "cve_id": "CVE-2024-6984",
+      "software": "v3.5.2",
+      "vuln_type": "CWE-209 Generation of Error Message Containing Sensitive Information",
+      "description": "An issue was discovered in Juju that resulted in the leak of the sensitive context ID, which allows "
+    },
+    {
+      "cve_id": "CVE-2024-6867",
+      "software": "v1.4.8",
+      "vuln_type": "CWE-1220 Insufficient Granularity of Access Control",
+      "description": "An information disclosure vulnerability exists in the lunary-ai/lunary, specifically in the `runs/{r"
+    },
+    {
+      "cve_id": "CVE-2024-6923",
+      "software": "v3.8.19",
+      "vuln_type": "n/a",
+      "description": "There is a MEDIUM severity vulnerability affecting CPython.\n\nThe \nemail module didn’t properly quote"
+    },
+    {
+      "cve_id": "CVE-2024-7474",
+      "software": "v1.3.4-alpha.1",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "In version 1.3.2 of lunary-ai/lunary, an Insecure Direct Object Reference (IDOR) vulnerability exist"
+    },
+    {
+      "cve_id": "CVE-2024-7473",
+      "software": "v1.4.3-alpha.2",
+      "vuln_type": "CWE-269 Improper Privilege Management",
+      "description": "An IDOR vulnerability exists in the 'Evaluations' function of the 'umgws datasets' section in lunary"
+    },
+    {
+      "cve_id": "CVE-2024-3504",
+      "software": "v1.2.6",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An improper access control vulnerability exists in lunary-ai/lunary versions up to and including 1.2"
+    },
+    {
+      "cve_id": "CVE-2024-3379",
+      "software": "v1.2.6",
+      "vuln_type": "CWE-863 Incorrect Authorization",
+      "description": "In lunary-ai/lunary versions 1.2.2 through 1.2.6, an incorrect authorization vulnerability allows un"
+    },
+    {
+      "cve_id": "CVE-2024-3502",
+      "software": "v1.2.5",
+      "vuln_type": "CWE-200 Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "In lunary-ai/lunary versions up to and including 1.2.5, an information disclosure vulnerability exis"
+    },
+    {
+      "cve_id": "CVE-2024-25638",
+      "software": "v3.5.3",
+      "vuln_type": "CWE-345: Insufficient Verification of Data Authenticity",
+      "description": "dnsjava is an implementation of DNS in Java. Records in DNS replies are not checked for their releva"
+    },
+    {
+      "cve_id": "CVE-2024-40637",
+      "software": "v1.6.13",
+      "vuln_type": "CWE-74: Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')",
+      "description": "dbt enables data analysts and engineers to transform their data using the same practices that softwa"
+    },
+    {
+      "cve_id": "CVE-2024-11167",
+      "software": "v0.7.6-rc1",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An improper access control vulnerability in danny-avila/librechat versions prior to 0.7.6 allows aut"
+    },
+    {
+      "cve_id": "CVE-2024-11301",
+      "software": "v1.6.2",
+      "vuln_type": "CWE-837 Improper Enforcement of a Single, Unique Action",
+      "description": "In lunary-ai/lunary before version 1.6.3, the application allows the creation of evaluators without "
+    },
+    {
+      "cve_id": "CVE-2024-11300",
+      "software": "v1.6.2",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "In lunary-ai/lunary before version 1.6.3, an improper access control vulnerability exists where a us"
+    },
+    {
+      "cve_id": "CVE-2024-11137",
+      "software": "v1.6.0",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An Insecure Direct Object Reference (IDOR) vulnerability exists in the `PATCH /v1/runs/:id/score` en"
+    },
+    {
+      "cve_id": "CVE-2024-54140",
+      "software": "v1.1.0",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "sigstore-java is a sigstore java client for interacting with sigstore infrastructure. sigstore-java "
+    },
+    {
+      "cve_id": "CVE-2024-54132",
+      "software": "v2.63.0",
+      "vuln_type": "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+      "description": "The GitHub CLI is GitHub’s official command line tool. A security vulnerability has been identified "
+    },
+    {
+      "cve_id": "CVE-2024-21529",
+      "software": "v3.1.3",
+      "vuln_type": "Prototype Pollution",
+      "description": "Versions of the package dset before 3.1.4 are vulnerable to Prototype Pollution via the dset functio"
+    },
+    {
+      "cve_id": "CVE-2024-45409",
+      "software": "v1.12.2",
+      "vuln_type": "CWE-347: Improper Verification of Cryptographic Signature",
+      "description": "The Ruby SAML library is for implementing the client side of a SAML authorization. Ruby-SAML in <= 1"
+    },
+    {
+      "cve_id": "CVE-2024-45390",
+      "software": "v1.1.0",
+      "vuln_type": "CWE-94: Improper Control of Generation of Code ('Code Injection')",
+      "description": "@blakeembrey/template is a string template library. Prior to version 1.2.0, it is possible to inject"
+    },
+    {
+      "cve_id": "CVE-2024-45304",
+      "software": "v0.15.1",
+      "vuln_type": "CWE-670: Always-Incorrect Control Flow Implementation",
+      "description": "Cairo-Contracts are OpenZeppelin Contracts written in Cairo for Starknet, a decentralized ZK Rollup."
+    },
+    {
+      "cve_id": "CVE-2024-34361",
+      "software": "v5.18.2",
+      "vuln_type": "CWE-918: Server-Side Request Forgery (SSRF)",
+      "description": "Pi-hole is a DNS sinkhole that protects devices from unwanted content without installing any client-"
+    },
+    {
+      "cve_id": "CVE-2024-9000",
+      "software": "v1.4.25",
+      "vuln_type": "CWE-285 Improper Authorization",
+      "description": "In lunary-ai/lunary before version 1.4.26, the checklists.post() endpoint allows users to create or "
+    },
+    {
+      "cve_id": "CVE-2024-9096",
+      "software": "v1.4.29",
+      "vuln_type": "CWE-285 Improper Authorization",
+      "description": "In lunary-ai/lunary version 1.4.28, the /checklists/:id route allows low-privilege users to modify c"
+    },
+    {
+      "cve_id": "CVE-2024-41672",
+      "software": "v1.0.0",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "DuckDB is a SQL database management system. In versions 1.0.0 and prior, content in filesystem is ac"
+    },
+    {
+      "cve_id": "CVE-2024-10330",
+      "software": "v1.5.6",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "In lunary-ai/lunary version 1.5.6, the `/v1/evaluators/` endpoint lacks proper access control, allow"
+    },
+    {
+      "cve_id": "CVE-2024-10366",
+      "software": "v0.7.5-rc2",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An improper access control vulnerability (IDOR) exists in the delete attachments functionality of da"
+    },
+    {
+      "cve_id": "CVE-2024-10274",
+      "software": "v1.5.6",
+      "vuln_type": "CWE-285 Improper Authorization",
+      "description": "An improper authorization vulnerability exists in lunary-ai/lunary version 1.5.5. The /users/me/org "
+    },
+    {
+      "cve_id": "CVE-2024-10359",
+      "software": "v0.7.5-rc2",
+      "vuln_type": "CWE-915 Improperly Controlled Modification of Dynamically-Determined Object Attributes",
+      "description": "In danny-avila/librechat version v0.7.5-rc2, a vulnerability exists in the preset creation functiona"
+    },
+    {
+      "cve_id": "CVE-2024-10363",
+      "software": "v0.7.5-rc2",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "In version 0.7.5 of danny-avila/LibreChat, there is an improper access control vulnerability. Users "
+    },
+    {
+      "cve_id": "CVE-2024-10762",
+      "software": "v1.5.8",
+      "vuln_type": "CWE-862 Missing Authorization",
+      "description": "In lunary-ai/lunary before version 1.5.9, the /v1/evaluators/ endpoint allows users to delete evalua"
+    },
+    {
+      "cve_id": "CVE-2024-56200",
+      "software": "v12.24Q3.2",
+      "vuln_type": "CWE-400: Uncontrolled Resource Consumption",
+      "description": "Altair is a fork of Misskey v12. Affected versions lack of request validation and lack of authentica"
+    },
+    {
+      "cve_id": "CVE-2024-52509",
+      "software": "v2.2.0",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "Nextcloud Mail is the mail app for Nextcloud, a self-hosted productivity platform. The Nextcloud mai"
+    },
+    {
+      "cve_id": "CVE-2024-52513",
+      "software": "v28.0.0",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Nextcloud Server is a self hosted personal cloud system. After receiving a \"Files drop\" or \"Password"
+    },
+    {
+      "cve_id": "CVE-2024-52508",
+      "software": "v1.9.0",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Nextcloud Mail is the mail app for Nextcloud, a self-hosted productivity platform. When a user is tr"
+    },
+    {
+      "cve_id": "CVE-2024-52514",
+      "software": "v28.0.0",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "Nextcloud Server is a self hosted personal cloud system. After a user received a share with some fil"
+    },
+    {
+      "cve_id": "CVE-2024-52521",
+      "software": "v28.0.0",
+      "vuln_type": "CWE-328: Use of Weak Hash",
+      "description": "Nextcloud Server is a self hosted personal cloud system. MD5 hashes were used to check background jo"
+    },
+    {
+      "cve_id": "CVE-2024-52516",
+      "software": "v28.0.0",
+      "vuln_type": "CWE-269: Improper Privilege Management",
+      "description": "Nextcloud Server is a self hosted personal cloud system. When a server is configured to only allow s"
+    },
+    {
+      "cve_id": "CVE-2024-52511",
+      "software": "v0.6.0",
+      "vuln_type": "CWE-639: Authorization Bypass Through User-Controlled Key",
+      "description": "Nextcloud Tables allows users to to create tables with individual columns. By directly specifying th"
+    },
+    {
+      "cve_id": "CVE-2024-52507",
+      "software": "v0.3.0",
+      "vuln_type": "CWE-639: Authorization Bypass Through User-Controlled Key",
+      "description": "Nextcloud Tables allows users to to create tables with individual columns. The information which Tab"
+    },
+    {
+      "cve_id": "CVE-2024-52510",
+      "software": "v3.0.0",
+      "vuln_type": "CWE-295: Improper Certificate Validation",
+      "description": "The Nextcloud Desktop Client is a tool to synchronize files from Nextcloud Server with your computer"
+    },
+    {
+      "cve_id": "CVE-2024-52584",
+      "software": "v3.0.1",
+      "vuln_type": "CWE-863: Incorrect Authorization",
+      "description": "Autolab is a course management service that enables auto-graded programming assignments. There is a "
+    },
+    {
+      "cve_id": "CVE-2024-37159",
+      "software": "v17.0.1",
+      "vuln_type": "CWE-285: Improper Authorization",
+      "description": "Evmos is the Ethereum Virtual Machine (EVM) Hub on the Cosmos Network. This vulnerability allowed a "
+    },
+    {
+      "cve_id": "CVE-2024-37158",
+      "software": "v17.0.1",
+      "vuln_type": "CWE-691: Insufficient Control Flow Management",
+      "description": "Evmos is the Ethereum Virtual Machine (EVM) Hub on the Cosmos Network. Preliminary checks on actions"
+    },
+    {
+      "cve_id": "CVE-2024-37153",
+      "software": "v18.0.0",
+      "vuln_type": "CWE-670: Always-Incorrect Control Flow Implementation",
+      "description": "Evmos is the Ethereum Virtual Machine (EVM) Hub on the Cosmos Network. There is an issue with how to"
+    },
+    {
+      "cve_id": "CVE-2024-37903",
+      "software": "v2.6.0",
+      "vuln_type": "CWE-862: Missing Authorization",
+      "description": "Mastodon is a self-hosted, federated microblogging platform. Starting in version 2.6.0 and prior to "
+    },
+    {
+      "cve_id": "CVE-2024-37312",
+      "software": "v1.3.6",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "user_oidc app is an OpenID Connect user backend for Nextcloud. Missing access control on the ID4me e"
+    },
+    {
+      "cve_id": "CVE-2024-37298",
+      "software": "v1.4.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "gorilla/schema converts structs to and from form values. Prior to version 1.4.1 Running `schema.Deco"
+    },
+    {
+      "cve_id": "CVE-2024-42370",
+      "software": "v2.10.0",
+      "vuln_type": "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+      "description": "Litestar is an Asynchronous Server Gateway Interface (ASGI) framework. In versions 2.10.0 and prior,"
+    },
+    {
+      "cve_id": "CVE-2024-53849",
+      "software": "v0.12.6",
+      "vuln_type": "CWE-121: Stack-based Buffer Overflow",
+      "description": "editorconfig-core-c  is  theEditorConfig core library written in C (for use by plugins supporting Ed"
+    },
+    {
+      "cve_id": "CVE-2024-53258",
+      "software": "v3.0.0",
+      "vuln_type": "CWE-359: Exposure of Private Personal Information to an Unauthorized Actor",
+      "description": "Autolab is a course management service that enables auto-graded programming assignments. From Autola"
+    },
+    {
+      "cve_id": "CVE-2024-36106",
+      "software": "v2.9.16",
+      "vuln_type": "CWE-209: Generation of Error Message Containing Sensitive Information",
+      "description": "Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. It’s possible for authenti"
+    },
+    {
+      "cve_id": "CVE-2024-12254",
+      "software": "v3.14.0a2",
+      "vuln_type": "CWE-400 Uncontrolled Resource Consumption",
+      "description": "Starting in Python 3.12.0, the asyncio._SelectorSocketTransport.writelines()\n method would not \"paus"
+    },
+    {
+      "cve_id": "CVE-2024-12952",
+      "software": "v0.1.0",
+      "vuln_type": "Code Injection",
+      "description": "A vulnerability classified as critical was found in melMass comfy_mtb up to 0.1.4. Affected by this "
+    },
+    {
+      "cve_id": "CVE-2024-43379",
+      "software": "v3.81.8",
+      "vuln_type": "CWE-918: Server-Side Request Forgery (SSRF)",
+      "description": "TruffleHog is a secrets scanning tool. Prior to v3.81.9, this vulnerability allows a malicious actor"
+    },
+    {
+      "cve_id": "CVE-2024-43397",
+      "software": "v2.2.0",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "Apollo is a configuration management system. A vulnerability exists in the synchronization configura"
+    },
+    {
+      "cve_id": "CVE-2024-43410",
+      "software": "v0.44.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "Russh is a Rust SSH client & server library. Allocating an untrusted amount of memory allows any una"
+    },
+    {
+      "cve_id": "CVE-2024-43415",
+      "software": "v0.9.1",
+      "vuln_type": "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')",
+      "description": "An improper neutralization of special elements used in an SQL command in the papertrail/version- mod"
+    },
+    {
+      "cve_id": "CVE-2024-43399",
+      "software": "v3.9.7",
+      "vuln_type": "CWE-23: Relative Path Traversal",
+      "description": "Mobile Security Framework (MobSF) is a pen-testing, malware analysis and security assessment framewo"
+    },
+    {
+      "cve_id": "CVE-2024-32873",
+      "software": "v17.0.1",
+      "vuln_type": "CWE-682: Incorrect Calculation",
+      "description": "Evmos is the Ethereum Virtual Machine (EVM) Hub on the Cosmos Network. The spendable balance is not "
+    },
+    {
+      "cve_id": "CVE-2024-47182",
+      "software": "v8.5.2",
+      "vuln_type": "CWE-328: Use of Weak Hash",
+      "description": "Dozzle is a realtime log viewer for docker containers. Before version 8.5.3, the app uses sha-256 as"
+    },
+    {
+      "cve_id": "CVE-2024-47771",
+      "software": "v1.11.70",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Element Desktop is a Matrix client for desktop platforms. Element Desktop versions 1.11.70 through 1"
+    },
+    {
+      "cve_id": "CVE-2024-47884",
+      "software": "v2.0.3",
+      "vuln_type": "CWE-378: Creation of Temporary File With Insecure Permissions",
+      "description": "foxmarks is a CLI read-only interface for Firefox's bookmarks and history. A temporary file was crea"
+    },
+    {
+      "cve_id": "CVE-2024-47534",
+      "software": "v2.0.0",
+      "vuln_type": "CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')",
+      "description": "go-tuf is a Go implementation of The Update Framework (TUF). The go-tuf client inconsistently traces"
+    },
+    {
+      "cve_id": "CVE-2024-39690",
+      "software": "v0.7.0",
+      "vuln_type": "CWE-863: Incorrect Authorization",
+      "description": "Capsule is a multi-tenancy and policy-based framework for Kubernetes. In Capsule v0.7.0 and earlier,"
+    },
+    {
+      "cve_id": "CVE-2024-39696",
+      "software": "v18.1.0",
+      "vuln_type": "CWE-863: Incorrect Authorization",
+      "description": "Evmos is a decentralized Ethereum Virtual Machine chain on the Cosmos Network. Prior to version 19.0"
+    },
+    {
+      "cve_id": "CVE-2024-4032",
+      "software": "v3.8.19",
+      "vuln_type": "n/a",
+      "description": "The “ipaddress” module contained incorrect information about whether certain IPv4 and IPv6 addresses"
+    },
+    {
+      "cve_id": "CVE-2024-0006",
+      "software": "v2.18.8.1",
+      "vuln_type": "CWE-532 Insertion of Sensitive Information into Log File",
+      "description": "Information exposure in the logging system in Yugabyte Platform allows local attackers with access t"
+    },
+    {
+      "cve_id": "CVE-2024-48915",
+      "software": "v1.0.0-dev.28",
+      "vuln_type": "CWE-295: Improper Certificate Validation",
+      "description": "Agent Dart is an agent library built for Internet Computer for Dart and Flutter apps. Prior to versi"
+    },
+    {
+      "cve_id": "CVE-2024-48911",
+      "software": "v0.9.3",
+      "vuln_type": "CWE-863: Incorrect Authorization",
+      "description": "OpenCanary, a multi-protocol network honeypot, directly executed commands taken from its config file"
+    },
+    {
+      "cve_id": "CVE-2024-49376",
+      "software": "v3.0.0",
+      "vuln_type": "CWE-287: Improper Authentication",
+      "description": "Autolab, a course management service that enables auto-graded programming assignments, has misconfig"
+    },
+    {
+      "cve_id": "CVE-2024-5131",
+      "software": "v1.2.24",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An Improper Access Control vulnerability exists in the lunary-ai/lunary repository, affecting versio"
+    },
+    {
+      "cve_id": "CVE-2024-5127",
+      "software": "v1.2.24",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "In lunary-ai/lunary versions 1.2.2 through 1.2.25, an improper access control vulnerability allows u"
+    },
+    {
+      "cve_id": "CVE-2024-5126",
+      "software": "v1.2.24",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An improper access control vulnerability exists in the lunary-ai/lunary repository, specifically wit"
+    },
+    {
+      "cve_id": "CVE-2024-5130",
+      "software": "v1.2.7",
+      "vuln_type": "CWE-863 Incorrect Authorization",
+      "description": "An Incorrect Authorization vulnerability exists in lunary-ai/lunary versions up to and including 1.2"
+    },
+    {
+      "cve_id": "CVE-2024-5128",
+      "software": "v1.2.24",
+      "vuln_type": "CWE-284 Improper Access Control",
+      "description": "An Insecure Direct Object Reference (IDOR) vulnerability was identified in lunary-ai/lunary, affecti"
+    },
+    {
+      "cve_id": "CVE-2025-3160",
+      "software": "v5.4.3",
+      "vuln_type": "Out-of-Bounds Read",
+      "description": "A vulnerability has been found in Open Asset Import Library Assimp 5.4.3 and classified as problemat"
+    },
+    {
+      "cve_id": "CVE-2025-3015",
+      "software": "v5.4.3",
+      "vuln_type": "Out-of-Bounds Read",
+      "description": "A vulnerability classified as critical has been found in Open Asset Import Library Assimp 5.4.3. Thi"
+    },
+    {
+      "cve_id": "CVE-2025-25300",
+      "software": "v1.14.0",
+      "vuln_type": "CWE-601: URL Redirection to Untrusted Site ('Open Redirect')",
+      "description": "smartbanner.js is a customizable smart app banner for iOS and Android. Prior to version 1.14.1, clic"
+    },
+    {
+      "cve_id": "CVE-2025-31130",
+      "software": "v0.41.0",
+      "vuln_type": "CWE-328: Use of Weak Hash",
+      "description": "gitoxide is an implementation of git written in Rust. Before 0.42.0, gitoxide uses SHA-1 hash implem"
+    },
+    {
+      "cve_id": "CVE-2025-31479",
+      "software": "v1.0.0",
+      "vuln_type": "CWE-532: Insertion of Sensitive Information into Log File",
+      "description": "canonical/get-workflow-version-action is a GitHub composite action to get commit SHA that GitHub Act"
+    },
+    {
+      "cve_id": "CVE-2025-31135",
+      "software": "v1.6.6",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "Go-Guerrilla SMTP Daemon is a lightweight SMTP server written in Go. Prior to 1.6.7, when ProxyOn is"
+    },
+    {
+      "cve_id": "CVE-2025-21607",
+      "software": "v0.4.1rc3",
+      "vuln_type": "CWE-670: Always-Incorrect Control Flow Implementation",
+      "description": "Vyper is a Pythonic Smart Contract Language for the EVM. When the Vyper Compiler uses the precompile"
+    },
+    {
+      "cve_id": "CVE-2025-30154",
+      "software": "v1",
+      "vuln_type": "CWE-506: Embedded Malicious Code",
+      "description": "reviewdog/action-setup is a GitHub action that installs reviewdog. reviewdog/action-setup@v1 was com"
+    },
+    {
+      "cve_id": "CVE-2025-24882",
+      "software": "v0.7.0",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "regclient is a Docker and OCI Registry Client in Go. A malicious registry could return a different d"
+    },
+    {
+      "cve_id": "CVE-2025-24790",
+      "software": "v3.6.8",
+      "vuln_type": "CWE-276: Incorrect Default Permissions",
+      "description": "Snowflake JDBC provides a JDBC type 4 driver that supports core functionality, allowing Java program"
+    },
+    {
+      "cve_id": "CVE-2025-24802",
+      "software": "v1.0.0",
+      "vuln_type": "CWE-1240: Use of a Cryptographic Primitive with a Risky Implementation",
+      "description": "Plonky2 is a SNARK implementation based on techniques from PLONK and FRI. Lookup tables, whose lengt"
+    },
+    {
+      "cve_id": "CVE-2025-24788",
+      "software": "v2.0.12",
+      "vuln_type": "CWE-276: Incorrect Default Permissions",
+      "description": "snowflake-connector-net is the Snowflake Connector for .NET. Snowflake discovered and remediated a v"
+    },
+    {
+      "cve_id": "CVE-2025-24024",
+      "software": "v1.9.0",
+      "vuln_type": "CWE-671: Lack of Administrator Control over Security",
+      "description": "Mjolnir is a moderation tool for Matrix. Mjolnir v1.9.0 responds to management commands from any roo"
+    },
+    {
+      "cve_id": "CVE-2025-24804",
+      "software": "v4.3.0",
+      "vuln_type": "CWE-1287: Improper Validation of Specified Type of Input",
+      "description": "Mobile Security Framework (MobSF) is an automated, all-in-one mobile application (Android/iOS/Window"
+    },
+    {
+      "cve_id": "CVE-2025-24795",
+      "software": "v2.3.7",
+      "vuln_type": "CWE-276: Incorrect Default Permissions",
+      "description": "The Snowflake Connector for Python provides an interface for developing Python applications that can"
+    },
+    {
+      "cve_id": "CVE-2025-24805",
+      "software": "v4.3.0",
+      "vuln_type": "CWE-269: Improper Privilege Management",
+      "description": "Mobile Security Framework (MobSF) is an automated, all-in-one mobile application (Android/iOS/Window"
+    },
+    {
+      "cve_id": "CVE-2025-46723",
+      "software": "v1.0.0",
+      "vuln_type": "CWE-131: Incorrect Calculation of Buffer Size",
+      "description": "OpenVM is a performant and modular zkVM framework built for customization and extensibility. In vers"
+    },
+    {
+      "cve_id": "CVE-2025-46573",
+      "software": "v3.0.5",
+      "vuln_type": "CWE-287: Improper Authentication",
+      "description": "passport-wsfed-saml2 provides passport strategy for both WS-fed and SAML2 protocol. A vulnerability "
+    },
+    {
+      "cve_id": "CVE-2025-46572",
+      "software": "v3.0.5",
+      "vuln_type": "CWE-287: Improper Authentication",
+      "description": "passport-wsfed-saml2 provides passport strategy for both WS-fed and SAML2 protocol. A vulnerability "
+    },
+    {
+      "cve_id": "CVE-2025-46331",
+      "software": "v1.3.6",
+      "vuln_type": "CWE-284: Improper Access Control",
+      "description": "OpenFGA is a high-performance and flexible authorization/permission engine built for developers and "
+    },
+    {
+      "cve_id": "CVE-2025-23047",
+      "software": "v1.14.0",
+      "vuln_type": "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor",
+      "description": "Cilium is a networking, observability, and security solution with an eBPF-based dataplane. An insecu"
+    },
+    {
+      "cve_id": "CVE-2025-27606",
+      "software": "v1.6.32",
+      "vuln_type": "CWE-488: Exposure of Data Element to Wrong Session",
+      "description": "Element Android is an Android Matrix Client provided by Element. Element Android up to version 1.6.3"
+    },
+    {
+      "cve_id": "CVE-2025-27612",
+      "software": "v0.5.2",
+      "vuln_type": "CWE-276: Incorrect Default Permissions",
+      "description": "libcontainer is a library for container control. Prior to libcontainer 0.5.3, while creating a tenan"
+    },
+    {
+      "cve_id": "CVE-2025-27496",
+      "software": "v3.0.13",
+      "vuln_type": "CWE-532: Insertion of Sensitive Information into Log File",
+      "description": "Snowflake, a platform for using artificial intelligence in the context of cloud computing, has a vul"
+    },
+    {
+      "cve_id": "CVE-2025-27157",
+      "software": "v4.2.0",
+      "vuln_type": "CWE-770: Allocation of Resources Without Limits or Throttling",
+      "description": "Mastodon is a self-hosted, federated microblogging platform. Starting in version 4.2.0 and prior to "
+    },
+    {
+      "cve_id": "CVE-2025-26624",
+      "software": "v4.6",
+      "vuln_type": "CWE-426: Untrusted Search Path",
+      "description": "Rufus is a utility that helps format and create bootable USB flash drives. A DLL hijacking vulnerabi"
+    },
+    {
+      "cve_id": "CVE-2025-26603",
+      "software": "v9.1.1114",
+      "vuln_type": "CWE-416: Use After Free",
+      "description": "Vim is a greatly improved version of the good old UNIX editor Vi. Vim allows to redirect screen mess"
+    },
+    {
+      "cve_id": "CVE-2025-32033",
+      "software": "v1.61.2-rc.0",
+      "vuln_type": "CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer",
+      "description": "The Apollo Router Core is a configurable, high-performance graph router written in Rust to run a fed"
+    },
+    {
+      "cve_id": "CVE-2025-32782",
+      "software": "v4.6.4",
+      "vuln_type": "CWE-306: Missing Authentication for Critical Function",
+      "description": "Ash Authentication provides authentication for the Ash framework. The confirmation flow for account "
+    },
+    {
+      "cve_id": "CVE-2025-32428",
+      "software": "v3.0.0",
+      "vuln_type": "CWE-668: Exposure of Resource to Wrong Sphere",
+      "description": "Jupyter Remote Desktop Proxy allows you to run a Linux Desktop on a JupyterHub. jupyter-remote-deskt"
+    },
+    {
+      "cve_id": "CVE-2025-32386",
+      "software": "v3.17.2",
+      "vuln_type": "CWE-789: Memory Allocation with Excessive Size Value",
+      "description": "Helm is a tool for managing Charts. A chart archive file can be crafted in a manner where it expands"
+    },
+    {
+      "cve_id": "CVE-2025-47775",
+      "software": "v0.8.3",
+      "vuln_type": "CWE-201: Insertion of Sensitive Information Into Sent Data",
+      "description": "Bullfrog is a GithHb Action to block unauthorized outbound traffic in GitHub workflows. Prior to ver"
+    },
+    {
+      "cve_id": "CVE-2025-47276",
+      "software": "v1.1.0",
+      "vuln_type": "CWE-328: Use of Weak Hash",
+      "description": "Actualizer is a single shell script solution to allow developers and embedded engineers to create De"
+    },
+    {
+      "cve_id": "CVE-2025-22136",
+      "software": "v1.0.216",
+      "vuln_type": "CWE-94: Improper Control of Generation of Code ('Code Injection')",
+      "description": "Tabby (formerly Terminus) is a highly configurable terminal emulator. Prior to 1.0.217 , Tabby enabl"
+    },
+    {
+      "cve_id": "CVE-2025-4516",
+      "software": "v3.14.0a7",
+      "vuln_type": "CWE-416 Use After Free",
+      "description": "There is an issue in CPython when using `bytes.decode(\"unicode_escape\", error=\"ignore|replace\")`. If"
+    },
+    {
+      "cve_id": "CVE-2025-29768",
+      "software": "v9.1.1197",
+      "vuln_type": "CWE-88: Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')",
+      "description": "Vim, a text editor, is vulnerable to potential data loss with zip.vim and special crafted zip files "
+    },
+    {
+      "cve_id": "CVE-2025-29923",
+      "software": "v9.7.0-beta.1",
+      "vuln_type": "CWE-20: Improper Input Validation",
+      "description": "go-redis is the official Redis client library for the Go programming language. Prior to 9.5.5, 9.6.3"
+    },
+    {
+      "cve_id": "CVE-2025-1795",
+      "software": "v3.11.8",
+      "vuln_type": "n/a",
+      "description": "During an address list folding when a separating comma ends up on a folded line and that line is to "
+    },
+    {
+      "cve_id": "CVE-2025-1474",
+      "software": "v2.19.0rc0",
+      "vuln_type": "CWE-521 Weak Password Requirements",
+      "description": "In mlflow/mlflow version 2.18, an admin is able to create a new user account without setting a passw"
+    }
+  ],
+  "web_cve_ids": [
+    "CVE-2024-2928",
+    "CVE-2024-2288",
+    "CVE-2024-2548",
+    "CVE-2024-2624",
+    "CVE-2024-6232",
+    "CVE-2024-6862",
+    "CVE-2024-6868",
+    "CVE-2024-6983",
+    "CVE-2024-6781",
+    "CVE-2024-6908",
+    "CVE-2024-6895",
+    "CVE-2024-6587",
+    "CVE-2024-7008",
+    "CVE-2024-7009",
+    "CVE-2024-7475",
+    "CVE-2024-7592",
+    "CVE-2024-7472",
+    "CVE-2024-7099",
+    "CVE-2024-7456",
+    "CVE-2024-7476",
+    "CVE-2024-3322",
+    "CVE-2024-3219",
+    "CVE-2024-3501",
+    "CVE-2024-3408",
+    "CVE-2024-50353",
+    "CVE-2024-50343",
+    "CVE-2024-50342",
+    "CVE-2024-50354",
+    "CVE-2024-50341",
+    "CVE-2024-50340",
+    "CVE-2024-50347",
+    "CVE-2024-35225",
+    "CVE-2024-35234",
+    "CVE-2024-35178",
+    "CVE-2024-8581",
+    "CVE-2024-8763",
+    "CVE-2024-8251",
+    "CVE-2024-8764",
+    "CVE-2024-8898",
+    "CVE-2024-8088",
+    "CVE-2024-8572",
+    "CVE-2024-8642",
+    "CVE-2024-8005",
+    "CVE-2024-8249",
+    "CVE-2024-8789",
+    "CVE-2024-8859",
+    "CVE-2024-8248",
+    "CVE-2024-8462",
+    "CVE-2024-8998",
+    "CVE-2024-8999",
+    "CVE-2024-40630",
+    "CVE-2024-40634",
+    "CVE-2024-40643",
+    "CVE-2024-40624",
+    "CVE-2024-11171",
+    "CVE-2024-11170",
+    "CVE-2024-11003",
+    "CVE-2024-11042",
+    "CVE-2024-11169",
+    "CVE-2024-11958",
+    "CVE-2024-11173",
+    "CVE-2024-11168",
+    "CVE-2024-31217",
+    "CVE-2024-54150",
+    "CVE-2024-54151",
+    "CVE-2024-54133",
+    "CVE-2024-54152",
+    "CVE-2024-54000",
+    "CVE-2024-54149",
+    "CVE-2024-21538",
+    "CVE-2024-21535",
+    "CVE-2024-21536",
+    "CVE-2024-21546",
+    "CVE-2024-21527",
+    "CVE-2024-55950",
+    "CVE-2024-55655",
+    "CVE-2024-55659",
+    "CVE-2024-55658",
+    "CVE-2024-55603",
+    "CVE-2024-55657",
+    "CVE-2024-55952",
+    "CVE-2024-55661",
+    "CVE-2024-55660",
+    "CVE-2024-55601",
+    "CVE-2024-55630",
+    "CVE-2024-55885",
+    "CVE-2024-45389",
+    "CVE-2024-45393",
+    "CVE-2024-45813",
+    "CVE-2024-45039",
+    "CVE-2024-45310",
+    "CVE-2024-45812",
+    "CVE-2024-45296",
+    "CVE-2024-45803",
+    "CVE-2024-45337",
+    "CVE-2024-45394",
+    "CVE-2024-45800",
+    "CVE-2024-45601",
+    "CVE-2024-45314",
+    "CVE-2024-45811",
+    "CVE-2024-45041",
+    "CVE-2024-45411",
+    "CVE-2024-45040",
+    "CVE-2024-45596",
+    "CVE-2024-45298",
+    "CVE-2024-45037",
+    "CVE-2024-51755",
+    "CVE-2024-51754",
+    "CVE-2024-51996",
+    "CVE-2024-51753",
+    "CVE-2024-51749",
+    "CVE-2024-51752",
+    "CVE-2024-51744",
+    "CVE-2024-51478",
+    "CVE-2024-51750",
+    "CVE-2024-51491",
+    "CVE-2024-51757",
+    "CVE-2024-9098",
+    "CVE-2024-9606",
+    "CVE-2024-9095",
+    "CVE-2024-9099",
+    "CVE-2024-9900",
+    "CVE-2024-24759",
+    "CVE-2024-41124",
+    "CVE-2024-41132",
+    "CVE-2024-41811",
+    "CVE-2024-41128",
+    "CVE-2024-41109",
+    "CVE-2024-41666",
+    "CVE-2024-41676",
+    "CVE-2024-41953",
+    "CVE-2024-41816",
+    "CVE-2024-41655",
+    "CVE-2024-41946",
+    "CVE-2024-41659",
+    "CVE-2024-41819",
+    "CVE-2024-41818",
+    "CVE-2024-41662",
+    "CVE-2024-41673",
+    "CVE-2024-41809",
+    "CVE-2024-41805",
+    "CVE-2024-41110",
+    "CVE-2024-41813",
+    "CVE-2024-41668",
+    "CVE-2024-41812",
+    "CVE-2024-41127",
+    "CVE-2024-41131",
+    "CVE-2024-10721",
+    "CVE-2024-10275",
+    "CVE-2024-10720",
+    "CVE-2024-10727",
+    "CVE-2024-10361",
+    "CVE-2024-10725",
+    "CVE-2024-10513",
+    "CVE-2024-10724",
+    "CVE-2024-10719",
+    "CVE-2024-10723",
+    "CVE-2024-10722",
+    "CVE-2024-10718",
+    "CVE-2024-56507",
+    "CVE-2024-56357",
+    "CVE-2024-56510",
+    "CVE-2024-56361",
+    "CVE-2024-56517",
+    "CVE-2024-56799",
+    "CVE-2024-56329",
+    "CVE-2024-56734",
+    "CVE-2024-56514",
+    "CVE-2024-56358",
+    "CVE-2024-56362",
+    "CVE-2024-56513",
+    "CVE-2024-56800",
+    "CVE-2024-56334",
+    "CVE-2024-56508",
+    "CVE-2024-56359",
+    "CVE-2024-46989",
+    "CVE-2024-46977",
+    "CVE-2024-46982",
+    "CVE-2024-46990",
+    "CVE-2024-52525",
+    "CVE-2024-52801",
+    "CVE-2024-52006",
+    "CVE-2024-52303",
+    "CVE-2024-52600",
+    "CVE-2024-52512",
+    "CVE-2024-52288",
+    "CVE-2024-52295",
+    "CVE-2024-52515",
+    "CVE-2024-52305",
+    "CVE-2024-52581",
+    "CVE-2024-52597",
+    "CVE-2024-52519",
+    "CVE-2024-52309",
+    "CVE-2024-52523",
+    "CVE-2024-52596",
+    "CVE-2024-52304",
+    "CVE-2024-52810",
+    "CVE-2024-52806",
+    "CVE-2024-52517",
+    "CVE-2024-52798",
+    "CVE-2024-52809",
+    "CVE-2024-52520",
+    "CVE-2024-52804",
+    "CVE-2024-52585",
+    "CVE-2024-52286",
+    "CVE-2024-37307",
+    "CVE-2024-37150",
+    "CVE-2024-37166",
+    "CVE-2024-37897",
+    "CVE-2024-37301",
+    "CVE-2024-37896",
+    "CVE-2024-37906",
+    "CVE-2024-37165",
+    "CVE-2024-37889",
+    "CVE-2024-37169",
+    "CVE-2024-37152",
+    "CVE-2024-37168",
+    "CVE-2024-37304",
+    "CVE-2024-37308",
+    "CVE-2024-37164",
+    "CVE-2024-27090",
+    "CVE-2024-13183",
+    "CVE-2024-42358",
+    "CVE-2024-42354",
+    "CVE-2024-42485",
+    "CVE-2024-42488",
+    "CVE-2024-42369",
+    "CVE-2024-42487",
+    "CVE-2024-42366",
+    "CVE-2024-42367",
+    "CVE-2024-42486",
+    "CVE-2024-42360",
+    "CVE-2024-42356",
+    "CVE-2024-42357",
+    "CVE-2024-42480",
+    "CVE-2024-53271",
+    "CVE-2024-53986",
+    "CVE-2024-53987",
+    "CVE-2024-53257",
+    "CVE-2024-53847",
+    "CVE-2024-53851",
+    "CVE-2024-53255",
+    "CVE-2024-53259",
+    "CVE-2024-53864",
+    "CVE-2024-53274",
+    "CVE-2024-53273",
+    "CVE-2024-53988",
+    "CVE-2024-53985",
+    "CVE-2024-53989",
+    "CVE-2024-53272",
+    "CVE-2024-36127",
+    "CVE-2024-36399",
+    "CVE-2024-36400",
+    "CVE-2024-36123",
+    "CVE-2024-36128",
+    "CVE-2024-12911",
+    "CVE-2024-12910",
+    "CVE-2024-12029",
+    "CVE-2024-12433",
+    "CVE-2024-12720",
+    "CVE-2024-12450",
+    "CVE-2024-12580",
+    "CVE-2024-12909",
+    "CVE-2024-43787",
+    "CVE-2024-43381",
+    "CVE-2024-43406",
+    "CVE-2024-43369",
+    "CVE-2024-43373",
+    "CVE-2024-43368",
+    "CVE-2024-43783",
+    "CVE-2024-43404",
+    "CVE-2024-43795",
+    "CVE-2024-43367",
+    "CVE-2024-43395",
+    "CVE-2024-43788",
+    "CVE-2024-32965",
+    "CVE-2024-32030",
+    "CVE-2024-32464",
+    "CVE-2024-32034",
+    "CVE-2024-47530",
+    "CVE-2024-47064",
+    "CVE-2024-47822",
+    "CVE-2024-47068",
+    "CVE-2024-47823",
+    "CVE-2024-47531",
+    "CVE-2024-47536",
+    "CVE-2024-47824",
+    "CVE-2024-47063",
+    "CVE-2024-47075",
+    "CVE-2024-47080",
+    "CVE-2024-47887",
+    "CVE-2024-47611",
+    "CVE-2024-47830",
+    "CVE-2024-47888",
+    "CVE-2024-47889",
+    "CVE-2024-47831",
+    "CVE-2024-47186",
+    "CVE-2024-47779",
+    "CVE-2024-47764",
+    "CVE-2024-47066",
+    "CVE-2024-47616",
+    "CVE-2024-47529",
+    "CVE-2024-47533",
+    "CVE-2024-47067",
+    "CVE-2024-47765",
+    "CVE-2024-39315",
+    "CVE-2024-39895",
+    "CVE-2024-39909",
+    "CVE-2024-39699",
+    "CVE-2024-39683",
+    "CVE-2024-39919",
+    "CVE-2024-39915",
+    "CVE-2024-39903",
+    "CVE-2024-39305",
+    "CVE-2024-39308",
+    "CVE-2024-39918",
+    "CVE-2024-39917",
+    "CVE-2024-39897",
+    "CVE-2024-39317",
+    "CVE-2024-39320",
+    "CVE-2024-39910",
+    "CVE-2024-39316",
+    "CVE-2024-4148",
+    "CVE-2024-29181",
+    "CVE-2024-0787",
+    "CVE-2024-0640",
+    "CVE-2024-0520",
+    "CVE-2024-48913",
+    "CVE-2024-48991",
+    "CVE-2024-48990",
+    "CVE-2024-48924",
+    "CVE-2024-48992",
+    "CVE-2024-48930",
+    "CVE-2024-49369",
+    "CVE-2024-49762",
+    "CVE-2024-49763",
+    "CVE-2024-49768",
+    "CVE-2024-49769",
+    "CVE-2024-49770",
+    "CVE-2024-49750",
+    "CVE-2024-49761",
+    "CVE-2024-38375",
+    "CVE-2024-38358",
+    "CVE-2024-38513",
+    "CVE-2024-38529",
+    "CVE-2024-38514",
+    "CVE-2024-38372",
+    "CVE-2024-38517",
+    "CVE-2024-38361",
+    "CVE-2024-38527",
+    "CVE-2024-38360",
+    "CVE-2024-5642",
+    "CVE-2024-5182",
+    "CVE-2024-5685",
+    "CVE-2024-5125",
+    "CVE-2025-25283",
+    "CVE-2025-25294",
+    "CVE-2025-25191",
+    "CVE-2025-25304",
+    "CVE-2025-25187",
+    "CVE-2025-25196",
+    "CVE-2025-25285",
+    "CVE-2025-25289",
+    "CVE-2025-25288",
+    "CVE-2025-25292",
+    "CVE-2025-25287",
+    "CVE-2025-25291",
+    "CVE-2025-25205",
+    "CVE-2025-25290",
+    "CVE-2025-25184",
+    "CVE-2025-31486",
+    "CVE-2025-31131",
+    "CVE-2025-31481",
+    "CVE-2025-31116",
+    "CVE-2025-31120",
+    "CVE-2025-31475",
+    "CVE-2025-31138",
+    "CVE-2025-31483",
+    "CVE-2025-31118",
+    "CVE-2025-31476",
+    "CVE-2025-31123",
+    "CVE-2025-31498",
+    "CVE-2025-31124",
+    "CVE-2025-31485",
+    "CVE-2025-31129",
+    "CVE-2025-31492",
+    "CVE-2025-31125",
+    "CVE-2025-21604",
+    "CVE-2025-21612",
+    "CVE-2025-21609",
+    "CVE-2025-21618",
+    "CVE-2025-21610",
+    "CVE-2025-30222",
+    "CVE-2025-30166",
+    "CVE-2025-30351",
+    "CVE-2025-30223",
+    "CVE-2025-30357",
+    "CVE-2025-30212",
+    "CVE-2025-30204",
+    "CVE-2025-30160",
+    "CVE-2025-30208",
+    "CVE-2025-30205",
+    "CVE-2025-30157",
+    "CVE-2025-30158",
+    "CVE-2025-30358",
+    "CVE-2025-30144",
+    "CVE-2025-30153",
+    "CVE-2025-30352",
+    "CVE-2025-30221",
+    "CVE-2025-24963",
+    "CVE-2025-24017",
+    "CVE-2025-24806",
+    "CVE-2025-24353",
+    "CVE-2025-24981",
+    "CVE-2025-24020",
+    "CVE-2025-24962",
+    "CVE-2025-24791",
+    "CVE-2025-24973",
+    "CVE-2025-24027",
+    "CVE-2025-24358",
+    "CVE-2025-24030",
+    "CVE-2025-24899",
+    "CVE-2025-24362",
+    "CVE-2025-24374",
+    "CVE-2025-24013",
+    "CVE-2025-24793",
+    "CVE-2025-24361",
+    "CVE-2025-24789",
+    "CVE-2025-24360",
+    "CVE-2025-24784",
+    "CVE-2025-24803",
+    "CVE-2025-24356",
+    "CVE-2025-24028",
+    "CVE-2025-24019",
+    "CVE-2025-24900",
+    "CVE-2025-24018",
+    "CVE-2025-24976",
+    "CVE-2025-46719",
+    "CVE-2025-46328",
+    "CVE-2025-46344",
+    "CVE-2025-46348",
+    "CVE-2025-46553",
+    "CVE-2025-46338",
+    "CVE-2025-46816",
+    "CVE-2025-46729",
+    "CVE-2025-46569",
+    "CVE-2025-46549",
+    "CVE-2025-46565",
+    "CVE-2025-46820",
+    "CVE-2025-46342",
+    "CVE-2025-46728",
+    "CVE-2025-46551",
+    "CVE-2025-46571",
+    "CVE-2025-46727",
+    "CVE-2025-46336",
+    "CVE-2025-46730",
+    "CVE-2025-46337",
+    "CVE-2025-46550",
+    "CVE-2025-46815",
+    "CVE-2025-46721",
+    "CVE-2025-46347",
+    "CVE-2025-46812",
+    "CVE-2025-46350",
+    "CVE-2025-46346",
+    "CVE-2025-46825",
+    "CVE-2025-23208",
+    "CVE-2025-23033",
+    "CVE-2025-23204",
+    "CVE-2025-23205",
+    "CVE-2025-23045",
+    "CVE-2025-23032",
+    "CVE-2025-23214",
+    "CVE-2025-23035",
+    "CVE-2025-23218",
+    "CVE-2025-23219",
+    "CVE-2025-23034",
+    "CVE-2025-23038",
+    "CVE-2025-23037",
+    "CVE-2025-23220",
+    "CVE-2025-23036",
+    "CVE-2025-23027",
+    "CVE-2025-23031",
+    "CVE-2025-23207",
+    "CVE-2025-23030",
+    "CVE-2025-27420",
+    "CVE-2025-27142",
+    "CVE-2025-27400",
+    "CVE-2025-27617",
+    "CVE-2025-27092",
+    "CVE-2025-27616",
+    "CVE-2025-27143",
+    "CVE-2025-27417",
+    "CVE-2025-27088",
+    "CVE-2025-27134",
+    "CVE-2025-27499",
+    "CVE-2025-27773",
+    "CVE-2025-27410",
+    "CVE-2025-27144",
+    "CVE-2025-27607",
+    "CVE-2025-27109",
+    "CVE-2025-27133",
+    "CVE-2025-27108",
+    "CVE-2025-27597",
+    "CVE-2025-27610",
+    "CVE-2025-27407",
+    "CVE-2025-27112",
+    "CVE-2025-27515",
+    "CVE-2025-27145",
+    "CVE-2025-27111",
+    "CVE-2025-27599",
+    "CVE-2025-27106",
+    "CVE-2025-27413",
+    "CVE-2025-27794",
+    "CVE-2025-27418",
+    "CVE-2025-27793",
+    "CVE-2025-27140",
+    "CVE-2025-27507",
+    "CVE-2025-27403",
+    "CVE-2025-27419",
+    "CVE-2025-27788",
+    "CVE-2025-27399",
+    "CVE-2025-26619",
+    "CVE-2025-43859",
+    "CVE-2025-43855",
+    "CVE-2025-32024",
+    "CVE-2025-32032",
+    "CVE-2025-32012",
+    "CVE-2025-32442",
+    "CVE-2025-32395",
+    "CVE-2025-32025",
+    "CVE-2025-32014",
+    "CVE-2025-32960",
+    "CVE-2025-32389",
+    "CVE-2025-32371",
+    "CVE-2025-32035",
+    "CVE-2025-32961",
+    "CVE-2025-32445",
+    "CVE-2025-32387",
+    "CVE-2025-32372",
+    "CVE-2025-32036",
+    "CVE-2025-32441",
+    "CVE-2025-47269",
+    "CVE-2025-47274",
+    "CVE-2025-47777",
+    "CVE-2025-22618",
+    "CVE-2025-22614",
+    "CVE-2025-22615",
+    "CVE-2025-22137",
+    "CVE-2025-22619",
+    "CVE-2025-22130",
+    "CVE-2025-22150",
+    "CVE-2025-22613",
+    "CVE-2025-22149",
+    "CVE-2025-22132",
+    "CVE-2025-22133",
+    "CVE-2025-22616",
+    "CVE-2025-22617",
+    "CVE-2025-29930",
+    "CVE-2025-29784",
+    "CVE-2025-29907",
+    "CVE-2025-29927",
+    "CVE-2025-29788",
+    "CVE-2025-29787",
+    "CVE-2025-29914",
+    "CVE-2025-29781",
+    "CVE-2025-29922",
+    "CVE-2025-29774",
+    "CVE-2025-29775",
+    "CVE-2025-0938",
+    "CVE-2025-0628",
+    "CVE-2025-0281",
+    "CVE-2025-0311",
+    "CVE-2025-0454",
+    "CVE-2025-1302",
+    "CVE-2025-1752",
+    "CVE-2025-1040",
+    "CVE-2025-1467",
+    "CVE-2025-1893",
+    "CVE-2025-1473",
+    "CVE-2025-1716",
+    "CVE-2025-1584",
+    "CVE-2025-1194"
+  ]
+}

@@ -2,6 +2,26 @@ import os
 from agentlib import Agent
 from typing import Optional
 
+# 🔧 修复 CVE-2024-3651: 防止超长输入导致 token 超限
+MAX_SECURITY_ADVISORY_LENGTH = 8000  # 约 2000 tokens
+MAX_PATCH_LENGTH = 6000  # 约 1500 tokens
+
+def _truncate_content(content: str, max_length: int, label: str = "content") -> str:
+    """截断过长的内容，保留关键信息"""
+    if not content or len(content) <= max_length:
+        return content
+    
+    # 尝试在合理位置截断（段落或代码块边界）
+    truncated = content[:max_length]
+    for delimiter in ['\n```\n', '\n\n', '\n', '. ']:
+        last_pos = truncated.rfind(delimiter)
+        if last_pos > max_length * 0.7:
+            truncated = truncated[:last_pos + len(delimiter)]
+            break
+    
+    return truncated.strip() + f"\n\n[... {label} truncated, {len(content) - len(truncated)} chars omitted to prevent token overflow ...]"
+
+
 class KnowledgeBuilder(Agent[dict, str]):
     __LLM_MODEL__ = 'gpt-4o-mini'
     __SYSTEM_PROMPT_TEMPLATE__ = 'knowledgeBuilder/knowledgeBuilder.system.j2'
@@ -22,8 +42,17 @@ class KnowledgeBuilder(Agent[dict, str]):
         self.CWE = kwargs.get('cwe')
         self.PROJECT_NAME = kwargs.get('project_name')
         self.AFFECTED_VERSION = kwargs.get('affected_version')
-        self.SECURITY_ADVISORY = kwargs.get('security_advisory')
-        self.PATCH = kwargs.get('patch')
+        # 🔧 截断过长的输入
+        self.SECURITY_ADVISORY = _truncate_content(
+            kwargs.get('security_advisory', ''), 
+            MAX_SECURITY_ADVISORY_LENGTH, 
+            "security advisory"
+        )
+        self.PATCH = _truncate_content(
+            kwargs.get('patch', ''), 
+            MAX_PATCH_LENGTH, 
+            "patch"
+        )
     
     def get_input_vars(self, *args, **kwargs) -> dict:
         vars = super().get_input_vars(*args, **kwargs)

@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "created_at": "2025-12-15T12:45:27.221120",
-  "updated_at": "2025-12-15T12:45:27.221411",
+  "updated_at": "2025-12-25T12:16:28.284930",
   "experiences": {
     "dotnet": {
       "library": {
@@ -244,6 +244,47 @@
             ],
             "should_avoid": true,
             "avoid_reason": "Go 库没有 main 包"
+          }
+        }
+      }
+    },
+    "unknown": {
+      "web_service": {
+        "project_type": "unknown",
+        "subtype": "web_service",
+        "total_tasks": 4,
+        "successful_tasks": 0,
+        "identifying_patterns": [],
+        "startup_advice": "",
+        "common_pitfalls": [
+          "源码项目必须在项目目录运行，不能在 /tmp"
+        ],
+        "last_updated": "2025-12-25T12:16:28.284910",
+        "command_experiences": {
+          "python app.py": {
+            "command_pattern": "python app.py",
+            "success_count": 0,
+            "failure_count": 3,
+            "common_errors": [
+              "python: can't open file '/tmp/yugabyte-db-2.20.6.0/app.py': [Errno 2] No such file or directory\n",
+              "python: can't open file '/workspaces/submission/src/simulation_environments/yugabyte-db-2.20.6.0/app.py': [Errno 2] No such file or directory\n"
+            ],
+            "solutions": [
+              "使用 project_path 参数指定正确的项目目录"
+            ],
+            "alternatives": [],
+            "should_avoid": false,
+            "avoid_reason": ""
+          },
+          "cd": {
+            "command_pattern": "cd",
+            "success_count": 0,
+            "failure_count": 1,
+            "common_errors": [],
+            "solutions": [],
+            "alternatives": [],
+            "should_avoid": false,
+            "avoid_reason": ""
           }
         }
       }

@@ -1,0 +1,331 @@
+{
+  "version": "1.1",
+  "description": "构建知识库 - 存储特定项目/技术的编译配方，由 RepoBuilder 动态加载",
+  "recipes": {
+    "micropython": {
+      "keywords": ["micropython", "py/objarray.c", "ports/unix", "mpy-cross"],
+      "description": "MicroPython - 嵌入式 Python 解释器",
+      "requires_submodules": true,
+      "build_instructions": [
+        "# ⚠️ MicroPython 需要 git submodules (Berkeley DB 等)",
+        "# 如果源码是 zip 下载的，submodules 会缺失！",
+        "",
+        "# 方案1: 重新克隆（推荐）",
+        "git clone --recurse-submodules https://github.com/micropython/micropython.git",
+        "cd micropython && git checkout v{VERSION}",
+        "",
+        "# 方案2: 手动下载缺失的子模块",
+        "cd lib && git clone https://github.com/pfalcon/berkeley-db-1.xx.git",
+        "",
+        "# 构建",
+        "cd ports/unix && make submodules && make"
+      ],
+      "common_errors": {
+        "btree.h: No such file": "Berkeley DB submodule 缺失，重新克隆仓库"
+      },
+      "dependencies": ["build-essential", "libffi-dev", "pkg-config"]
+    },
+    "git": {
+      "keywords": ["git-scm", "git.c", "builtin/", "credential-"],
+      "description": "Git - 版本控制系统",
+      "build_instructions": [
+        "apt-get install -y build-essential libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev autoconf",
+        "make prefix=/usr/local all",
+        "./git --version"
+      ],
+      "common_errors": {
+        "curl/curl.h: No such file": "apt-get install -y libcurl4-gnutls-dev"
+      },
+      "dependencies": ["build-essential", "libcurl4-gnutls-dev", "libexpat1-dev", "gettext", "libz-dev", "libssl-dev"]
+    },
+    "protobuf": {
+      "keywords": ["protobuf", "google.protobuf", "protobuf-java", "protoc", ".proto"],
+      "description": "Protocol Buffers - Google 序列化库",
+      "is_library": true,
+      "complex_build": true,
+      "build_system": "bazel",
+      "build_instructions": [
+        "# ⚠️ Protobuf 使用 Bazel，不要从源码构建！",
+        "# Java: mvn dependency:resolve (需要 pom.xml)",
+        "# Python: pip install protobuf=={VERSION}"
+      ],
+      "package_managers": {
+        "maven": "com.google.protobuf:protobuf-java",
+        "pip": "protobuf",
+        "npm": "google-protobuf"
+      }
+    },
+    "grpc": {
+      "keywords": ["grpc", "grpc-c++", "grpc-java", "grpc-go", "posix_endpoint", "gRPC"],
+      "description": "gRPC - 高性能 RPC 框架",
+      "is_library": true,
+      "complex_build": true,
+      "build_system": "bazel",
+      "requires_submodules": true,
+      "build_instructions": [
+        "# ⚠️ gRPC 使用 Bazel + submodules，非常复杂！",
+        "# 推荐使用包管理器：",
+        "",
+        "# Python:",
+        "pip install grpcio=={VERSION} grpcio-tools=={VERSION}",
+        "",
+        "# Java (Maven):",
+        "# 添加 io.grpc:grpc-core:{VERSION} 到 pom.xml",
+        "",
+        "# 如果必须从源码构建 C++:",
+        "git clone --recurse-submodules https://github.com/grpc/grpc.git",
+        "cd grpc && git checkout v{VERSION}",
+        "mkdir build && cd build",
+        "cmake .. && make -j4"
+      ],
+      "package_managers": {
+        "pip": "grpcio",
+        "maven": "io.grpc:grpc-core",
+        "npm": "@grpc/grpc-js"
+      }
+    },
+    "idna": {
+      "keywords": ["idna", "internationalized domain"],
+      "description": "IDNA - 国际化域名库 (Python)",
+      "is_library": true,
+      "build_instructions": ["pip install idna=={VERSION}"],
+      "package_managers": {"pip": "idna"}
+    },
+    "sqlparse": {
+      "keywords": ["sqlparse", "sql parser"],
+      "description": "sqlparse - SQL 解析库 (Python)",
+      "is_library": true,
+      "build_instructions": ["pip install sqlparse=={VERSION}"],
+      "package_managers": {"pip": "sqlparse"}
+    },
+    "requests": {
+      "keywords": ["requests", "python-requests", "urllib3"],
+      "description": "Requests - HTTP 库 (Python)",
+      "is_library": true,
+      "build_instructions": ["pip install requests=={VERSION}"],
+      "package_managers": {"pip": "requests"}
+    },
+    "flask": {
+      "keywords": ["flask", "werkzeug", "jinja2"],
+      "description": "Flask - Python Web 框架",
+      "is_library": true,
+      "build_instructions": [
+        "pip install flask=={VERSION}",
+        "# 启动示例应用",
+        "flask run --host=0.0.0.0 --port=5000"
+      ],
+      "package_managers": {"pip": "flask"}
+    },
+    "django": {
+      "keywords": ["django", "djangoproject"],
+      "description": "Django - Python Web 框架",
+      "is_library": true,
+      "build_instructions": [
+        "pip install django=={VERSION}",
+        "python manage.py runserver 0.0.0.0:8000"
+      ],
+      "package_managers": {"pip": "django"}
+    },
+    "djl": {
+      "keywords": ["djl", "deepjavalibrary", "deep java library"],
+      "description": "DJL - Deep Java Library",
+      "is_library": true,
+      "build_instructions": [
+        "# Java 深度学习库，使用 Maven",
+        "mvn clean install -DskipTests"
+      ],
+      "package_managers": {"maven": "ai.djl:api"}
+    },
+    "juju": {
+      "keywords": ["juju", "canonical", "charm"],
+      "description": "Juju - 云基础设施编排",
+      "skip_reproduction": true,
+      "skip_reason": "需要完整 Juju 集群环境（Controller + Model + LXD/K8s）"
+    },
+    "redis": {
+      "keywords": ["redis", "redis-server", "redis-cli"],
+      "description": "Redis - 内存数据库",
+      "build_instructions": ["make", "./src/redis-server --daemonize yes", "./src/redis-cli ping"],
+      "dependencies": ["build-essential"]
+    },
+    "nginx": {
+      "keywords": ["nginx", "ngx_"],
+      "description": "Nginx - Web 服务器",
+      "build_instructions": [
+        "apt-get install -y build-essential libpcre3-dev zlib1g-dev libssl-dev",
+        "./configure && make",
+        "./objs/nginx"
+      ],
+      "dependencies": ["build-essential", "libpcre3-dev", "zlib1g-dev", "libssl-dev"]
+    },
+    "cups": {
+      "keywords": ["cups", "cupsd", "OpenPrinting"],
+      "description": "CUPS - 打印系统",
+      "build_instructions": [
+        "apt-get install -y build-essential autoconf libssl-dev libpam-dev libusb-1.0-0-dev",
+        "./configure --disable-dnssd --disable-avahi",
+        "make"
+      ],
+      "dependencies": ["build-essential", "autoconf", "libssl-dev", "libpam-dev"]
+    },
+    "tensorflow": {
+      "keywords": ["tensorflow", "tf.", "keras"],
+      "description": "TensorFlow - 机器学习框架",
+      "is_library": true,
+      "complex_build": true,
+      "build_system": "bazel",
+      "build_instructions": ["# 不要从源码构建！", "pip install tensorflow=={VERSION}"],
+      "package_managers": {"pip": "tensorflow"}
+    },
+    "pytorch": {
+      "keywords": ["pytorch", "torch", "torchvision"],
+      "description": "PyTorch - 机器学习框架",
+      "is_library": true,
+      "build_instructions": ["pip install torch=={VERSION}"],
+      "package_managers": {"pip": "torch"}
+    },
+    "express": {
+      "keywords": ["express", "expressjs"],
+      "description": "Express - Node.js Web 框架",
+      "is_library": true,
+      "build_instructions": ["npm install express@{VERSION}", "node app.js"],
+      "package_managers": {"npm": "express"}
+    },
+    "lodash": {
+      "keywords": ["lodash", "_.", "underscore"],
+      "description": "Lodash - JavaScript 工具库",
+      "is_library": true,
+      "build_instructions": ["npm install lodash@{VERSION}"],
+      "package_managers": {"npm": "lodash"}
+    },
+    "axios": {
+      "keywords": ["axios"],
+      "description": "Axios - HTTP 客户端",
+      "is_library": true,
+      "build_instructions": ["npm install axios@{VERSION}"],
+      "package_managers": {"npm": "axios"}
+    },
+    "spring": {
+      "keywords": ["springframework", "spring-boot", "spring-core", "@SpringBootApplication"],
+      "description": "Spring Framework - Java Web 框架",
+      "is_library": true,
+      "build_instructions": [
+        "# 使用 Maven 或 Gradle",
+        "mvn spring-boot:run",
+        "# 或 gradle bootRun"
+      ],
+      "package_managers": {"maven": "org.springframework.boot:spring-boot-starter"}
+    },
+    "log4j": {
+      "keywords": ["log4j", "log4j2", "logging"],
+      "description": "Log4j - Java 日志框架",
+      "is_library": true,
+      "build_instructions": ["# Maven: 添加 log4j 依赖到 pom.xml"],
+      "package_managers": {"maven": "org.apache.logging.log4j:log4j-core"}
+    },
+    "jackson": {
+      "keywords": ["jackson", "ObjectMapper", "JsonNode"],
+      "description": "Jackson - JSON 处理库 (Java)",
+      "is_library": true,
+      "build_instructions": ["# Maven 依赖"],
+      "package_managers": {"maven": "com.fasterxml.jackson.core:jackson-databind"}
+    },
+    "openssl": {
+      "keywords": ["openssl", "libssl", "libcrypto"],
+      "description": "OpenSSL - 加密库",
+      "build_instructions": [
+        "apt-get install -y build-essential",
+        "./config",
+        "make",
+        "./apps/openssl version"
+      ],
+      "dependencies": ["build-essential"]
+    },
+    "curl": {
+      "keywords": ["libcurl", "curl"],
+      "description": "cURL - 网络传输库",
+      "build_instructions": [
+        "apt-get install -y build-essential libssl-dev",
+        "./configure --with-openssl",
+        "make",
+        "./src/curl --version"
+      ],
+      "dependencies": ["build-essential", "libssl-dev"]
+    },
+    "calibre": {
+      "keywords": ["calibre", "ebook"],
+      "description": "Calibre - 电子书管理",
+      "build_instructions": [
+        "# Calibre 有复杂的依赖，推荐使用 Docker 或系统包",
+        "apt-get install -y calibre",
+        "# 或从源码:",
+        "python setup.py install"
+      ]
+    },
+    "next": {
+      "keywords": ["next.js", "nextjs", "next/"],
+      "description": "Next.js - React 框架",
+      "build_instructions": [
+        "npm install",
+        "npm run dev",
+        "# 或 npm run build && npm start"
+      ],
+      "package_managers": {"npm": "next"}
+    },
+    "react": {
+      "keywords": ["react", "reactjs", "jsx"],
+      "description": "React - UI 库",
+      "is_library": true,
+      "build_instructions": ["npm install react@{VERSION} react-dom@{VERSION}"],
+      "package_managers": {"npm": "react"}
+    },
+    "vue": {
+      "keywords": ["vue", "vuejs", ".vue"],
+      "description": "Vue.js - UI 框架",
+      "is_library": true,
+      "build_instructions": ["npm install vue@{VERSION}"],
+      "package_managers": {"npm": "vue"}
+    }
+  },
+  "complex_build_indicators": {
+    "bazel": ["WORKSPACE", "BUILD.bazel", "MODULE.bazel", ".bazelrc"],
+    "cmake_complex": ["CMakeLists.txt"],
+    "generated_pom": ["pom_template.xml"],
+    "monorepo": ["java/", "python/", "rust/", "go/", "packages/"]
+  },
+  "general_submodule_fix": {
+    "detection": "检查 .gitmodules 文件是否存在",
+    "solutions": [
+      "git clone --recurse-submodules https://github.com/ORG/PROJECT.git",
+      "make submodules",
+      "cat .gitmodules && git submodule update --init"
+    ]
+  },
+  "language_defaults": {
+    "python": {
+      "install": "pip install -e . 或 python setup.py install",
+      "test": "pytest 或 python -m pytest"
+    },
+    "java": {
+      "install": "mvn package -DskipTests 或 gradle build",
+      "test": "mvn test 或 gradle test"
+    },
+    "node": {
+      "install": "npm install",
+      "test": "npm test",
+      "start": "npm start 或 node app.js"
+    },
+    "go": {
+      "install": "go build",
+      "test": "go test ./..."
+    },
+    "rust": {
+      "install": "cargo build",
+      "test": "cargo test"
+    },
+    "c": {
+      "install": "make 或 ./configure && make",
+      "deps": "apt-get install -y build-essential"
+    }
+  }
+}

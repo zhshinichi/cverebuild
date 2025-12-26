@@ -9,6 +9,8 @@ from . import file_ops
 from . import command_ops
 from . import security_tools
 from . import project_analyzer
+from . import version_kb
+from . import docker_tools
 
 TOOLS = {
     'get_file': file_ops.get_file,
@@ -27,6 +29,14 @@ TOOLS = {
     
     # 项目结构分析工具 - 在构建前分析项目类型，避免使用错误的工具
     'analyze_project_structure': project_analyzer.analyze_project_structure,
+    
+    # 版本映射知识库 - 防止跨语言库的版本号幻觉
+    'query_version_mapping': version_kb.query_version_mapping,
+    'list_known_libraries': version_kb.list_known_libraries,
+    
+    # Docker 镜像查询和构建工具检查 - 优先使用官方镜像，自动安装缺失工具
+    'search_docker_hub': docker_tools.search_docker_hub,
+    'check_build_tool': docker_tools.check_build_tool,
 }
 
 # @tools.tool

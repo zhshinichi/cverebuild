@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "description": "Version mapping knowledge base for cross-language libraries",
+    "last_updated": "2025-12-24",
+    "purpose": "Prevents version hallucination when building CVE reproduction environments"
+  },
+  "libraries": {
+    "protobuf": {
+      "full_name": "Protocol Buffers",
+      "official_site": "https://github.com/protocolbuffers/protobuf",
+      "version_schemes": {
+        "git_tag": {
+          "pattern": "vXX.Y",
+          "description": "Unified versioning since v21.0",
+          "examples": ["v28.1", "v27.0", "v26.1", "v25.3"]
+        },
+        "maven": {
+          "group_id": "com.google.protobuf",
+          "artifact_id": "protobuf-java",
+          "pattern": "4.XX.Y",
+          "mapping_rule": "Git vXX.Y → Maven 4.XX.Y",
+          "verification_url": "https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java",
+          "examples": {
+            "v28.1": "4.28.1",
+            "v27.0": "4.27.0",
+            "v26.1": "4.26.1",
+            "v25.3": "4.25.3"
+          }
+        },
+        "python": {
+          "package_name": "protobuf",
+          "pattern": "5.XX.Y",
+          "mapping_rule": "Git vXX.Y → PyPI 5.XX.Y",
+          "verification_url": "https://pypi.org/project/protobuf/",
+          "examples": {
+            "v28.1": "5.28.1",
+            "v27.0": "5.27.0",
+            "v26.1": "5.26.1",
+            "v25.3": "5.25.3"
+          }
+        },
+        "cpp": {
+          "package_name": "protobuf",
+          "pattern": "XX.Y (matches git tag)",
+          "mapping_rule": "Git vXX.Y → Use git tag directly for C++",
+          "build_method": "cmake or autotools",
+          "examples": {
+            "v28.1": "28.1",
+            "v27.0": "27.0"
+          }
+        }
+      },
+      "common_mistakes": [
+        "Using git tag version directly in Maven (protobuf-java:28.1 does NOT exist)",
+        "Using git tag version directly in pip (protobuf==28.1 does NOT exist)",
+        "Confusing protobuf-java 3.x series with newer 4.x series"
+      ]
+    },
+    "grpc": {
+      "full_name": "gRPC",
+      "official_site": "https://github.com/grpc/grpc",
+      "version_schemes": {
+        "git_tag": {
+          "pattern": "vX.YY.Z",
+          "examples": ["v1.60.0", "v1.59.1"]
+        },
+        "maven": {
+          "group_id": "io.grpc",
+          "artifact_id": "grpc-all",
+          "pattern": "X.YY.Z",
+          "mapping_rule": "Git vX.YY.Z → Maven X.YY.Z (remove v prefix)",
+          "verification_url": "https://mvnrepository.com/artifact/io.grpc/grpc-all",
+          "examples": {
+            "v1.60.0": "1.60.0",
+            "v1.59.1": "1.59.1"
+          }
+        },
+        "python": {
+          "package_name": "grpcio",
+          "pattern": "X.YY.Z",
+          "mapping_rule": "Git vX.YY.Z → PyPI X.YY.Z (remove v prefix)",
+          "verification_url": "https://pypi.org/project/grpcio/",
+          "examples": {
+            "v1.60.0": "1.60.0",
+            "v1.59.1": "1.59.1"
+          }
+        }
+      },
+      "common_mistakes": [
+        "Forgetting to remove 'v' prefix for Maven/pip versions"
+      ]
+    },
+    "openssl": {
+      "full_name": "OpenSSL",
+      "official_site": "https://github.com/openssl/openssl",
+      "version_schemes": {
+        "git_tag": {
+          "pattern": "openssl-X.Y.Z",
+          "examples": ["openssl-3.0.8", "openssl-1.1.1w"]
+        },
+        "ubuntu_apt": {
+          "package_name": "libssl-dev",
+          "pattern": "X.Y.Z-XubuntuY",
+          "mapping_rule": "Check apt-cache search for available versions",
+          "examples": {
+            "openssl-3.0.8": "libssl-dev (3.0.2-0ubuntu1.12)",
+            "openssl-1.1.1": "libssl1.1"
+          }
+        },
+        "build_from_source": {
+          "mapping_rule": "Use git tag directly, strip 'openssl-' prefix for ./config",
+          "examples": {
+            "openssl-3.0.8": "git checkout openssl-3.0.8 && ./config --prefix=/usr/local"
+          }
+        }
+      },
+      "common_mistakes": [
+        "Expecting exact version match in apt (use closest available version)",
+        "Not specifying --prefix when building from source"
+      ]
+    }
+  },
+  "general_rules": {
+    "verification_before_use": {
+      "maven": "Search https://search.maven.org/ or use mvn search",
+      "pypi": "Use 'pip index versions <package>' or check https://pypi.org/",
+      "npm": "Use 'npm view <package> versions' or check https://www.npmjs.com/",
+      "apt": "Use 'apt-cache search <package>' or 'apt-cache policy <package>'"
+    },
+    "when_version_not_found": [
+      "Try closest minor version (e.g., 4.28.0 if 4.28.1 not found)",
+      "Check if the library uses a different versioning scheme for that language",
+      "Look for version mapping documentation in the official repository",
+      "Consider building from source as last resort"
+    ],
+    "language_package_managers": {
+      "java": ["Maven (pom.xml)", "Gradle (build.gradle)"],
+      "python": ["pip (requirements.txt)", "poetry (pyproject.toml)"],
+      "javascript": ["npm (package.json)", "yarn"],
+      "go": ["go modules (go.mod)"],
+      "rust": ["cargo (Cargo.toml)"],
+      "cpp": ["apt-get", "vcpkg", "conan", "build from source"]
+    }
+  }
+}
